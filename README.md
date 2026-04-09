@@ -175,13 +175,6 @@ App runs at `http://localhost:3000`
 
 ---
 
-## 🙋 About
-
-Built by **Ayush** — a 4th semester engineering student who was tired of managing 40+ internship applications on WhatsApp and Excel sheets.
-
-Built in 4 weeks as a personal tool and actively used during my own internship hunt.
-
----
 
 ## 📄 License
 
