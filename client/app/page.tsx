@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Rocket, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle, Zap, Brain, BarChart3, Github } from "lucide-react"
+import { Rocket, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle, Zap, Brain, BarChart3, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginUser, registerUser, saveToken, saveUser, getToken } from "@/lib/api"
@@ -111,9 +111,6 @@ export default function HomePage() {
             <span className="text-xl font-bold text-foreground">Tracktern</span>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://github.com/ayushoncode/Tracktern" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Github className="w-5 h-5" />
-            </a>
             <button onClick={() => { setShowAuth(true); setIsLogin(true) }} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Sign In
             </button>
@@ -148,10 +145,9 @@ export default function HomePage() {
               Start Tracking Free
               <ArrowRight className="w-5 h-5" />
             </button>
-            <a href="https://github.com/ayushoncode/Tracktern" target="_blank" className="px-8 py-4 rounded-xl border border-border text-foreground text-lg font-medium hover:bg-secondary transition-colors flex items-center gap-2 justify-center">
-              <Github className="w-5 h-5" />
-              View on GitHub
-            </a>
+            <button onClick={() => { setShowAuth(true); setIsLogin(true) }} className="px-8 py-4 rounded-xl border border-border text-foreground text-lg font-medium hover:bg-secondary transition-colors flex items-center gap-2 justify-center">
+              Sign In
+            </button>
           </div>
         </div>
       </section>
@@ -186,7 +182,7 @@ export default function HomePage() {
               { icon: Mail, title: "Gmail Integration", desc: "Auto-detect offer and rejection emails. Your tracker updates itself. (Coming soon)", color: "text-green-400", bg: "bg-green-500/10" },
               { icon: Zap, title: "Skill Gap Analyzer", desc: "See which skills your target companies need and what you're missing.", color: "text-yellow-400", bg: "bg-yellow-500/10" },
               { icon: CheckCircle, title: "Interview Journal", desc: "Log questions asked, difficulty rating, and outcomes after every interview.", color: "text-pink-400", bg: "bg-pink-500/10" },
-              { icon: BarChart3, title: "Analytics Dashboard", desc: "Visual funnel showing your conversion rate from applied to offer.", color: "text-cyan-400", bg: "bg-cyan-500/10" },
+              { icon: Users, title: "Community Experiences", desc: "Read real interview experiences from other students. See what questions they faced and where they got stuck.", color: "text-cyan-400", bg: "bg-cyan-500/10" },
             ].map((feature) => (
               <div key={feature.title} className="glass-card rounded-xl p-6 border border-border hover:border-primary/30 transition-colors">
                 <div className={`w-10 h-10 rounded-lg ${feature.bg} flex items-center justify-center mb-4`}>
@@ -225,9 +221,12 @@ export default function HomePage() {
             <span className="text-sm text-muted-foreground">Tracktern — Built by Ayush</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="https://github.com/ayushoncode/Tracktern" target="_blank" className="hover:text-foreground transition-colors">GitHub</a>
             <button onClick={() => { setShowAuth(true); setIsLogin(false) }} className="hover:text-foreground transition-colors">Sign Up</button>
             <button onClick={() => { setShowAuth(true); setIsLogin(true) }} className="hover:text-foreground transition-colors">Sign In</button>
+            <a href="/community" className="flex items-center gap-1.5 hover:text-foreground transition-colors">
+              <Users className="w-4 h-4" />
+              Community
+            </a>
           </div>
         </div>
       </footer>
