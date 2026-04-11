@@ -134,16 +134,14 @@ export default function PracticePage() {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Code2 className="w-6 h-6 text-primary" />
           Daily Practice
         </h2>
-        <p className="text-muted-foreground mt-1">One problem a day keeps the rejection away 💪</p>
+        <p className="text-muted-foreground mt-1">One problem a day keeps the rejection away</p>
       </div>
 
-      {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
@@ -170,7 +168,6 @@ export default function PracticePage() {
         </div>
       </div>
 
-      {/* Weekly Heatmap */}
       <div className="glass-card rounded-xl border border-border p-4">
         <div className="flex items-center gap-2 mb-3">
           <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -179,32 +176,28 @@ export default function PracticePage() {
         <div className="flex gap-2">
           {weekData.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className={cn(
-                "w-full h-8 rounded-md transition-colors",
-                d.done ? "bg-primary" : "bg-secondary"
-              )} />
+              <div className={cn("w-full h-8 rounded-md transition-colors", d.done ? "bg-primary" : "bg-secondary")} />
               <span className="text-xs text-muted-foreground">{d.day}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Today's Problem */}
       <div className="glass-card rounded-xl border border-border p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Today's Problem</span>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Today&apos;s Problem</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               #{(FALLBACK_PROBLEMS.indexOf(problem) + 1).toString().padStart(3, "0")}
             </span>
           </div>
           {status !== "pending" && (
-            <span className={cn("text-xs px-3 py-1 rounded-full font-medium border", 
+            <span className={cn("text-xs px-3 py-1 rounded-full font-medium border",
               status === "done" ? "bg-green-500/10 text-green-400 border-green-500/20" :
               status === "struggling" ? "bg-red-500/10 text-red-400 border-red-500/20" :
               "bg-gray-500/10 text-gray-400 border-gray-500/20"
             )}>
-              {status === "done" ? "✓ Solved" : status === "struggling" ? "Need Help" : "Skipped"}
+              {status === "done" ? "Solved" : status === "struggling" ? "Need Help" : "Skipped"}
             </span>
           )}
         </div>
@@ -222,7 +215,6 @@ export default function PracticePage() {
           ))}
         </div>
 
-        {/* Companies */}
         <div className="flex items-center gap-2 mb-6">
           <Tag className="w-3.5 h-3.5 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">Asked at:</span>
@@ -231,7 +223,6 @@ export default function PracticePage() {
           ))}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
           
             href={problem.link}
@@ -268,7 +259,7 @@ export default function PracticePage() {
 
           {status === "done" && (
             <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium">
-              <CheckCircle className="w-4 h-4" /> Great job! Come back tomorrow 🎉
+              <CheckCircle className="w-4 h-4" /> Great job! Come back tomorrow
             </div>
           )}
 
@@ -283,7 +274,6 @@ export default function PracticePage() {
         </div>
       </div>
 
-      {/* LeetCode Username */}
       <div className="glass-card rounded-xl border border-border p-5">
         <h4 className="text-sm font-semibold text-foreground mb-1">Connect LeetCode Profile</h4>
         <p className="text-xs text-muted-foreground mb-3">Enter your username to track your real stats on LeetCode</p>
@@ -302,7 +292,7 @@ export default function PracticePage() {
           </button>
           {leetcodeUser && (
             
-              href={`https://leetcode.com/${leetcodeUser}`}
+              href={"https://leetcode.com/" + leetcodeUser}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-secondary border border-border text-foreground hover:bg-secondary/80 transition-colors"
@@ -313,11 +303,8 @@ export default function PracticePage() {
         </div>
       </div>
 
-      {/* Problem Bank */}
       <div className="glass-card rounded-xl border border-border p-6">
         <h4 className="text-base font-semibold text-foreground mb-4">Problem Bank</h4>
-
-        {/* Topic Filters */}
         <div className="flex flex-wrap gap-2 mb-4">
           {allTopics.map(t => (
             <button
@@ -334,8 +321,6 @@ export default function PracticePage() {
             </button>
           ))}
         </div>
-
-        {/* Problem List */}
         <div className="space-y-2">
           {topicProblems.map((p, i) => (
             
