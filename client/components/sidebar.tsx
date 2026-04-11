@@ -12,6 +12,7 @@ import {
   Rocket,
   LogOut,
   Users,
+  Code2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { removeToken } from "@/lib/api"
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/applications", icon: Briefcase, label: "Applications" },
   { href: "/ai-prep", icon: Sparkles, label: "AI Prep" },
   { href: "/skill-gap", icon: BarChart3, label: "Skill Gap" },
+  { href: "/practice", icon: Code2, label: "Daily Practice" },
   { href: "/journal", icon: BookOpen, label: "Interview Journal" },
   { href: "/community", icon: Users, label: "Community Experiences" },
   { href: "/settings", icon: Settings, label: "Settings" },
@@ -37,7 +39,6 @@ export function Sidebar() {
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-sidebar border-r border-sidebar-border">
-      {/* Logo */}
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg gradient-purple flex items-center justify-center">
@@ -47,7 +48,6 @@ export function Sidebar() {
         </Link>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-4">
         <ul className="space-y-1">
           {navItems.map((item) => {
@@ -72,7 +72,6 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {/* Footer */}
       <div className="p-4 border-t border-sidebar-border">
         <button
           onClick={handleSignOut}
