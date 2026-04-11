@@ -72,7 +72,6 @@ export default function PracticePage() {
     const savedTotal = parseInt(localStorage.getItem("practice_total") || "0")
     const savedUser = localStorage.getItem("leetcode_user") || ""
     const todayStatus = savedHistory[getTodayKey()] || "pending"
-
     setHistory(savedHistory)
     setStreak(savedStreak)
     setTotalSolved(savedTotal)
@@ -80,7 +79,6 @@ export default function PracticePage() {
     setInputUser(savedUser)
     setStatus(todayStatus as any)
     setProblem(getDailyProblem())
-
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     const week = Array.from({ length: 7 }, (_, i) => {
       const d = new Date()
@@ -97,12 +95,10 @@ export default function PracticePage() {
     setStatus(newStatus)
     setHistory(newHistory)
     localStorage.setItem("practice_history", JSON.stringify(newHistory))
-
     if (newStatus === "done") {
       const newTotal = totalSolved + 1
       setTotalSolved(newTotal)
       localStorage.setItem("practice_total", newTotal.toString())
-
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
       const yKey = yesterday.toISOString().split("T")[0]
@@ -110,7 +106,6 @@ export default function PracticePage() {
       setStreak(newStreak)
       localStorage.setItem("practice_streak", newStreak.toString())
     }
-
     setWeekData(prev => prev.map((d, i) => i === 6 ? { ...d, done: newStatus === "done" } : d))
   }
 
@@ -186,7 +181,7 @@ export default function PracticePage() {
       <div className="glass-card rounded-xl border border-border p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Today&apos;s Problem</span>
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Today's Problem</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               #{(FALLBACK_PROBLEMS.indexOf(problem) + 1).toString().padStart(3, "0")}
             </span>
@@ -224,34 +219,20 @@ export default function PracticePage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          
-            href={problem.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg gradient-purple text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
-          >
+          <a href={problem.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-5 py-2.5 rounded-lg gradient-purple text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
             Solve on LeetCode
             <ExternalLink className="w-4 h-4" />
           </a>
 
           {status === "pending" && (
             <>
-              <button
-                onClick={() => handleStatus("done")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium hover:bg-green-500/20 transition-colors"
-              >
+              <button onClick={() => handleStatus("done")} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium hover:bg-green-500/20 transition-colors">
                 <CheckCircle className="w-4 h-4" /> Mark Solved
               </button>
-              <button
-                onClick={() => handleStatus("struggling")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-sm font-medium hover:bg-red-500/20 transition-colors"
-              >
+              <button onClick={() => handleStatus("struggling")} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-sm font-medium hover:bg-red-500/20 transition-colors">
                 <AlertCircle className="w-4 h-4" /> Need Help
               </button>
-              <button
-                onClick={() => handleStatus("skipped")}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-muted-foreground border border-border text-sm font-medium hover:bg-secondary/80 transition-colors"
-              >
+              <button onClick={() => handleStatus("skipped")} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-muted-foreground border border-border text-sm font-medium hover:bg-secondary/80 transition-colors">
                 <SkipForward className="w-4 h-4" /> Skip
               </button>
             </>
@@ -264,10 +245,7 @@ export default function PracticePage() {
           )}
 
           {status === "struggling" && (
-            <button
-              onClick={() => handleStatus("done")}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium hover:bg-green-500/20 transition-colors"
-            >
+            <button onClick={() => handleStatus("done")} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium hover:bg-green-500/20 transition-colors">
               <CheckCircle className="w-4 h-4" /> Got it now!
             </button>
           )}
@@ -284,19 +262,11 @@ export default function PracticePage() {
             placeholder="your-leetcode-username"
             className="flex-1 px-3 py-2 text-sm bg-secondary border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
-          <button
-            onClick={saveLeetcodeUser}
-            className="px-4 py-2 text-sm rounded-lg gradient-purple text-primary-foreground font-medium hover:opacity-90 transition-opacity"
-          >
+          <button onClick={saveLeetcodeUser} className="px-4 py-2 text-sm rounded-lg gradient-purple text-primary-foreground font-medium hover:opacity-90 transition-opacity">
             Save
           </button>
           {leetcodeUser && (
-            
-              href={"https://leetcode.com/" + leetcodeUser}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-secondary border border-border text-foreground hover:bg-secondary/80 transition-colors"
-            >
+            <a href={"https://leetcode.com/" + leetcodeUser} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-secondary border border-border text-foreground hover:bg-secondary/80 transition-colors">
               View Profile <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
@@ -307,29 +277,14 @@ export default function PracticePage() {
         <h4 className="text-base font-semibold text-foreground mb-4">Problem Bank</h4>
         <div className="flex flex-wrap gap-2 mb-4">
           {allTopics.map(t => (
-            <button
-              key={t}
-              onClick={() => setActiveFilter(t)}
-              className={cn(
-                "px-3 py-1 text-xs rounded-full border transition-all",
-                activeFilter === t
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
-              )}
-            >
+            <button key={t} onClick={() => setActiveFilter(t)} className={cn("px-3 py-1 text-xs rounded-full border transition-all", activeFilter === t ? "bg-primary text-primary-foreground border-primary" : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground")}>
               {t}
             </button>
           ))}
         </div>
         <div className="space-y-2">
           {topicProblems.map((p, i) => (
-            
-              key={i}
-              href={p.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/60 transition-colors group"
-            >
+            <a key={i} href={p.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/60 transition-colors group">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-muted-foreground w-6">{i + 1}</span>
                 <span className="text-sm text-foreground group-hover:text-primary transition-colors">{p.title}</span>
