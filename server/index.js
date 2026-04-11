@@ -10,7 +10,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://tracktern.vercel.app",
+    "https://tracktern-ten.vercel.app",
     /\.vercel\.app$/
   ],
   credentials: true
