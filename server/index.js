@@ -7,7 +7,14 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://tracktern.vercel.app",
+    /\.vercel\.app$/
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 const authRoutes = require("./routes/auth");
@@ -16,6 +23,7 @@ const companyRoutes = require("./routes/companies");
 app.use("/api/auth", authRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/ai", require("./routes/ai"));
+app.use("/api/journal", require("./routes/journal"));
 
 app.get("/", (req, res) => {
   res.json({ message: "Tracktern API is running 🚀" });
@@ -33,4 +41,3 @@ mongoose
     console.error("❌ MongoDB connection failed:", err.message);
     process.exit(1);
   });
-app.use("/api/journal", require("./routes/journal"));
