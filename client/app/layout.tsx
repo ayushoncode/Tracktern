@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: 'InternTrack - AI-Powered Internship Tracker',
+  title: 'Tracktern - AI-Powered Internship Tracker',
   description: 'Your internship hunt, organized. Track applications, get AI-powered interview prep, and land your dream role.',
   generator: 'v0.app',
   icons: {

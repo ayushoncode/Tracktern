@@ -36,3 +36,25 @@ export const getToken = () => localStorage.getItem("tracktern_token");
 export const removeToken = () => localStorage.removeItem("tracktern_token");
 export const saveUser = (user: object) => localStorage.setItem("tracktern_user", JSON.stringify(user));
 export const getUser = () => { const u = localStorage.getItem("tracktern_user"); return u ? JSON.parse(u) : null; };
+
+export const getAIPrep = async (token: string, company: string, role: string) => {
+  const res = await fetch("http://localhost:5001/api/ai/prep", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
+  return res.json();
+};
+export const getFollowUpEmail = async (token: string, company: string, role: string) => {
+  const res = await fetch("http://localhost:5001/api/ai/followup", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
+  return res.json();
+};
+
+export const getJournalEntries = async (token: string) => {
+  const res = await fetch("http://localhost:5001/api/journal", { headers: { Authorization: `Bearer ${token}` } });
+  return res.json();
+};
+export const addJournalEntry = async (token: string, data: object) => {
+  const res = await fetch("http://localhost:5001/api/journal", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(data) });
+  return res.json();
+};
+export const deleteJournalEntry = async (token: string, id: string) => {
+  const res = await fetch(`http://localhost:5001/api/journal/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+  return res.json();
+};
