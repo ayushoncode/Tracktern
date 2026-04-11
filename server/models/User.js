@@ -20,8 +20,13 @@ userSchema.pre("save", function(next) {
   });
 });
 
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = function(candidatePassword) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidatePassword, this.password, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
 };
 
 module.exports = mongoose.model("User", userSchema);
