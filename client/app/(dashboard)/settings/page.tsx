@@ -7,12 +7,18 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { getUser, removeToken } from "@/lib/api"
-import Link from "next/link"
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile")
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [notifications, setNotifications] = useState({
+    emailUpdates: true,
+    interviewReminders: true,
+    weeklySummary: false,
+    aiSuggestions: true,
+    skillGapAlerts: false,
+  })
 
   useEffect(() => {
     const user = getUser()
@@ -28,6 +34,10 @@ export default function SettingsPage() {
     window.location.href = "/"
   }
 
+  const toggleNotification = (key: keyof typeof notifications) => {
+    setNotifications(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
   const initials = name
     ? name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
     : "?"
@@ -37,6 +47,14 @@ export default function SettingsPage() {
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "integrations", label: "Integrations", icon: Mail },
     { id: "security", label: "Security", icon: Shield },
+  ]
+
+  const notificationItems = [
+    { key: "emailUpdates" as const, label: "Email updates on application status" },
+    { key: "interviewReminders" as const, label: "Interview reminders" },
+    { key: "weeklySummary" as const, label: "Weekly summary" },
+    { key: "aiSuggestions" as const, label: "AI prep suggestions" },
+    { key: "skillGapAlerts" as const, label: "Skill gap alerts" },
   ]
 
   return (
@@ -81,7 +99,6 @@ export default function SettingsPage() {
           {activeTab === "profile" && (
             <div className="glass-card rounded-xl border border-border p-6 space-y-6">
               <h3 className="text-lg font-semibold text-foreground">Profile Settings</h3>
-
               <div className="flex items-center gap-4">
                 <Avatar className="w-20 h-20 border-2 border-primary/30">
                   <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
@@ -95,23 +112,14 @@ export default function SettingsPage() {
                   <p className="text-xs text-muted-foreground mt-1">JPG, PNG. Max 2MB.</p>
                 </div>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Full Name</label>
-                  <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="bg-secondary border-border text-foreground"
-                  />
+                  <Input value={name} onChange={(e) => setName(e.target.value)} className="bg-secondary border-border text-foreground" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
-                  <Input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-secondary border-border text-foreground"
-                  />
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} className="bg-secondary border-border text-foreground" />
                 </div>
                 <Button className="gradient-purple hover:opacity-90 text-primary-foreground">
                   Save Changes
@@ -123,18 +131,21 @@ export default function SettingsPage() {
           {activeTab === "notifications" && (
             <div className="glass-card rounded-xl border border-border p-6 space-y-6">
               <h3 className="text-lg font-semibold text-foreground">Notification Preferences</h3>
-              <div className="space-y-4">
-                {[
-                  { label: "Email updates on application status", enabled: true },
-                  { label: "Interview reminders", enabled: true },
-                  { label: "Weekly summary", enabled: false },
-                  { label: "AI prep suggestions", enabled: true },
-                  { label: "Skill gap alerts", enabled: false },
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
-                    <span className="text-foreground">{item.label}</span>
-                    <button className={cn("w-10 h-6 rounded-full transition-colors relative", item.enabled ? "bg-primary" : "bg-muted")}>
-                      <div className={cn("w-4 h-4 rounded-full bg-foreground absolute top-1 transition-all", item.enabled ? "right-1" : "left-1")} />
+              <div className="space-y-3">
+                {notificationItems.map((item) => (
+                  <div key={item.key} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                    <span className="text-foreground text-sm">{item.label}</span>
+                    <button
+                      onClick={() => toggleNotification(item.key)}
+                      className={cn(
+                        "w-11 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0",
+                        notifications[item.key] ? "bg-primary" : "bg-muted"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-4 h-4 rounded-full bg-white absolute top-1 transition-all duration-200",
+                        notifications[item.key] ? "left-6" : "left-1"
+                      )} />
                     </button>
                   </div>
                 ))}
@@ -146,6 +157,7 @@ export default function SettingsPage() {
             <div className="glass-card rounded-xl border border-border p-6 space-y-6">
               <h3 className="text-lg font-semibold text-foreground">Integrations</h3>
               <div className="space-y-4">
+                {/* Gmail - Coming Soon */}
                 <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
@@ -156,10 +168,12 @@ export default function SettingsPage() {
                       <p className="text-sm text-muted-foreground">Auto-detect application updates</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-green-400 text-sm">
-                    <CheckCircle className="w-4 h-4" /> Connected
-                  </div>
+                  <span className="text-xs px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 font-medium">
+                    Coming Soon
+                  </span>
                 </div>
+
+                {/* LinkedIn - Coming Soon */}
                 <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -172,9 +186,9 @@ export default function SettingsPage() {
                       <p className="text-sm text-muted-foreground">Import job applications</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="bg-secondary border-border text-foreground hover:bg-secondary/80">
-                    Connect
-                  </Button>
+                  <span className="text-xs px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 font-medium">
+                    Coming Soon
+                  </span>
                 </div>
               </div>
             </div>
