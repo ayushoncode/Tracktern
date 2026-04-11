@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5001/api";
+const API_URL = "https://tracktern-27b8.onrender.com/api";
 export const registerUser = async (name: string, email: string, password: string) => {
   const res = await fetch(`${API_URL}/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, password }) });
   return res.json();
@@ -38,23 +38,23 @@ export const saveUser = (user: object) => localStorage.setItem("tracktern_user",
 export const getUser = () => { const u = localStorage.getItem("tracktern_user"); return u ? JSON.parse(u) : null; };
 
 export const getAIPrep = async (token: string, company: string, role: string) => {
-  const res = await fetch("http://localhost:5001/api/ai/prep", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
+  const res = await fetch("https://tracktern-27b8.onrender.com/api/ai/prep", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
   return res.json();
 };
 export const getFollowUpEmail = async (token: string, company: string, role: string) => {
-  const res = await fetch("http://localhost:5001/api/ai/followup", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
+  const res = await fetch("https://tracktern-27b8.onrender.com/api/ai/followup", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
   return res.json();
 };
 
 export const getJournalEntries = async (token: string) => {
-  const res = await fetch("http://localhost:5001/api/journal", { headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch("https://tracktern-27b8.onrender.com/api/journal", { headers: { Authorization: `Bearer ${token}` } });
   return res.json();
 };
 export const addJournalEntry = async (token: string, data: object) => {
-  const res = await fetch("http://localhost:5001/api/journal", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(data) });
+  const res = await fetch("https://tracktern-27b8.onrender.com/api/journal", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(data) });
   return res.json();
 };
 export const deleteJournalEntry = async (token: string, id: string) => {
-  const res = await fetch(`http://localhost:5001/api/journal/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch(`https://tracktern-27b8.onrender.com/api/journal/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
   return res.json();
 };
