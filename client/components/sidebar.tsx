@@ -14,6 +14,7 @@ import {
   Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { removeToken } from "@/lib/api"
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -27,6 +28,12 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+
+  const handleSignOut = () => {
+    removeToken()
+    localStorage.removeItem("tracktern_user")
+    window.location.href = "/"
+  }
 
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-sidebar border-r border-sidebar-border">
@@ -67,13 +74,13 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-sidebar-border">
-        <Link
-          href="/"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent transition-all"
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all"
         >
           <LogOut className="w-5 h-5" />
           Sign Out
-        </Link>
+        </button>
       </div>
     </aside>
   )
