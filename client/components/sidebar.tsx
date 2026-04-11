@@ -11,6 +11,7 @@ import {
   Settings,
   Rocket,
   LogOut,
+  Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/ai-prep", icon: Sparkles, label: "AI Prep" },
   { href: "/skill-gap", icon: BarChart3, label: "Skill Gap" },
   { href: "/journal", icon: BookOpen, label: "Interview Journal" },
+  { href: "/community", icon: Users, label: "Community Experiences" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
 
