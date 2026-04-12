@@ -1,89 +1,225 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, Calendar } from "lucide-react"
+import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, Calendar, ChevronDown, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const PATTERNS = [
-  { topic: "Array + Basic Hashing", patterns: 2, questionsCount: 14, color: "bg-blue-500/20 text-blue-400 border-blue-500/20" },
-  { topic: "String + Basic Hashing", patterns: 2, questionsCount: 14, color: "bg-purple-500/20 text-purple-400 border-purple-500/20" },
-  { topic: "Binary Search", patterns: 6, questionsCount: 21, color: "bg-orange-500/20 text-orange-400 border-orange-500/20" },
-  { topic: "Sorting", patterns: 7, questionsCount: 21, color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/20" },
-  { topic: "Number Theory", patterns: 5, questionsCount: 18, color: "bg-red-500/20 text-red-400 border-red-500/20" },
-  { topic: "Matrix", patterns: 5, questionsCount: 18, color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/20" },
-  { topic: "Two Pointers", patterns: 3, questionsCount: 14, color: "bg-green-500/20 text-green-400 border-green-500/20" },
-  { topic: "Prefix Sum", patterns: 5, questionsCount: 18, color: "bg-teal-500/20 text-teal-400 border-teal-500/20" },
-  { topic: "Linked Lists", patterns: 6, questionsCount: 21, color: "bg-pink-500/20 text-pink-400 border-pink-500/20" },
-  { topic: "Sliding Window", patterns: 2, questionsCount: 14, color: "bg-indigo-500/20 text-indigo-400 border-indigo-500/20" },
-  { topic: "Bit Manipulation", patterns: 5, questionsCount: 18, color: "bg-violet-500/20 text-violet-400 border-violet-500/20" },
-  { topic: "Stack", patterns: 4, questionsCount: 14, color: "bg-amber-500/20 text-amber-400 border-amber-500/20" },
-  { topic: "Queue & Deque", patterns: 3, questionsCount: 14, color: "bg-lime-500/20 text-lime-400 border-lime-500/20" },
-  { topic: "Monotonic Stack & Queue", patterns: 2, questionsCount: 14, color: "bg-rose-500/20 text-rose-400 border-rose-500/20" },
-  { topic: "Priority Queue & Heap", patterns: 3, questionsCount: 14, color: "bg-sky-500/20 text-sky-400 border-sky-500/20" },
-  { topic: "Greedy", patterns: 6, questionsCount: 21, color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" },
-  { topic: "Recursion", patterns: 2, questionsCount: 14, color: "bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-500/20" },
-  { topic: "Backtracking", patterns: 3, questionsCount: 14, color: "bg-blue-500/20 text-blue-400 border-blue-500/20" },
-  { topic: "Trie", patterns: 3, questionsCount: 14, color: "bg-purple-500/20 text-purple-400 border-purple-500/20" },
-  { topic: "Design", patterns: 7, questionsCount: 21, color: "bg-orange-500/20 text-orange-400 border-orange-500/20" },
-  { topic: "Dynamic Programming", patterns: 12, questionsCount: 42, color: "bg-red-500/20 text-red-400 border-red-500/20" },
-  { topic: "Tree", patterns: 12, questionsCount: 42, color: "bg-green-500/20 text-green-400 border-green-500/20" },
-]
-
-const PROBLEMS = [
-  { id: 1, title: "Two Sum", difficulty: "Easy", topic: "Array + Basic Hashing", link: "https://leetcode.com/problems/two-sum/" },
-  { id: 2, title: "Contains Duplicate", difficulty: "Easy", topic: "Array + Basic Hashing", link: "https://leetcode.com/problems/contains-duplicate/" },
-  { id: 3, title: "Valid Anagram", difficulty: "Easy", topic: "String + Basic Hashing", link: "https://leetcode.com/problems/valid-anagram/" },
-  { id: 4, title: "Group Anagrams", difficulty: "Medium", topic: "String + Basic Hashing", link: "https://leetcode.com/problems/group-anagrams/" },
-  { id: 5, title: "Binary Search", difficulty: "Easy", topic: "Binary Search", link: "https://leetcode.com/problems/binary-search/" },
-  { id: 6, title: "Search in Rotated Sorted Array", difficulty: "Medium", topic: "Binary Search", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
-  { id: 7, title: "Find Minimum in Rotated Sorted Array", difficulty: "Medium", topic: "Binary Search", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
-  { id: 8, title: "Median of Two Sorted Arrays", difficulty: "Hard", topic: "Binary Search", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/" },
-  { id: 9, title: "Sort Colors", difficulty: "Medium", topic: "Sorting", link: "https://leetcode.com/problems/sort-colors/" },
-  { id: 10, title: "Merge Intervals", difficulty: "Medium", topic: "Sorting", link: "https://leetcode.com/problems/merge-intervals/" },
-  { id: 11, title: "Largest Number", difficulty: "Medium", topic: "Sorting", link: "https://leetcode.com/problems/largest-number/" },
-  { id: 12, title: "Count Primes", difficulty: "Medium", topic: "Number Theory", link: "https://leetcode.com/problems/count-primes/" },
-  { id: 13, title: "Power of Two", difficulty: "Easy", topic: "Number Theory", link: "https://leetcode.com/problems/power-of-two/" },
-  { id: 14, title: "Rotate Image", difficulty: "Medium", topic: "Matrix", link: "https://leetcode.com/problems/rotate-image/" },
-  { id: 15, title: "Spiral Matrix", difficulty: "Medium", topic: "Matrix", link: "https://leetcode.com/problems/spiral-matrix/" },
-  { id: 16, title: "Valid Palindrome", difficulty: "Easy", topic: "Two Pointers", link: "https://leetcode.com/problems/valid-palindrome/" },
-  { id: 17, title: "3Sum", difficulty: "Medium", topic: "Two Pointers", link: "https://leetcode.com/problems/3sum/" },
-  { id: 18, title: "Container With Most Water", difficulty: "Medium", topic: "Two Pointers", link: "https://leetcode.com/problems/container-with-most-water/" },
-  { id: 19, title: "Running Sum of 1d Array", difficulty: "Easy", topic: "Prefix Sum", link: "https://leetcode.com/problems/running-sum-of-1d-array/" },
-  { id: 20, title: "Subarray Sum Equals K", difficulty: "Medium", topic: "Prefix Sum", link: "https://leetcode.com/problems/subarray-sum-equals-k/" },
-  { id: 21, title: "Reverse Linked List", difficulty: "Easy", topic: "Linked Lists", link: "https://leetcode.com/problems/reverse-linked-list/" },
-  { id: 22, title: "Merge Two Sorted Lists", difficulty: "Easy", topic: "Linked Lists", link: "https://leetcode.com/problems/merge-two-sorted-lists/" },
-  { id: 23, title: "LRU Cache", difficulty: "Medium", topic: "Linked Lists", link: "https://leetcode.com/problems/lru-cache/" },
-  { id: 24, title: "Best Time to Buy and Sell Stock", difficulty: "Easy", topic: "Sliding Window", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
-  { id: 25, title: "Longest Substring Without Repeating Characters", difficulty: "Medium", topic: "Sliding Window", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
-  { id: 26, title: "Number of 1 Bits", difficulty: "Easy", topic: "Bit Manipulation", link: "https://leetcode.com/problems/number-of-1-bits/" },
-  { id: 27, title: "Counting Bits", difficulty: "Easy", topic: "Bit Manipulation", link: "https://leetcode.com/problems/counting-bits/" },
-  { id: 28, title: "Valid Parentheses", difficulty: "Easy", topic: "Stack", link: "https://leetcode.com/problems/valid-parentheses/" },
-  { id: 29, title: "Min Stack", difficulty: "Medium", topic: "Stack", link: "https://leetcode.com/problems/min-stack/" },
-  { id: 30, title: "Daily Temperatures", difficulty: "Medium", topic: "Monotonic Stack & Queue", link: "https://leetcode.com/problems/daily-temperatures/" },
-  { id: 31, title: "Largest Rectangle in Histogram", difficulty: "Hard", topic: "Monotonic Stack & Queue", link: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
-  { id: 32, title: "Kth Largest Element in Array", difficulty: "Medium", topic: "Priority Queue & Heap", link: "https://leetcode.com/problems/kth-largest-element-in-an-array/" },
-  { id: 33, title: "Top K Frequent Elements", difficulty: "Medium", topic: "Priority Queue & Heap", link: "https://leetcode.com/problems/top-k-frequent-elements/" },
-  { id: 34, title: "Jump Game", difficulty: "Medium", topic: "Greedy", link: "https://leetcode.com/problems/jump-game/" },
-  { id: 35, title: "Gas Station", difficulty: "Medium", topic: "Greedy", link: "https://leetcode.com/problems/gas-station/" },
-  { id: 36, title: "Fibonacci Number", difficulty: "Easy", topic: "Recursion", link: "https://leetcode.com/problems/fibonacci-number/" },
-  { id: 37, title: "Pow(x, n)", difficulty: "Medium", topic: "Recursion", link: "https://leetcode.com/problems/powx-n/" },
-  { id: 38, title: "Subsets", difficulty: "Medium", topic: "Backtracking", link: "https://leetcode.com/problems/subsets/" },
-  { id: 39, title: "Combination Sum", difficulty: "Medium", topic: "Backtracking", link: "https://leetcode.com/problems/combination-sum/" },
-  { id: 40, title: "Permutations", difficulty: "Medium", topic: "Backtracking", link: "https://leetcode.com/problems/permutations/" },
-  { id: 41, title: "Implement Trie", difficulty: "Medium", topic: "Trie", link: "https://leetcode.com/problems/implement-trie-prefix-tree/" },
-  { id: 42, title: "Word Search II", difficulty: "Hard", topic: "Trie", link: "https://leetcode.com/problems/word-search-ii/" },
-  { id: 43, title: "LRU Cache", difficulty: "Medium", topic: "Design", link: "https://leetcode.com/problems/lru-cache/" },
-  { id: 44, title: "Design Twitter", difficulty: "Medium", topic: "Design", link: "https://leetcode.com/problems/design-twitter/" },
-  { id: 45, title: "Climbing Stairs", difficulty: "Easy", topic: "Dynamic Programming", link: "https://leetcode.com/problems/climbing-stairs/" },
-  { id: 46, title: "House Robber", difficulty: "Medium", topic: "Dynamic Programming", link: "https://leetcode.com/problems/house-robber/" },
-  { id: 47, title: "Coin Change", difficulty: "Medium", topic: "Dynamic Programming", link: "https://leetcode.com/problems/coin-change/" },
-  { id: 48, title: "Longest Common Subsequence", difficulty: "Medium", topic: "Dynamic Programming", link: "https://leetcode.com/problems/longest-common-subsequence/" },
-  { id: 49, title: "Word Break", difficulty: "Medium", topic: "Dynamic Programming", link: "https://leetcode.com/problems/word-break/" },
-  { id: 50, title: "Invert Binary Tree", difficulty: "Easy", topic: "Tree", link: "https://leetcode.com/problems/invert-binary-tree/" },
-  { id: 51, title: "Maximum Depth of Binary Tree", difficulty: "Easy", topic: "Tree", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
-  { id: 52, title: "Level Order Traversal", difficulty: "Medium", topic: "Tree", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
-  { id: 53, title: "Validate Binary Search Tree", difficulty: "Medium", topic: "Tree", link: "https://leetcode.com/problems/validate-binary-search-tree/" },
-  { id: 54, title: "Number of Islands", difficulty: "Medium", topic: "Tree", link: "https://leetcode.com/problems/number-of-islands/" },
+const SHEET_DATA = [
+  {
+    topic: "Array + Basic Hashing", patterns: 2, total: 34, color: "bg-blue-500/20 text-blue-400 border-blue-500/20",
+    subPatterns: [
+      { name: "Arrays", count: 15 },
+      { name: "Arrays + Hashing", count: 19 },
+    ]
+  },
+  {
+    topic: "String + Basic Hashing", patterns: 2, total: 30, color: "bg-purple-500/20 text-purple-400 border-purple-500/20",
+    subPatterns: [
+      { name: "Strings", count: 12 },
+      { name: "Strings + Hashing", count: 15 },
+    ]
+  },
+  {
+    topic: "Binary Search", patterns: 6, total: 41, color: "bg-orange-500/20 text-orange-400 border-orange-500/20",
+    subPatterns: [
+      { name: "Basic Problems on Sorted Array", count: 7 },
+      { name: "Lower And Upper Bound", count: 6 },
+      { name: "Binary Search On Rotated Sorted Array", count: 5 },
+      { name: "Binary Search on Answer", count: 12 },
+      { name: "Floating Point Binary Search", count: 5 },
+      { name: "Miscellaneous Binary Search Problems", count: 6 },
+    ]
+  },
+  {
+    topic: "Sorting", patterns: 7, total: 51, color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/20",
+    subPatterns: [
+      { name: "Basic Sorting Problems (Array)", count: 10 },
+      { name: "Basic Sorting Problems (Strings)", count: 6 },
+      { name: "Sorting Based On Matrix", count: 5 },
+      { name: "Standard Sorting Algorithms", count: 6 },
+      { name: "Problems on Sorting Algorithms", count: 9 },
+      { name: "Custom Sort & Lambda", count: 6 },
+      { name: "Problems on Intervals + Sorting + Greedy", count: 9 },
+    ]
+  },
+  {
+    topic: "Number Theory", patterns: 5, total: 55, color: "bg-red-500/20 text-red-400 border-red-500/20",
+    subPatterns: [
+      { name: "Basic Maths", count: 15 },
+      { name: "Divisibility & Factors", count: 10 },
+      { name: "Prime Numbers", count: 10 },
+      { name: "GCD/LCM", count: 10 },
+      { name: "Modular Arithmetic", count: 10 },
+    ]
+  },
+  {
+    topic: "Matrix", patterns: 5, total: 36, color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/20",
+    subPatterns: [
+      { name: "Traversal Based Problems", count: 7 },
+      { name: "Modify Matrix Problems", count: 10 },
+      { name: "Searching On Matrix", count: 7 },
+      { name: "Standard Problems with Hashing", count: 8 },
+      { name: "Chess Related Problems", count: 4 },
+    ]
+  },
+  {
+    topic: "Two Pointers", patterns: 3, total: 29, color: "bg-green-500/20 text-green-400 border-green-500/20",
+    subPatterns: [
+      { name: "Standard Problems on Array", count: 10 },
+      { name: "Standard Problems on Strings", count: 10 },
+      { name: "Two Pointers + Hashing", count: 10 },
+    ]
+  },
+  {
+    topic: "Prefix Sum", patterns: 5, total: 30, color: "bg-teal-500/20 text-teal-400 border-teal-500/20",
+    subPatterns: [
+      { name: "Prefix Sum on Array", count: 8 },
+      { name: "Prefix Sum on Binary Array", count: 5 },
+      { name: "Prefix Sum + Hash Map", count: 8 },
+      { name: "2D Prefix Sum", count: 5 },
+      { name: "Difference Array", count: 4 },
+    ]
+  },
+  {
+    topic: "Linked Lists", patterns: 6, total: 57, color: "bg-pink-500/20 text-pink-400 border-pink-500/20",
+    subPatterns: [
+      { name: "Traversal in Singly Linked List", count: 10 },
+      { name: "Insertion/Deletion in Singly Linked List", count: 8 },
+      { name: "Linked List with Two Pointers/Hash Table", count: 17 },
+      { name: "Doubly Linked List", count: 7 },
+      { name: "Circular Linked List & Cycle Related Problems", count: 8 },
+      { name: "Sort/Merge in Linked List", count: 7 },
+    ]
+  },
+  {
+    topic: "Sliding Window", patterns: 2, total: 24, color: "bg-indigo-500/20 text-indigo-400 border-indigo-500/20",
+    subPatterns: [
+      { name: "Fixed Size Window", count: 12 },
+      { name: "Variable Size Window", count: 12 },
+    ]
+  },
+  {
+    topic: "Bit Manipulation", patterns: 5, total: 43, color: "bg-violet-500/20 text-violet-400 border-violet-500/20",
+    subPatterns: [
+      { name: "Math Based Bit Problems", count: 10 },
+      { name: "Array & Matrix Related Problems", count: 8 },
+      { name: "String Related Problems", count: 8 },
+      { name: "Hash Table Related Problems", count: 8 },
+      { name: "Operator Based Problems", count: 9 },
+    ]
+  },
+  {
+    topic: "Stack", patterns: 4, total: 33, color: "bg-amber-500/20 text-amber-400 border-amber-500/20",
+    subPatterns: [
+      { name: "Basic Stack Problems", count: 7 },
+      { name: "Conversion/Expression Related Problems", count: 6 },
+      { name: "Nested Structure Verification Problems", count: 8 },
+      { name: "Hard Problems on Stack", count: 12 },
+    ]
+  },
+  {
+    topic: "Queue & Deque", patterns: 3, total: 25, color: "bg-lime-500/20 text-lime-400 border-lime-500/20",
+    subPatterns: [
+      { name: "Basics of Queue & Deque", count: 10 },
+      { name: "Queue Based Problems", count: 10 },
+      { name: "Deque Based Problems", count: 5 },
+    ]
+  },
+  {
+    topic: "Monotonic Stack & Queue", patterns: 2, total: 23, color: "bg-rose-500/20 text-rose-400 border-rose-500/20",
+    subPatterns: [
+      { name: "Monotonic Stack", count: 15 },
+      { name: "Monotonic Queue/Deque", count: 8 },
+    ]
+  },
+  {
+    topic: "Priority Queue & Heap", patterns: 3, total: 28, color: "bg-sky-500/20 text-sky-400 border-sky-500/20",
+    subPatterns: [
+      { name: "Max/Min Heap", count: 15 },
+      { name: "Custom Comparator in Priority Queue", count: 7 },
+      { name: "Two Heap", count: 6 },
+    ]
+  },
+  {
+    topic: "Greedy", patterns: 6, total: 60, color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/20",
+    subPatterns: [
+      { name: "Greedy with Sorting + Two Pointers", count: 10 },
+      { name: "Greedy with Counting / Hash Map", count: 10 },
+      { name: "Math + Greedy", count: 10 },
+      { name: "One-Pass Greedy", count: 10 },
+      { name: "Greedy instead of DP", count: 10 },
+      { name: "Greedy with Heap", count: 10 },
+    ]
+  },
+  {
+    topic: "Recursion", patterns: 2, total: 20, color: "bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-500/20",
+    subPatterns: [
+      { name: "Basic Recursive Problems", count: 10 },
+      { name: "Recursion Based Problems", count: 10 },
+    ]
+  },
+  {
+    topic: "Backtracking", patterns: 3, total: 22, color: "bg-blue-500/20 text-blue-400 border-blue-500/20",
+    subPatterns: [
+      { name: "Subsets/Permutations/Combinations", count: 8 },
+      { name: "Array & String Based Problems", count: 7 },
+      { name: "Matrix Based Problems", count: 7 },
+    ]
+  },
+  {
+    topic: "Trie", patterns: 3, total: 20, color: "bg-purple-500/20 text-purple-400 border-purple-500/20",
+    subPatterns: [
+      { name: "Basic Trie Operations", count: 8 },
+      { name: "Prefix Matching", count: 7 },
+      { name: "Bitwise Trie", count: 5 },
+    ]
+  },
+  {
+    topic: "Design", patterns: 7, total: 42, color: "bg-orange-500/20 text-orange-400 border-orange-500/20",
+    subPatterns: [
+      { name: "Array & String Based Design Problems", count: 8 },
+      { name: "Hash Table Based Design Problems", count: 8 },
+      { name: "Linked List Based Design Problems", count: 7 },
+      { name: "Stack & Queue Based Design Problems", count: 4 },
+      { name: "Heap Based Design Problems", count: 5 },
+      { name: "Trie Based Design Problems", count: 5 },
+      { name: "Tree Based Design Problems", count: 5 },
+    ]
+  },
+  {
+    topic: "Dynamic Programming", patterns: 12, total: 166, color: "bg-red-500/20 text-red-400 border-red-500/20",
+    subPatterns: [
+      { name: "Linear DP", count: 29 },
+      { name: "Knapsack", count: 11 },
+      { name: "Multi Dimensional DP", count: 22 },
+      { name: "DP Interval Problem", count: 10 },
+      { name: "Bit DP", count: 10 },
+      { name: "Digit DP", count: 3 },
+      { name: "DP on Trees", count: 8 },
+      { name: "DP on Strings", count: 23 },
+      { name: "DP on LCS", count: 11 },
+      { name: "DP on LIS", count: 7 },
+      { name: "DP on 2D Grid", count: 10 },
+      { name: "DP on Cumulative Sum", count: 17 },
+    ]
+  },
+  {
+    topic: "Tree", patterns: 12, total: 73, color: "bg-green-500/20 text-green-400 border-green-500/20",
+    subPatterns: [
+      { name: "Ancestor Problems", count: 5 },
+      { name: "Root-to-Leaf Path Problems", count: 6 },
+      { name: "Serialize & Deserialize", count: 3 },
+      { name: "Leaves Related", count: 4 },
+      { name: "Level Order Traversal & BFS Variants", count: 15 },
+      { name: "Node Deletion", count: 2 },
+      { name: "Tree Construction", count: 10 },
+      { name: "Distance Between Two Nodes", count: 3 },
+      { name: "Inorder-BST Specific", count: 6 },
+      { name: "Flipping & Tree Checking", count: 7 },
+      { name: "Counting Nodes or Recovery or Kth or Pruning or Searching", count: 8 },
+      { name: "Depth Related", count: 4 },
+    ]
+  },
 ]
 
 const DAILY_PROBLEMS = [
@@ -135,21 +271,22 @@ function getDailyProblem() {
 }
 
 export default function PracticePage() {
-  const [solved, setSolved] = useState<number[]>([])
-  const [selectedTopic, setSelectedTopic] = useState("All")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("All")
+  const [solvedPatterns, setSolvedPatterns] = useState<Record<string, number>>({})
+  const [expandedTopic, setExpandedTopic] = useState<string | null>(null)
   const [streak, setStreak] = useState(0)
   const [history, setHistory] = useState<Record<string, boolean>>({})
   const [weekData, setWeekData] = useState<{ day: string; done: boolean }[]>([])
   const [dailyDone, setDailyDone] = useState(false)
 
   const dailyProblem = getDailyProblem()
+  const totalSolved = Object.values(solvedPatterns).reduce((a, b) => a + b, 0)
+  const grandTotal = SHEET_DATA.reduce((a, b) => a + b.total, 0)
 
   useEffect(() => {
-    const savedSolved = JSON.parse(localStorage.getItem("practice_solved") || "[]")
+    const savedSolved = JSON.parse(localStorage.getItem("pattern_solved") || "{}")
     const savedHistory = JSON.parse(localStorage.getItem("practice_daily_history") || "{}")
     const savedStreak = parseInt(localStorage.getItem("practice_streak") || "0")
-    setSolved(savedSolved)
+    setSolvedPatterns(savedSolved)
     setHistory(savedHistory)
     setStreak(savedStreak)
     setDailyDone(savedHistory[getTodayKey()] === true)
@@ -163,10 +300,22 @@ export default function PracticePage() {
     setWeekData(week)
   }, [])
 
-  const toggleSolved = (id: number) => {
-    const newSolved = solved.includes(id) ? solved.filter(i => i !== id) : [...solved, id]
-    setSolved(newSolved)
-    localStorage.setItem("practice_solved", JSON.stringify(newSolved))
+  const updateSubPatternSolved = (topic: string, subPattern: string, count: number, max: number) => {
+    const key = `${topic}__${subPattern}`
+    const newVal = Math.min(Math.max(0, count), max)
+    const newSolved = { ...solvedPatterns, [key]: newVal }
+    setSolvedPatterns(newSolved)
+    localStorage.setItem("pattern_solved", JSON.stringify(newSolved))
+  }
+
+  const getSubPatternSolved = (topic: string, subPattern: string) => {
+    return solvedPatterns[`${topic}__${subPattern}`] || 0
+  }
+
+  const getTopicSolved = (topic: string) => {
+    return SHEET_DATA.find(s => s.topic === topic)?.subPatterns.reduce((acc, sp) => {
+      return acc + (solvedPatterns[`${topic}__${sp.name}`] || 0)
+    }, 0) || 0
   }
 
   const markDailyDone = () => {
@@ -185,27 +334,19 @@ export default function PracticePage() {
     setWeekData(prev => prev.map((d, i) => i === 6 ? { ...d, done: true } : d))
   }
 
-  const filtered = PROBLEMS.filter(p => {
-    if (selectedTopic !== "All" && p.topic !== selectedTopic) return false
-    if (selectedDifficulty !== "All" && p.difficulty !== selectedDifficulty) return false
-    return true
-  })
-
-  const totalSolved = solved.length
-  const totalProblems = PROBLEMS.length
-
   return (
     <div className="space-y-6 max-w-5xl">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Code2 className="w-6 h-6 text-primary" />
             Daily Practice
           </h2>
-          <p className="text-muted-foreground mt-1">Pattern-wise DSA mastery — 22 topics, crack any interview</p>
+          <p className="text-muted-foreground mt-1">Pattern-Wise Mastery — 22 topics, {grandTotal} problems</p>
         </div>
-        <div className="text-right glass-card rounded-xl border border-border px-5 py-3">
-          <div className="text-2xl font-bold text-primary">{totalSolved}<span className="text-muted-foreground text-base font-normal">/{totalProblems}</span></div>
+        <div className="glass-card rounded-xl border border-border px-5 py-3 text-right">
+          <div className="text-2xl font-bold text-primary">{totalSolved}<span className="text-muted-foreground text-base font-normal">/{grandTotal}</span></div>
           <div className="text-xs text-muted-foreground">Total Solved</div>
         </div>
       </div>
@@ -229,7 +370,7 @@ export default function PracticePage() {
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Target className="w-5 h-5 text-primary" />
-            <span className="text-2xl font-bold text-foreground">{PATTERNS.length}</span>
+            <span className="text-2xl font-bold text-foreground">{SHEET_DATA.length}</span>
           </div>
           <p className="text-xs text-muted-foreground">Topics</p>
         </div>
@@ -253,8 +394,8 @@ export default function PracticePage() {
 
       {/* Daily Problem */}
       <div className="glass-card rounded-xl border border-border p-6">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Today's Problem</span>
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Problem of the Day</span>
           {dailyDone && (
             <span className="text-xs px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 font-medium">
               Solved today
@@ -283,89 +424,92 @@ export default function PracticePage() {
         </div>
       </div>
 
-      {/* Pattern Cards */}
+      {/* Pattern Wise Sheet */}
       <div>
-        <h3 className="text-base font-semibold text-foreground mb-3">Pattern-Wise Mastery <span className="text-muted-foreground font-normal text-sm">— 22 topics</span></h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {PATTERNS.map((p) => {
-            const topicSolved = solved.filter(id => PROBLEMS.find(pr => pr.id === id && pr.topic === p.topic)).length
-            const topicTotal = PROBLEMS.filter(pr => pr.topic === p.topic).length || p.questionsCount
+        <h3 className="text-base font-semibold text-foreground mb-3">
+          Pattern-Wise Mastery
+          <span className="text-muted-foreground font-normal text-sm ml-2">— 22 topics</span>
+        </h3>
+        <div className="space-y-3">
+          {SHEET_DATA.map((sheet) => {
+            const topicSolved = getTopicSolved(sheet.topic)
+            const pct = Math.round((topicSolved / sheet.total) * 100)
+            const isExpanded = expandedTopic === sheet.topic
+
             return (
-              <button key={p.topic}
-                onClick={() => setSelectedTopic(selectedTopic === p.topic ? "All" : p.topic)}
-                className={cn("glass-card rounded-xl p-3 border text-left transition-all hover:border-primary/40",
-                  selectedTopic === p.topic ? "border-primary bg-primary/5" : "border-border"
-                )}>
-                <div className={cn("text-xs font-medium px-2 py-0.5 rounded-full inline-block mb-2 border", p.color)}>
-                  {p.topic}
-                </div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-foreground">{topicSolved}/{topicTotal}</span>
-                  <span className="text-xs text-muted-foreground">{p.patterns} patterns</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-1.5">
-                  <div className="bg-primary rounded-full h-1.5 transition-all" style={{ width: `${topicTotal > 0 ? (topicSolved / topicTotal) * 100 : 0}%` }} />
-                </div>
-              </button>
+              <div key={sheet.topic} className="glass-card rounded-xl border border-border overflow-hidden">
+                {/* Topic Header */}
+                <button
+                  onClick={() => setExpandedTopic(isExpanded ? null : sheet.topic)}
+                  className="w-full flex items-center justify-between p-4 hover:bg-secondary/30 transition-colors"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {isExpanded ? <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-foreground text-sm">{sheet.topic}</span>
+                        <span className="text-xs text-muted-foreground">{sheet.patterns} patterns</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 max-w-48 bg-secondary rounded-full h-1.5">
+                          <div className="bg-primary rounded-full h-1.5 transition-all" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="text-xs text-muted-foreground">{pct}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right ml-4 shrink-0">
+                    <span className="text-sm font-bold text-primary">{topicSolved}</span>
+                    <span className="text-sm text-muted-foreground">/{sheet.total}</span>
+                  </div>
+                </button>
+
+                {/* Sub Patterns */}
+                {isExpanded && (
+                  <div className="border-t border-border divide-y divide-border">
+                    {sheet.subPatterns.map((sp) => {
+                      const spSolved = getSubPatternSolved(sheet.topic, sp.name)
+                      const spPct = Math.round((spSolved / sp.count) * 100)
+                      return (
+                        <div key={sp.name} className="flex items-center gap-4 px-6 py-3 hover:bg-secondary/20 transition-colors">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="text-sm text-foreground">{sp.name}</span>
+                              <span className="text-xs text-muted-foreground ml-2 shrink-0">{spSolved}/{sp.count}</span>
+                            </div>
+                            <div className="w-full bg-secondary rounded-full h-1">
+                              <div className="bg-primary rounded-full h-1 transition-all" style={{ width: `${spPct}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              onClick={() => updateSubPatternSolved(sheet.topic, sp.name, spSolved - 1, sp.count)}
+                              className="w-6 h-6 rounded bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground text-sm font-bold transition-colors flex items-center justify-center"
+                            >
+                              -
+                            </button>
+                            <button
+                              onClick={() => updateSubPatternSolved(sheet.topic, sp.name, spSolved + 1, sp.count)}
+                              className={cn("w-6 h-6 rounded text-sm font-bold transition-colors flex items-center justify-center",
+                                spSolved === sp.count
+                                  ? "bg-green-500/20 text-green-400"
+                                  : "bg-primary/20 text-primary hover:bg-primary/30"
+                              )}
+                            >
+                              +
+                            </button>
+                            {spSolved === sp.count && (
+                              <CheckCircle className="w-4 h-4 text-green-400 ml-1" />
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             )
           })}
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex gap-2 flex-wrap items-center">
-        <span className="text-sm text-muted-foreground">Difficulty:</span>
-        {["All", "Easy", "Medium", "Hard"].map(d => (
-          <button key={d} onClick={() => setSelectedDifficulty(d)}
-            className={cn("px-3 py-1 rounded-full text-xs font-medium border transition-all",
-              selectedDifficulty === d ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"
-            )}>
-            {d}
-          </button>
-        ))}
-        {selectedTopic !== "All" && (
-          <button onClick={() => setSelectedTopic("All")} className="px-3 py-1 rounded-full text-xs font-medium border border-border text-muted-foreground hover:border-red-400/50 hover:text-red-400 transition-all ml-2">
-            Clear filter x
-          </button>
-        )}
-      </div>
-
-      {/* Problems Table */}
-      <div className="glass-card rounded-xl border border-border overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">
-            {selectedTopic === "All" ? "All Problems" : selectedTopic}
-            <span className="text-muted-foreground text-sm font-normal ml-2">({filtered.length} problems)</span>
-          </h3>
-          <span className="text-sm text-muted-foreground">
-            {solved.filter(id => filtered.find(p => p.id === id)).length}/{filtered.length} solved
-          </span>
-        </div>
-        <div className="divide-y divide-border">
-          {filtered.map((problem) => (
-            <div key={problem.id} className="flex items-center gap-4 p-4 hover:bg-secondary/30 transition-colors">
-              <button onClick={() => toggleSolved(problem.id)} className="shrink-0">
-                <CheckCircle className={cn("w-5 h-5 transition-colors",
-                  solved.includes(problem.id) ? "text-green-400 fill-green-400/20" : "text-muted-foreground/30 hover:text-muted-foreground"
-                )} />
-              </button>
-              <div className="flex-1 min-w-0">
-                <span className={cn("text-sm font-medium",
-                  solved.includes(problem.id) ? "line-through text-muted-foreground" : "text-foreground"
-                )}>
-                  {problem.id}. {problem.title}
-                </span>
-              </div>
-              <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium border hidden sm:block", diffColor[problem.difficulty])}>
-                {problem.difficulty}
-              </span>
-              <span className="text-xs text-muted-foreground hidden lg:block max-w-32 truncate">{problem.topic}</span>
-              <a href={problem.link} target="_blank" rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors shrink-0">
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-          ))}
         </div>
       </div>
     </div>
