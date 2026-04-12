@@ -502,7 +502,7 @@ export default function HomePage() {
               {icon:Brain,c:"#0ea5e9",title:"AI Interview Prep",tag:"AI ✨",desc:"Top 10 questions + skills to revise + personalized 3-day prep plan. Generated instantly for any company."},
               {icon:Mail,c:"#10b981",title:"Gmail Sync",tag:"Coming Soon",desc:"Auto-detect offer, rejection & interview emails. Your tracker updates itself — zero manual work."},
               {icon:Zap,c:"#f59e0b",title:"Skill Gap Analyzer",tag:"Smart",desc:"Add your skills. See exactly what companies need. Bridge the gap before you even apply."},
-              {icon:Code2,c:"#a78bfa",title:"Daily Practice",tag:"DSA",desc:"22 pattern-wise topics. 700+ curated problems. Track progress exactly like CodeHurdle."},
+              {icon:Code2,c:"#a78bfa",title:"Daily Practice",tag:"DSA",desc:"22 pattern-wise topics. 700+ curated problems. Monitor your growth in real-time."},
               {icon:Users,c:"#f472b6",title:"Community",tag:"Social",desc:"Real interview questions from real students. Know what Google and Microsoft asked before you walk in."},
             ].map((f,i) => (
               <div key={i} className="p-6 rounded-2xl card-hover"
@@ -616,7 +616,7 @@ export default function HomePage() {
             <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{background:"linear-gradient(135deg,#7c3aed,#4f46e5)"}}>
               <Rocket className="w-3 h-3 text-white"/>
             </div>
-            <span className="text-sm" style={{color:"rgba(255,255,255,0.3)"}}>Tracktern — Built by Ayush </span>
+            <span className="text-sm" style={{color:"rgba(255,255,255,0.3)"}}>Tracktern — Built by Ayush</span>
           </div>
           <div className="flex items-center gap-6 text-sm" style={{color:"rgba(255,255,255,0.25)"}}>
             <button onClick={() => { setShowAuth(true); setIsLogin(false) }} className="hover:text-white transition-colors">Sign Up</button>
