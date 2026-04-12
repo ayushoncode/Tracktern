@@ -41,3 +41,4 @@ mongoose
     console.error("❌ MongoDB connection failed:", err.message);
     process.exit(1);
   });
+app.use("/api/community", require("./routes/community"));
