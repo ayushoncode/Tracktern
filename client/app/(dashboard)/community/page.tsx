@@ -147,14 +147,13 @@ export default function CommunityPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Community Experiences</h2>
-          <p className="text-muted-foreground">Real interview experiences from LeetCode & students</p>
+          <p className="text-muted-foreground">Real interview experiences from LeetCode and students</p>
         </div>
         <Button onClick={() => setIsAdding(true)} className="gradient-purple hover:opacity-90 text-primary-foreground">
           <Plus className="w-4 h-4 mr-2" /> Share Experience
         </Button>
       </div>
 
-      {/* Add Form */}
       {isAdding && (
         <div className="glass-card rounded-xl p-5 border border-primary/30">
           <div className="flex items-center justify-between mb-4">
@@ -216,7 +215,6 @@ export default function CommunityPage() {
         </div>
       )}
 
-      {/* Tabs */}
       <div className="flex bg-secondary rounded-lg p-1 w-fit">
         <button onClick={() => setActiveTab("leetcode")} className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all", activeTab === "leetcode" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
           LeetCode Discuss
@@ -226,7 +224,6 @@ export default function CommunityPage() {
         </button>
       </div>
 
-      {/* LeetCode Tab */}
       {activeTab === "leetcode" && (
         <div className="space-y-4">
           <div className="flex gap-3">
@@ -302,7 +299,6 @@ export default function CommunityPage() {
         </div>
       )}
 
-      {/* Community Tab */}
       {activeTab === "community" && (
         <div className="space-y-4">
           {loading ? (
