@@ -22,6 +22,7 @@ const fullNavItems = [
 ]
 
 const focusNavItems = [
+  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/applications", icon: Briefcase, label: "Applications" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
