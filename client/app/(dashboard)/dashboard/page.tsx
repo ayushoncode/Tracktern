@@ -4,10 +4,7 @@ import { useEffect, useState } from "react"
 import { Send, Star, Calendar, Trophy, ExternalLink } from "lucide-react"
 import { StatCard } from "@/components/stat-card"
 import { GmailSync } from "@/components/gmail-sync"
-import {
-  Table, TableBody, TableCell,
-  TableHead, TableHeader, TableRow,
-} from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { FunnelChart, Funnel, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import { getStats, getCompanies, getToken } from "@/lib/api"
 
@@ -23,30 +20,20 @@ export default function DashboardPage() {
   const [stats, setStats] = useState({ total: 0, applied: 0, shortlisted: 0, interview: 0, offer: 0, rejected: 0 })
   const [companies, setCompanies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [userName, setUserName] = useState("there")
 
   useEffect(() => {
     const token = getToken()
-    if (!token) {
-      window.location.href = "/"
-      return
-    }
-
-    // Load user name
-    const user = localStorage.getItem("tracktern_user")
-    if (user) setUserName(JSON.parse(user).name?.split(" ")[0] || "there")
-
-    // Load stats and companies
-    Promise.all([getStats(token), getCompanies(token)]).then(([statsData, companiesData]) => {
-      setStats(statsData)
-      setCompanies(Array.isArray(companiesData) ? companiesData.slice(0, 5) : [])
+    if (!token) { window.location.href = "/"; return }
+    Promise.all([getStats(token), getCompanies(token)]).then(([s, c]) => {
+      setStats(s)
+      setCompanies(Array.isArray(c) ? c : [])
       setLoading(false)
     })
   }, [])
 
   const statCards = [
-    { title: "Total Applied", value: stats.total, icon: Send, color: "blue" as const, change: `+${stats.applied} applied` },
-    { title: "Shortlisted", value: stats.shortlisted, icon: Star, color: "yellow" as const, change: stats.total ? `${Math.round((stats.shortlisted / stats.total) * 100)}% conversion` : "0%" },
+    { title: "Total Applied", value: stats.total, icon: Send, color: "blue" as const, change: "+applied" },
+    { title: "Shortlisted", value: stats.shortlisted, icon: Star, color: "yellow" as const, change: stats.total ? `${Math.round((stats.shortlisted/stats.total)*100)}% conversion` : "0%" },
     { title: "Interviews", value: stats.interview, icon: Calendar, color: "purple" as const, change: "scheduled" },
     { title: "Offers", value: stats.offer, icon: Trophy, color: "green" as const, change: stats.offer > 0 ? "Congrats! 🎉" : "Keep going!" },
   ]
@@ -58,42 +45,27 @@ export default function DashboardPage() {
     { name: "Offer", value: stats.offer || 0, fill: "#22C55E" },
   ]
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground animate-pulse">Loading your dashboard...</div>
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="text-muted-foreground animate-pulse">Loading your dashboard...</div>
+    </div>
+  )
 
   return (
     <div className="space-y-6">
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((stat) => (
-          <StatCard key={stat.title} {...stat} />
-        ))}
+        {statCards.map((stat) => <StatCard key={stat.title} {...stat} />)}
       </div>
 
-      {/* Charts & Gmail Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass-card rounded-xl p-5 border border-border">
           <h3 className="font-semibold text-foreground mb-4">Application Funnel</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <FunnelChart>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1A1A24",
-                    border: "1px solid #2E2E3A",
-                    borderRadius: "8px",
-                    color: "#F8FAFC",
-                  }}
-                />
+                <Tooltip contentStyle={{ backgroundColor: "#1A1A24", border: "1px solid #2E2E3A", borderRadius: "8px", color: "#F8FAFC" }} />
                 <Funnel data={funnelData} dataKey="value" nameKey="name" isAnimationActive>
-                  {funnelData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
+                  {funnelData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.fill} />)}
                 </Funnel>
               </FunnelChart>
             </ResponsiveContainer>
@@ -110,7 +82,6 @@ export default function DashboardPage() {
         <GmailSync />
       </div>
 
-      {/* Recent Applications */}
       <div className="glass-card rounded-xl border border-border overflow-hidden">
         <div className="p-5 border-b border-border flex items-center justify-between">
           <h3 className="font-semibold text-foreground">Recent Applications</h3>
@@ -133,7 +104,7 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {companies.map((app: any) => (
+              {companies.slice(0, 5).map((app: any) => (
                 <TableRow key={app._id} className="border-border hover:bg-secondary/30">
                   <TableCell className="font-medium text-foreground">
                     <div className="flex items-center gap-3">
