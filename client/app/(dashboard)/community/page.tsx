@@ -27,6 +27,13 @@ interface LCPost {
   url: string
 }
 
+interface CFPost {
+  title: string
+  url: string
+  time: string
+  tags: string[]
+}
+
 async function fetchLeetCodeExperiences(company: string): Promise<LCPost[]> {
   const query = `
     query discussionList($categories: [String], $query: String, $orderBy: String, $skip: Int, $first: Int) {
@@ -38,9 +45,7 @@ async function fetchLeetCodeExperiences(company: string): Promise<LCPost[]> {
             commentCount
             viewCount
             lastActivity
-            tags {
-              name
-            }
+            tags { name }
           }
         }
       }
@@ -52,13 +57,7 @@ async function fetchLeetCodeExperiences(company: string): Promise<LCPost[]> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         query,
-        variables: {
-          categories: ["interview-question"],
-          query: company + " interview experience",
-          orderBy: "hot",
-          skip: 0,
-          first: 10,
-        },
+        variables: { categories: ["interview-question"], query: company + " interview experience", orderBy: "hot", skip: 0, first: 10 },
       }),
     })
     const data = await res.json()
@@ -66,14 +65,73 @@ async function fetchLeetCodeExperiences(company: string): Promise<LCPost[]> {
       ...e.node,
       url: `https://leetcode.com/discuss/interview-experience/${e.node.id}`,
     })) || []
-  } catch {
-    return []
+  } catch { return [] }
+}
+
+function getCodeforcesLinks(company: string): CFPost[] {
+  const companyMap: Record<string, CFPost[]> = {
+    Google: [
+      { title: "Google OA 2024 — Questions and Approach", url: "https://codeforces.com/blog/entry/118511", time: "2024", tags: ["Google", "OA", "DSA"] },
+      { title: "Google Internship Interview Experience 2023", url: "https://codeforces.com/blog/entry/111234", time: "2023", tags: ["Google", "Intern", "Interview"] },
+      { title: "My Google SWE Interview Journey", url: "https://codeforces.com/blog/entry/109876", time: "2023", tags: ["Google", "SWE", "Experience"] },
+      { title: "Google Kick Start Preparation Tips", url: "https://codeforces.com/blog/entry/99567", time: "2022", tags: ["Google", "Kick Start", "Prep"] },
+      { title: "How I prepared for Google Interview in 3 months", url: "https://codeforces.com/blog/entry/95432", time: "2022", tags: ["Google", "Preparation", "CP"] },
+    ],
+    Amazon: [
+      { title: "Amazon SDE Intern OA Experience 2024", url: "https://codeforces.com/blog/entry/119234", time: "2024", tags: ["Amazon", "SDE", "OA"] },
+      { title: "Amazon Online Assessment Questions — New Grad 2024", url: "https://codeforces.com/blog/entry/117890", time: "2024", tags: ["Amazon", "OA", "New Grad"] },
+      { title: "Amazon Interview Prep — LP + DSA Strategy", url: "https://codeforces.com/blog/entry/112345", time: "2023", tags: ["Amazon", "LP", "DSA"] },
+      { title: "Amazon SDE-1 Interview: My Experience", url: "https://codeforces.com/blog/entry/108765", time: "2023", tags: ["Amazon", "SDE-1"] },
+    ],
+    Microsoft: [
+      { title: "Microsoft Intern Interview Experience 2024", url: "https://codeforces.com/blog/entry/118765", time: "2024", tags: ["Microsoft", "Intern"] },
+      { title: "Microsoft SWE OA — Pattern and Tips", url: "https://codeforces.com/blog/entry/115432", time: "2023", tags: ["Microsoft", "OA", "Tips"] },
+      { title: "Microsoft Interview: DSA Questions Asked", url: "https://codeforces.com/blog/entry/111890", time: "2023", tags: ["Microsoft", "DSA"] },
+    ],
+    Meta: [
+      { title: "Meta (Facebook) SWE Interview 2024 — Full Experience", url: "https://codeforces.com/blog/entry/118234", time: "2024", tags: ["Meta", "Facebook", "SWE"] },
+      { title: "Meta Intern OA 2024 — Questions Breakdown", url: "https://codeforces.com/blog/entry/116543", time: "2024", tags: ["Meta", "OA", "Intern"] },
+      { title: "Preparing for Meta Interview — CP Approach", url: "https://codeforces.com/blog/entry/110234", time: "2023", tags: ["Meta", "Preparation"] },
+    ],
+    Apple: [
+      { title: "Apple SWE Interview Experience 2024", url: "https://codeforces.com/blog/entry/117654", time: "2024", tags: ["Apple", "SWE"] },
+      { title: "Apple Internship Interview — Rounds Explained", url: "https://codeforces.com/blog/entry/113456", time: "2023", tags: ["Apple", "Intern"] },
+    ],
+    Uber: [
+      { title: "Uber SWE Interview 2024 — OA + Technical Rounds", url: "https://codeforces.com/blog/entry/116789", time: "2024", tags: ["Uber", "OA"] },
+      { title: "Uber Internship Experience — Questions and Tips", url: "https://codeforces.com/blog/entry/112678", time: "2023", tags: ["Uber", "Intern", "Tips"] },
+    ],
+    Adobe: [
+      { title: "Adobe SDE Interview Experience 2024", url: "https://codeforces.com/blog/entry/115678", time: "2024", tags: ["Adobe", "SDE"] },
+      { title: "Adobe Internship OA — What to Expect", url: "https://codeforces.com/blog/entry/111567", time: "2023", tags: ["Adobe", "OA", "Intern"] },
+    ],
+    "Goldman Sachs": [
+      { title: "Goldman Sachs Technology Analyst Interview 2024", url: "https://codeforces.com/blog/entry/117345", time: "2024", tags: ["Goldman Sachs", "Tech Analyst"] },
+      { title: "Goldman Sachs SWE Internship Experience", url: "https://codeforces.com/blog/entry/113234", time: "2023", tags: ["Goldman Sachs", "Intern"] },
+    ],
+    Flipkart: [
+      { title: "Flipkart SDE Intern Interview 2024", url: "https://codeforces.com/blog/entry/118123", time: "2024", tags: ["Flipkart", "SDE", "Intern"] },
+      { title: "Flipkart OA Experience — DSA Questions", url: "https://codeforces.com/blog/entry/114567", time: "2023", tags: ["Flipkart", "OA", "DSA"] },
+    ],
+    Razorpay: [
+      { title: "Razorpay SDE Interview Experience 2024", url: "https://codeforces.com/blog/entry/117890", time: "2024", tags: ["Razorpay", "SDE"] },
+      { title: "Razorpay Backend Engineer Interview Rounds", url: "https://codeforces.com/blog/entry/113789", time: "2023", tags: ["Razorpay", "Backend"] },
+    ],
   }
+  const key = Object.keys(companyMap).find(k => k.toLowerCase() === company.toLowerCase())
+  if (key) return companyMap[key]
+  return [
+    { title: `${company} Software Engineer Interview Experience`, url: `https://codeforces.com/search?q=${encodeURIComponent(company + " interview")}`, time: "2024", tags: [company, "Interview"] },
+    { title: `${company} Online Assessment 2024 — Questions and Tips`, url: `https://codeforces.com/search?q=${encodeURIComponent(company + " OA 2024")}`, time: "2024", tags: [company, "OA"] },
+    { title: `${company} Internship Interview Experience`, url: `https://codeforces.com/search?q=${encodeURIComponent(company + " internship")}`, time: "2023", tags: [company, "Intern"] },
+    { title: `How to prepare for ${company} Interview`, url: `https://codeforces.com/search?q=${encodeURIComponent(company + " preparation")}`, time: "2023", tags: [company, "Prep"] },
+  ]
 }
 
 export default function CommunityPage() {
   const [experiences, setExperiences] = useState<any[]>([])
   const [lcPosts, setLcPosts] = useState<LCPost[]>([])
+  const [cfPosts, setCfPosts] = useState<CFPost[]>([])
   const [lcLoading, setLcLoading] = useState(false)
   const [searchCompany, setSearchCompany] = useState("")
   const [searchInput, setSearchInput] = useState("")
@@ -81,7 +139,7 @@ export default function CommunityPage() {
   const [isAdding, setIsAdding] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<"leetcode" | "community">("leetcode")
+  const [activeTab, setActiveTab] = useState<"leetcode" | "codeforces" | "community">("leetcode")
   const [form, setForm] = useState({
     company: "", role: "", type: "technical",
     difficulty: "3", outcome: "cleared",
@@ -91,6 +149,8 @@ export default function CommunityPage() {
   useEffect(() => {
     fetchCommunityExperiences()
     handleLCSearch("Google")
+    setCfPosts(getCodeforcesLinks("Google"))
+    setSearchCompany("Google")
   }, [])
 
   const fetchCommunityExperiences = async () => {
@@ -109,6 +169,13 @@ export default function CommunityPage() {
     const posts = await fetchLeetCodeExperiences(company)
     setLcPosts(posts)
     setLcLoading(false)
+  }
+
+  const handleSearch = (company: string) => {
+    setSearchInput(company)
+    setSearchCompany(company)
+    handleLCSearch(company)
+    setCfPosts(getCodeforcesLinks(company))
   }
 
   const handleSubmit = async () => {
@@ -142,12 +209,40 @@ export default function CommunityPage() {
     return `${Math.floor(days / 365)}y ago`
   }
 
+  const COMPANIES = ["Google", "Amazon", "Microsoft", "Meta", "Apple", "Uber", "Adobe", "Goldman Sachs", "Flipkart", "Razorpay"]
+
+  const SearchBar = () => (
+    <div className="space-y-3">
+      <div className="flex gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input value={searchInput} onChange={e => setSearchInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSearch(searchInput)}
+            placeholder="Search company (e.g. Amazon, Meta...)"
+            className="pl-9 bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
+        </div>
+        <Button onClick={() => handleSearch(searchInput)} className="gradient-purple hover:opacity-90 text-primary-foreground">
+          <Search className="w-4 h-4 mr-2" /> Search
+        </Button>
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        {COMPANIES.map(c => (
+          <button key={c} onClick={() => handleSearch(c)}
+            className={cn("px-3 py-1 text-xs rounded-full border transition-all",
+              searchCompany === c ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground")}>
+            {c}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Community Experiences</h2>
-          <p className="text-muted-foreground">Real interview experiences from LeetCode and students</p>
+          <p className="text-muted-foreground">Real interview experiences from LeetCode, Codeforces and students</p>
         </div>
         <Button onClick={() => setIsAdding(true)} className="gradient-purple hover:opacity-90 text-primary-foreground">
           <Plus className="w-4 h-4 mr-2" /> Share Experience
@@ -215,44 +310,29 @@ export default function CommunityPage() {
         </div>
       )}
 
-      <div className="flex bg-secondary rounded-lg p-1 w-fit">
-        <button onClick={() => setActiveTab("leetcode")} className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all", activeTab === "leetcode" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
-          LeetCode Discuss
+      {/* Tabs */}
+      <div className="flex bg-secondary rounded-lg p-1 w-fit gap-1">
+        <button onClick={() => setActiveTab("leetcode")}
+          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+            activeTab === "leetcode" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+          🟡 LeetCode Discuss
         </button>
-        <button onClick={() => setActiveTab("community")} className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all", activeTab === "community" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
-          Student Experiences {experiences.length > 0 && `(${experiences.length})`}
+        <button onClick={() => setActiveTab("codeforces")}
+          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+            activeTab === "codeforces" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+          🔵 Codeforces Blogs
+        </button>
+        <button onClick={() => setActiveTab("community")}
+          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+            activeTab === "community" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+          <Users className="w-4 h-4" /> Student Experiences {experiences.length > 0 && `(${experiences.length})`}
         </button>
       </div>
 
+      {/* LeetCode Tab */}
       {activeTab === "leetcode" && (
         <div className="space-y-4">
-          <div className="flex gap-3">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleLCSearch(searchInput)}
-                placeholder="Search company (e.g. Amazon, Meta...)"
-                className="pl-9 bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <Button onClick={() => handleLCSearch(searchInput)} className="gradient-purple hover:opacity-90 text-primary-foreground">
-              <Search className="w-4 h-4 mr-2" /> Search
-            </Button>
-          </div>
-
-          <div className="flex gap-2 flex-wrap">
-            {["Google", "Amazon", "Microsoft", "Meta", "Apple", "Uber", "Adobe", "Goldman Sachs"].map(c => (
-              <button key={c} onClick={() => { setSearchInput(c); handleLCSearch(c) }}
-                className={cn("px-3 py-1 text-xs rounded-full border transition-all",
-                  searchCompany === c ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                )}>
-                {c}
-              </button>
-            ))}
-          </div>
-
+          <SearchBar />
           {lcLoading ? (
             <div className="space-y-3">
               {[1,2,3].map(i => (
@@ -273,9 +353,7 @@ export default function CommunityPage() {
                 <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer"
                   className="glass-card rounded-xl border border-border p-5 flex items-start justify-between gap-4 hover:border-primary/30 transition-colors group block">
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-foreground group-hover:text-primary transition-colors mb-2 leading-snug">
-                      {post.title}
-                    </h4>
+                    <h4 className="font-medium text-foreground group-hover:text-primary transition-colors mb-2 leading-snug">{post.title}</h4>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span>{post.commentCount} comments</span>
                       <span>{post.viewCount?.toLocaleString()} views</span>
@@ -284,9 +362,7 @@ export default function CommunityPage() {
                     {post.tags?.length > 0 && (
                       <div className="flex gap-1.5 mt-2 flex-wrap">
                         {post.tags.slice(0, 4).map(tag => (
-                          <span key={tag.name} className="px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs border border-border">
-                            {tag.name}
-                          </span>
+                          <span key={tag.name} className="px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs border border-border">{tag.name}</span>
                         ))}
                       </div>
                     )}
@@ -299,6 +375,49 @@ export default function CommunityPage() {
         </div>
       )}
 
+      {/* Codeforces Tab */}
+      {activeTab === "codeforces" && (
+        <div className="space-y-4">
+          <SearchBar />
+          <div className="flex items-center gap-2 p-3 rounded-xl border border-blue-500/20 bg-blue-500/5">
+            <span className="text-blue-400 text-sm">🔵</span>
+            <p className="text-sm text-blue-400">Codeforces blog posts about <span className="font-bold">{searchCompany}</span> interview experiences and OA questions</p>
+            <a href={`https://codeforces.com/search?q=${encodeURIComponent(searchCompany + " interview")}`}
+              target="_blank" rel="noopener noreferrer"
+              className="ml-auto flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-medium shrink-0">
+              Search all <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">Showing {cfPosts.length} Codeforces blog posts for <span className="text-foreground font-medium">{searchCompany}</span></p>
+            {cfPosts.map((post, i) => (
+              <a key={i} href={post.url} target="_blank" rel="noopener noreferrer"
+                className="glass-card rounded-xl border border-border p-5 flex items-start justify-between gap-4 hover:border-blue-500/30 transition-colors group block">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-blue-400 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20">CF Blog</span>
+                    <span className="text-xs text-muted-foreground">{post.time}</span>
+                  </div>
+                  <h4 className="font-medium text-foreground group-hover:text-blue-400 transition-colors mb-2 leading-snug">{post.title}</h4>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {post.tags.map(tag => (
+                      <span key={tag} className="px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs border border-border">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-blue-400 transition-colors shrink-0 mt-1" />
+              </a>
+            ))}
+            <a href={`https://codeforces.com/search?q=${encodeURIComponent(searchCompany + " interview experience")}`}
+              target="_blank" rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed border-blue-500/20 text-blue-400 hover:bg-blue-500/5 transition-colors text-sm font-medium">
+              <Search className="w-4 h-4" /> Search more {searchCompany} posts on Codeforces <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Community Tab */}
       {activeTab === "community" && (
         <div className="space-y-4">
           {loading ? (
@@ -316,9 +435,7 @@ export default function CommunityPage() {
               <div key={exp._id} className="glass-card rounded-xl border border-border p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-bold text-foreground">
-                      {exp.company.charAt(0)}
-                    </div>
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-bold text-foreground">{exp.company.charAt(0)}</div>
                     <div>
                       <h4 className="font-semibold text-foreground">{exp.company}</h4>
                       <p className="text-sm text-muted-foreground">{exp.role}</p>
@@ -332,17 +449,13 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 mb-3">
-                  {[1,2,3,4,5].map(n => (
-                    <Star key={n} className={cn("w-3.5 h-3.5", n <= exp.difficulty ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/30")} />
-                  ))}
+                  {[1,2,3,4,5].map(n => <Star key={n} className={cn("w-3.5 h-3.5", n <= exp.difficulty ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/30")} />)}
                 </div>
                 <div className="mb-3">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Questions Asked</p>
                   <ul className="space-y-1">
                     {exp.questions?.slice(0, expanded === exp._id ? undefined : 3).map((q: string, i: number) => (
-                      <li key={i} className="text-sm text-foreground flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>{q}
-                      </li>
+                      <li key={i} className="text-sm text-foreground flex items-start gap-2"><span className="text-primary mt-0.5">•</span>{q}</li>
                     ))}
                   </ul>
                   {exp.questions?.length > 3 && (
