@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, Calendar, ChevronRight, ArrowLeft, Play } from "lucide-react"
+import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const SHEET_DATA = [
@@ -40,12 +40,12 @@ const SHEET_DATA = [
         { title: "Sort Characters By Frequency", difficulty: "Medium", link: "https://leetcode.com/problems/sort-characters-by-frequency/" },
         { title: "Minimum Index Sum of Two Lists", difficulty: "Easy", link: "https://leetcode.com/problems/minimum-index-sum-of-two-lists/" },
         { title: "Find Common Characters", difficulty: "Easy", link: "https://leetcode.com/problems/find-common-characters/" },
-        { title: "Count Number of Texts", difficulty: "Medium", link: "https://leetcode.com/problems/count-number-of-texts/" },
         { title: "Ransom Note", difficulty: "Easy", link: "https://leetcode.com/problems/ransom-note/" },
         { title: "Happy Number", difficulty: "Easy", link: "https://leetcode.com/problems/happy-number/" },
         { title: "Isomorphic Strings", difficulty: "Easy", link: "https://leetcode.com/problems/isomorphic-strings/" },
         { title: "Word Pattern", difficulty: "Easy", link: "https://leetcode.com/problems/word-pattern/" },
         { title: "4Sum II", difficulty: "Medium", link: "https://leetcode.com/problems/4sum-ii/" },
+        { title: "Count Number of Texts", difficulty: "Medium", link: "https://leetcode.com/problems/count-number-of-texts/" },
       ]},
     ]
   },
@@ -74,21 +74,21 @@ const SHEET_DATA = [
         { title: "Permutation in String", difficulty: "Medium", link: "https://leetcode.com/problems/permutation-in-string/" },
         { title: "Minimum Window Substring", difficulty: "Hard", link: "https://leetcode.com/problems/minimum-window-substring/" },
         { title: "Longest Substring Without Repeating", difficulty: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
-        { title: "Substring with Concatenation of All Words", difficulty: "Hard", link: "https://leetcode.com/problems/substring-with-concatenation-of-all-words/" },
         { title: "Longest Repeating Character Replacement", difficulty: "Medium", link: "https://leetcode.com/problems/longest-repeating-character-replacement/" },
         { title: "Custom Sort String", difficulty: "Medium", link: "https://leetcode.com/problems/custom-sort-string/" },
+        { title: "Unique Email Addresses", difficulty: "Easy", link: "https://leetcode.com/problems/unique-email-addresses/" },
+        { title: "Jewels and Stones", difficulty: "Easy", link: "https://leetcode.com/problems/jewels-and-stones/" },
         { title: "Check if Two Strings Are Equivalent", difficulty: "Easy", link: "https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/" },
         { title: "Number of Different Integers", difficulty: "Easy", link: "https://leetcode.com/problems/number-of-different-integers-in-a-string/" },
-        { title: "Decode the Slanted Ciphertext", difficulty: "Medium", link: "https://leetcode.com/problems/decode-the-slanted-ciphertext/" },
-        { title: "Unique Email Addresses", difficulty: "Easy", link: "https://leetcode.com/problems/unique-email-addresses/" },
         { title: "Sentence Similarity", difficulty: "Easy", link: "https://leetcode.com/problems/sentence-similarity/" },
-        { title: "Jewels and Stones", difficulty: "Easy", link: "https://leetcode.com/problems/jewels-and-stones/" },
+        { title: "Substring with Concatenation of All Words", difficulty: "Hard", link: "https://leetcode.com/problems/substring-with-concatenation-of-all-words/" },
+        { title: "Decode the Slanted Ciphertext", difficulty: "Medium", link: "https://leetcode.com/problems/decode-the-slanted-ciphertext/" },
       ]},
     ]
   },
   {
     topic: "Binary Search", patterns: 6, total: 41,
-    icon: "</>",
+    icon: "⌕",
     subPatterns: [
       { name: "Basic Problems on Sorted Array", count: 7, problems: [
         { title: "Binary Search", difficulty: "Easy", link: "https://leetcode.com/problems/binary-search/" },
@@ -101,11 +101,11 @@ const SHEET_DATA = [
       ]},
       { name: "Lower And Upper Bound", count: 6, problems: [
         { title: "Find First and Last Position", difficulty: "Medium", link: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" },
-        { title: "Count of Range Sum", difficulty: "Hard", link: "https://leetcode.com/problems/count-of-range-sum/" },
         { title: "Find Smallest Letter Greater Than Target", difficulty: "Easy", link: "https://leetcode.com/problems/find-smallest-letter-greater-than-target/" },
         { title: "Count Elements With Strictly Smaller and Greater Elements", difficulty: "Easy", link: "https://leetcode.com/problems/count-elements-with-strictly-smaller-and-greater-elements/" },
         { title: "Find Target Indices After Sorting Array", difficulty: "Easy", link: "https://leetcode.com/problems/find-target-indices-after-sorting-array/" },
         { title: "Maximum Count of Positive and Negative Integer", difficulty: "Easy", link: "https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/" },
+        { title: "Count of Range Sum", difficulty: "Hard", link: "https://leetcode.com/problems/count-of-range-sum/" },
       ]},
       { name: "Binary Search On Rotated Sorted Array", count: 5, problems: [
         { title: "Search in Rotated Sorted Array", difficulty: "Medium", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
@@ -176,13 +176,13 @@ const SHEET_DATA = [
       { name: "Two Pointers + Hashing", count: 9, problems: [
         { title: "Subarray Sum Equals K", difficulty: "Medium", link: "https://leetcode.com/problems/subarray-sum-equals-k/" },
         { title: "Max Number of K-Sum Pairs", difficulty: "Medium", link: "https://leetcode.com/problems/max-number-of-k-sum-pairs/" },
-        { title: "Count Nice Pairs in Array", difficulty: "Medium", link: "https://leetcode.com/problems/count-nice-pairs-in-an-array/" },
-        { title: "Number of Subsequences That Satisfy Given Sum Condition", difficulty: "Medium", link: "https://leetcode.com/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/" },
         { title: "Boats to Save People", difficulty: "Medium", link: "https://leetcode.com/problems/boats-to-save-people/" },
         { title: "Minimize Maximum Pair Sum in Array", difficulty: "Medium", link: "https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/" },
         { title: "3Sum With Multiplicity", difficulty: "Medium", link: "https://leetcode.com/problems/3sum-with-multiplicity/" },
-        { title: "Closest Pair", difficulty: "Medium", link: "https://leetcode.com/problems/3sum-closest/" },
         { title: "3Sum Closest", difficulty: "Medium", link: "https://leetcode.com/problems/3sum-closest/" },
+        { title: "Number of Subsequences That Satisfy Given Sum Condition", difficulty: "Medium", link: "https://leetcode.com/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/" },
+        { title: "Count Nice Pairs in Array", difficulty: "Medium", link: "https://leetcode.com/problems/count-nice-pairs-in-an-array/" },
+        { title: "Closest Pair", difficulty: "Medium", link: "https://leetcode.com/problems/3sum-closest/" },
       ]},
     ]
   },
@@ -193,7 +193,6 @@ const SHEET_DATA = [
       { name: "Fixed Size Window", count: 12, problems: [
         { title: "Maximum Average Subarray I", difficulty: "Easy", link: "https://leetcode.com/problems/maximum-average-subarray-i/" },
         { title: "Number of Sub-arrays of Size K and Average >= Threshold", difficulty: "Medium", link: "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/" },
-        { title: "Maximum Sum of Two Non-Overlapping Subarrays", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-sum-of-two-non-overlapping-subarrays/" },
         { title: "Sliding Window Maximum", difficulty: "Hard", link: "https://leetcode.com/problems/sliding-window-maximum/" },
         { title: "Find All Anagrams in a String", difficulty: "Medium", link: "https://leetcode.com/problems/find-all-anagrams-in-a-string/" },
         { title: "Permutation in String", difficulty: "Medium", link: "https://leetcode.com/problems/permutation-in-string/" },
@@ -203,6 +202,7 @@ const SHEET_DATA = [
         { title: "Grumpy Bookstore Owner", difficulty: "Medium", link: "https://leetcode.com/problems/grumpy-bookstore-owner/" },
         { title: "Maximum Number of Vowels in Substring of Length K", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/" },
         { title: "Diet Plan Performance", difficulty: "Easy", link: "https://leetcode.com/problems/diet-plan-performance/" },
+        { title: "Maximum Sum of Two Non-Overlapping Subarrays", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-sum-of-two-non-overlapping-subarrays/" },
       ]},
       { name: "Variable Size Window", count: 12, problems: [
         { title: "Longest Substring Without Repeating Characters", difficulty: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
@@ -210,13 +210,13 @@ const SHEET_DATA = [
         { title: "Longest Repeating Character Replacement", difficulty: "Medium", link: "https://leetcode.com/problems/longest-repeating-character-replacement/" },
         { title: "Minimum Size Subarray Sum", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-size-subarray-sum/" },
         { title: "Fruit Into Baskets", difficulty: "Medium", link: "https://leetcode.com/problems/fruit-into-baskets/" },
-        { title: "Longest Subarray of 1s After Deleting One Element", difficulty: "Medium", link: "https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/" },
         { title: "Max Consecutive Ones III", difficulty: "Medium", link: "https://leetcode.com/problems/max-consecutive-ones-iii/" },
         { title: "Subarray Product Less Than K", difficulty: "Medium", link: "https://leetcode.com/problems/subarray-product-less-than-k/" },
-        { title: "Longest Turbulent Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/longest-turbulent-subarray/" },
         { title: "Count Number of Nice Subarrays", difficulty: "Medium", link: "https://leetcode.com/problems/count-number-of-nice-subarrays/" },
         { title: "Binary Subarrays With Sum", difficulty: "Medium", link: "https://leetcode.com/problems/binary-subarrays-with-sum/" },
         { title: "Subarrays with K Different Integers", difficulty: "Hard", link: "https://leetcode.com/problems/subarrays-with-k-different-integers/" },
+        { title: "Longest Turbulent Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/longest-turbulent-subarray/" },
+        { title: "Longest Subarray of 1s After Deleting One Element", difficulty: "Medium", link: "https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/" },
       ]},
     ]
   },
@@ -243,8 +243,8 @@ const SHEET_DATA = [
         { title: "Rotate List", difficulty: "Medium", link: "https://leetcode.com/problems/rotate-list/" },
         { title: "Partition List", difficulty: "Medium", link: "https://leetcode.com/problems/partition-list/" },
         { title: "Delete the Middle Node of a Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/" },
-        { title: "Insert into a Sorted Circular Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/insert-into-a-sorted-circular-linked-list/" },
         { title: "Odd Even Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/odd-even-linked-list/" },
+        { title: "Insert into a Sorted Circular Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/insert-into-a-sorted-circular-linked-list/" },
       ]},
       { name: "Linked List with Two Pointers/Hash Table", count: 17, problems: [
         { title: "Linked List Cycle II", difficulty: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
@@ -259,11 +259,11 @@ const SHEET_DATA = [
         { title: "Reverse Nodes in k-Group", difficulty: "Hard", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/" },
         { title: "Swapping Nodes in a Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/swapping-nodes-in-a-linked-list/" },
         { title: "Reverse Linked List II", difficulty: "Medium", link: "https://leetcode.com/problems/reverse-linked-list-ii/" },
-        { title: "Plus One Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/plus-one-linked-list/" },
         { title: "Next Greater Node In Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/next-greater-node-in-linked-list/" },
         { title: "Design Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/design-linked-list/" },
         { title: "Design Browser History", difficulty: "Medium", link: "https://leetcode.com/problems/design-browser-history/" },
-        { title: "All O`one Data Structure", difficulty: "Hard", link: "https://leetcode.com/problems/all-oone-data-structure/" },
+        { title: "All O one Data Structure", difficulty: "Hard", link: "https://leetcode.com/problems/all-oone-data-structure/" },
+        { title: "Plus One Linked List", difficulty: "Medium", link: "https://leetcode.com/problems/plus-one-linked-list/" },
       ]},
       { name: "Sort/Merge in Linked List", count: 7, problems: [
         { title: "Sort List", difficulty: "Medium", link: "https://leetcode.com/problems/sort-list/" },
@@ -343,8 +343,6 @@ const SHEET_DATA = [
         { title: "N-th Tribonacci Number", difficulty: "Easy", link: "https://leetcode.com/problems/n-th-tribonacci-number/" },
         { title: "Delete and Earn", difficulty: "Medium", link: "https://leetcode.com/problems/delete-and-earn/" },
         { title: "Maximum Product Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-product-subarray/" },
-        { title: "Paint House", difficulty: "Medium", link: "https://leetcode.com/problems/paint-house/" },
-        { title: "Paint House II", difficulty: "Hard", link: "https://leetcode.com/problems/paint-house-ii/" },
         { title: "Ugly Number II", difficulty: "Medium", link: "https://leetcode.com/problems/ugly-number-ii/" },
         { title: "Perfect Squares", difficulty: "Medium", link: "https://leetcode.com/problems/perfect-squares/" },
         { title: "Integer Break", difficulty: "Medium", link: "https://leetcode.com/problems/integer-break/" },
@@ -352,14 +350,15 @@ const SHEET_DATA = [
         { title: "Combination Sum IV", difficulty: "Medium", link: "https://leetcode.com/problems/combination-sum-iv/" },
         { title: "Minimum Cost For Tickets", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-cost-for-tickets/" },
         { title: "Domino and Tromino Tiling", difficulty: "Medium", link: "https://leetcode.com/problems/domino-and-tromino-tiling/" },
-        { title: "Number of Ways to Stay in the Same Place After Some Steps", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/" },
+        { title: "Paint House", difficulty: "Medium", link: "https://leetcode.com/problems/paint-house/" },
+        { title: "Paint House II", difficulty: "Hard", link: "https://leetcode.com/problems/paint-house-ii/" },
         { title: "Soup Servings", difficulty: "Medium", link: "https://leetcode.com/problems/soup-servings/" },
         { title: "Painting the Walls", difficulty: "Hard", link: "https://leetcode.com/problems/painting-the-walls/" },
-        { title: "Number of Ways to Form a Target String", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-form-a-target-string-given-a-dictionary/" },
         { title: "Solving Questions With Brainpower", difficulty: "Medium", link: "https://leetcode.com/problems/solving-questions-with-brainpower/" },
+        { title: "Number of Ways to Stay in the Same Place After Some Steps", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/" },
+        { title: "Number of Ways to Form a Target String", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-form-a-target-string-given-a-dictionary/" },
       ]},
       { name: "Knapsack", count: 11, problems: [
-        { title: "0/1 Knapsack", difficulty: "Medium", link: "https://leetcode.com/problems/partition-equal-subset-sum/" },
         { title: "Partition Equal Subset Sum", difficulty: "Medium", link: "https://leetcode.com/problems/partition-equal-subset-sum/" },
         { title: "Target Sum", difficulty: "Medium", link: "https://leetcode.com/problems/target-sum/" },
         { title: "Last Stone Weight II", difficulty: "Medium", link: "https://leetcode.com/problems/last-stone-weight-ii/" },
@@ -370,6 +369,7 @@ const SHEET_DATA = [
         { title: "Combination Sum IV", difficulty: "Medium", link: "https://leetcode.com/problems/combination-sum-iv/" },
         { title: "Form Largest Integer With Digits That Add up to Target", difficulty: "Hard", link: "https://leetcode.com/problems/form-largest-integer-with-digits-that-add-up-to-target/" },
         { title: "Number of Dice Rolls With Target Sum", difficulty: "Medium", link: "https://leetcode.com/problems/number-of-dice-rolls-with-target-sum/" },
+        { title: "0/1 Knapsack", difficulty: "Medium", link: "https://leetcode.com/problems/partition-equal-subset-sum/" },
       ]},
       { name: "DP on Strings", count: 23, problems: [
         { title: "Longest Common Subsequence", difficulty: "Medium", link: "https://leetcode.com/problems/longest-common-subsequence/" },
@@ -386,15 +386,15 @@ const SHEET_DATA = [
         { title: "Uncrossed Lines", difficulty: "Medium", link: "https://leetcode.com/problems/uncrossed-lines/" },
         { title: "Maximum Length of Repeated Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-length-of-repeated-subarray/" },
         { title: "Count Vowels Permutation", difficulty: "Hard", link: "https://leetcode.com/problems/count-vowels-permutation/" },
-        { title: "Encode String with Shortest Length", difficulty: "Hard", link: "https://leetcode.com/problems/encode-string-with-shortest-length/" },
         { title: "Strange Printer", difficulty: "Hard", link: "https://leetcode.com/problems/strange-printer/" },
-        { title: "Stone Game V", difficulty: "Hard", link: "https://leetcode.com/problems/stone-game-v/" },
-        { title: "Number of Ways to Form Target", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-form-a-target-string-given-a-dictionary/" },
         { title: "Longest String Chain", difficulty: "Medium", link: "https://leetcode.com/problems/longest-string-chain/" },
         { title: "Scramble String", difficulty: "Hard", link: "https://leetcode.com/problems/scramble-string/" },
         { title: "Count Different Palindromic Subsequences", difficulty: "Hard", link: "https://leetcode.com/problems/count-different-palindromic-subsequences/" },
         { title: "Zuma Game", difficulty: "Hard", link: "https://leetcode.com/problems/zuma-game/" },
         { title: "Minimum Number of Insertions to Make String Palindrome", difficulty: "Hard", link: "https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/" },
+        { title: "Encode String with Shortest Length", difficulty: "Hard", link: "https://leetcode.com/problems/encode-string-with-shortest-length/" },
+        { title: "Stone Game V", difficulty: "Hard", link: "https://leetcode.com/problems/stone-game-v/" },
+        { title: "Number of Ways to Form Target", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-ways-to-form-a-target-string-given-a-dictionary/" },
       ]},
       { name: "DP on LIS", count: 7, problems: [
         { title: "Longest Increasing Subsequence", difficulty: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
@@ -469,8 +469,8 @@ const SHEET_DATA = [
         { title: "Non-overlapping Intervals", difficulty: "Medium", link: "https://leetcode.com/problems/non-overlapping-intervals/" },
         { title: "Meeting Rooms II", difficulty: "Medium", link: "https://leetcode.com/problems/meeting-rooms-ii/" },
         { title: "Task Scheduler", difficulty: "Medium", link: "https://leetcode.com/problems/task-scheduler/" },
-        { title: "Minimum Platforms", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/" },
         { title: "Car Pooling", difficulty: "Medium", link: "https://leetcode.com/problems/car-pooling/" },
+        { title: "Minimum Platforms", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/" },
       ]},
       { name: "One-Pass Greedy", count: 10, problems: [
         { title: "Jump Game", difficulty: "Medium", link: "https://leetcode.com/problems/jump-game/" },
@@ -512,11 +512,11 @@ const SHEET_DATA = [
       { name: "Matrix Based Problems", count: 7, problems: [
         { title: "Word Search II", difficulty: "Hard", link: "https://leetcode.com/problems/word-search-ii/" },
         { title: "Unique Paths III", difficulty: "Hard", link: "https://leetcode.com/problems/unique-paths-iii/" },
-        { title: "Rat in a Maze", difficulty: "Medium", link: "https://leetcode.com/problems/unique-paths-iii/" },
-        { title: "Knight's Tour", difficulty: "Hard", link: "https://leetcode.com/problems/minimum-knight-moves/" },
-        { title: "Number of Increasing Paths in Grid", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-increasing-paths-in-a-grid/" },
         { title: "Flood Fill", difficulty: "Easy", link: "https://leetcode.com/problems/flood-fill/" },
         { title: "Pacific Atlantic Water Flow", difficulty: "Medium", link: "https://leetcode.com/problems/pacific-atlantic-water-flow/" },
+        { title: "Number of Increasing Paths in Grid", difficulty: "Hard", link: "https://leetcode.com/problems/number-of-increasing-paths-in-a-grid/" },
+        { title: "Knight Minimum Moves", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-knight-moves/" },
+        { title: "Rat in a Maze", difficulty: "Medium", link: "https://leetcode.com/problems/unique-paths-iii/" },
       ]},
     ]
   },
@@ -552,13 +552,66 @@ const DAILY_PROBLEMS = [
   { title: "Trapping Rain Water", difficulty: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
   { title: "Climbing Stairs", difficulty: "Easy", link: "https://leetcode.com/problems/climbing-stairs/" },
   { title: "LRU Cache", difficulty: "Medium", link: "https://leetcode.com/problems/lru-cache/" },
+  { title: "Maximum Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+  { title: "Search in Rotated Sorted Array", difficulty: "Medium", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
+  { title: "Container With Most Water", difficulty: "Medium", link: "https://leetcode.com/problems/container-with-most-water/" },
+  { title: "House Robber", difficulty: "Medium", link: "https://leetcode.com/problems/house-robber/" },
+  { title: "Merge Intervals", difficulty: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
+  { title: "Word Break", difficulty: "Medium", link: "https://leetcode.com/problems/word-break/" },
+  { title: "Reverse Linked List", difficulty: "Easy", link: "https://leetcode.com/problems/reverse-linked-list/" },
+  { title: "Valid Parentheses", difficulty: "Easy", link: "https://leetcode.com/problems/valid-parentheses/" },
+  { title: "Kth Largest Element in Array", difficulty: "Medium", link: "https://leetcode.com/problems/kth-largest-element-in-an-array/" },
+  { title: "Product of Array Except Self", difficulty: "Medium", link: "https://leetcode.com/problems/product-of-array-except-self/" },
+  { title: "Find Minimum in Rotated Sorted Array", difficulty: "Medium", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
+  { title: "Minimum Window Substring", difficulty: "Hard", link: "https://leetcode.com/problems/minimum-window-substring/" },
+  { title: "Serialize and Deserialize Binary Tree", difficulty: "Hard", link: "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" },
+  { title: "Longest Increasing Subsequence", difficulty: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
+  { title: "Jump Game", difficulty: "Medium", link: "https://leetcode.com/problems/jump-game/" },
+  { title: "Combination Sum", difficulty: "Medium", link: "https://leetcode.com/problems/combination-sum/" },
+  { title: "Subsets", difficulty: "Medium", link: "https://leetcode.com/problems/subsets/" },
+  { title: "Rotate Image", difficulty: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
+  { title: "Group Anagrams", difficulty: "Medium", link: "https://leetcode.com/problems/group-anagrams/" },
+  { title: "Daily Temperatures", difficulty: "Medium", link: "https://leetcode.com/problems/daily-temperatures/" },
+  { title: "Largest Rectangle in Histogram", difficulty: "Hard", link: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
 ]
 
-function getTodayKey() { return new Date().toISOString().split("T")[0] }
-function getDailyProblem() {
-  const day = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-  return DAILY_PROBLEMS[day % DAILY_PROBLEMS.length]
+function getTodayKey() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
 }
+
+function getDailyProblem() {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 1)
+  const dayOfYear = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  return DAILY_PROBLEMS[dayOfYear % DAILY_PROBLEMS.length]
+}
+
+function buildYearHeatmap(history: Record<string, boolean>) {
+  const cells: { date: string; done: boolean; month: number; week: number; dayOfWeek: number }[] = []
+  const today = new Date()
+  const startDate = new Date(today)
+  startDate.setDate(today.getDate() - 364)
+  startDate.setDate(startDate.getDate() - startDate.getDay())
+
+  let weekIdx = 0
+  const cur = new Date(startDate)
+  while (cur <= today) {
+    const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`
+    cells.push({
+      date: key,
+      done: history[key] === true,
+      month: cur.getMonth(),
+      week: weekIdx,
+      dayOfWeek: cur.getDay(),
+    })
+    cur.setDate(cur.getDate() + 1)
+    if (cur.getDay() === 0) weekIdx++
+  }
+  return { cells, totalWeeks: weekIdx + 1 }
+}
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 type View = "home" | "topic" | "pattern"
 interface SelectedPattern { topic: typeof SHEET_DATA[0]; subPattern: typeof SHEET_DATA[0]["subPatterns"][0] }
@@ -571,7 +624,7 @@ export default function PracticePage() {
   const [streak, setStreak] = useState(0)
   const [dailyDone, setDailyDone] = useState(false)
   const [history, setHistory] = useState<Record<string, boolean>>({})
-  const [weekData, setWeekData] = useState<{ day: string; done: boolean }[]>([])
+  const [totalActiveDays, setTotalActiveDays] = useState(0)
 
   const dailyProblem = getDailyProblem()
 
@@ -583,11 +636,7 @@ export default function PracticePage() {
     setHistory(savedHistory)
     setStreak(savedStreak)
     setDailyDone(savedHistory[getTodayKey()] === true)
-    const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
-    setWeekData(Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(); d.setDate(d.getDate() - (6 - i))
-      return { day: days[d.getDay()], done: savedHistory[d.toISOString().split("T")[0]] === true }
-    }))
+    setTotalActiveDays(Object.values(savedHistory).filter(Boolean).length)
   }, [])
 
   const toggleSolved = (problemKey: string) => {
@@ -614,17 +663,32 @@ export default function PracticePage() {
   const markDailyDone = () => {
     if (dailyDone) return
     const todayKey = getTodayKey()
-    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1)
-    const yKey = yesterday.toISOString().split("T")[0]
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`
     const newStreak = history[yKey] ? streak + 1 : 1
     const newHistory = { ...history, [todayKey]: true }
-    setDailyDone(true); setStreak(newStreak); setHistory(newHistory)
+    setDailyDone(true)
+    setStreak(newStreak)
+    setHistory(newHistory)
+    setTotalActiveDays(prev => prev + 1)
     localStorage.setItem("daily_history", JSON.stringify(newHistory))
     localStorage.setItem("lc_streak", newStreak.toString())
-    setWeekData(prev => prev.map((d, i) => i === 6 ? { ...d, done: true } : d))
   }
 
-  // PATTERN VIEW — individual problems list
+  const { cells, totalWeeks } = buildYearHeatmap(history)
+
+  // Month labels
+  const monthLabels: { month: number; week: number }[] = []
+  let lastMonth = -1
+  cells.forEach(c => {
+    if (c.dayOfWeek === 0 && c.month !== lastMonth) {
+      monthLabels.push({ month: c.month, week: c.week })
+      lastMonth = c.month
+    }
+  })
+
+  // PATTERN VIEW
   if (view === "pattern" && selectedPattern) {
     const { topic, subPattern } = selectedPattern
     const progress = getSubPatternProgress(topic.topic, subPattern.name, subPattern.problems.length)
@@ -639,13 +703,10 @@ export default function PracticePage() {
           <span className="text-muted-foreground">/</span>
           <span className="text-sm text-foreground font-medium">{subPattern.name}</span>
         </div>
-
         <div>
           <h2 className="text-2xl font-bold text-foreground">{subPattern.name}</h2>
           <p className="text-muted-foreground mt-1">{progress.done} of {subPattern.problems.length} problems solved</p>
         </div>
-
-        {/* Progress Bar */}
         <div className="glass-card rounded-xl border border-border p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Overall Progress</span>
@@ -655,8 +716,6 @@ export default function PracticePage() {
             <div className="bg-primary rounded-full h-2 transition-all duration-500" style={{ width: `${progress.pct}%` }} />
           </div>
         </div>
-
-        {/* Problems List */}
         <div className="space-y-2">
           {subPattern.problems.map((problem, i) => {
             const key = `${topic.topic}__${subPattern.name}__${i}`
@@ -667,13 +726,10 @@ export default function PracticePage() {
                 isSolved ? "border-green-500/20 bg-green-500/5" : "border-border hover:border-primary/20"
               )}>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <button
-                    onClick={() => toggleSolved(key)}
-                    className={cn(
-                      "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
+                  <button onClick={() => toggleSolved(key)}
+                    className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
                       isSolved ? "bg-green-500 border-green-500" : "border-muted-foreground hover:border-primary"
-                    )}
-                  >
+                    )}>
                     {isSolved && <CheckCircle className="w-3 h-3 text-white" />}
                   </button>
                   <span className={cn("text-sm font-medium truncate", isSolved ? "line-through text-muted-foreground" : "text-foreground")}>
@@ -697,7 +753,7 @@ export default function PracticePage() {
     )
   }
 
-  // TOPIC VIEW — sub patterns grid
+  // TOPIC VIEW
   if (view === "topic" && selectedTopic) {
     const topicProg = getTopicProgress(selectedTopic)
     return (
@@ -709,7 +765,6 @@ export default function PracticePage() {
           <span className="text-muted-foreground">/</span>
           <span className="text-sm text-foreground font-medium">{selectedTopic.topic}</span>
         </div>
-
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">CURRICULUM › PATTERNS</p>
@@ -725,8 +780,6 @@ export default function PracticePage() {
             </div>
           </div>
         </div>
-
-        {/* Sub Pattern Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {selectedTopic.subPatterns.map((sp, i) => {
             const prog = getSubPatternProgress(selectedTopic.topic, sp.name, sp.problems.length)
@@ -758,7 +811,7 @@ export default function PracticePage() {
     )
   }
 
-  // HOME VIEW — main grid
+  // HOME VIEW
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between">
@@ -794,25 +847,81 @@ export default function PracticePage() {
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Target className="w-5 h-5 text-primary" />
-            <span className="text-2xl font-bold text-foreground">{SHEET_DATA.length}</span>
+            <span className="text-2xl font-bold text-foreground">{totalActiveDays}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Topics</p>
+          <p className="text-xs text-muted-foreground">Active Days</p>
         </div>
       </div>
 
-      {/* Weekly Heatmap */}
-      <div className="glass-card rounded-xl border border-border p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Calendar className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm font-medium text-foreground">This Week</span>
+      {/* GitHub-style Yearly Heatmap */}
+      <div className="glass-card rounded-xl border border-border p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <span className="text-sm font-semibold text-foreground">{totalActiveDays} submissions in the past one year</span>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span>Total active days: <span className="text-foreground font-medium">{totalActiveDays}</span></span>
+            <span>Max streak: <span className="text-foreground font-medium">{streak}</span></span>
+          </div>
         </div>
-        <div className="flex gap-2">
-          {weekData.map((d, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className={cn("w-full h-8 rounded-md transition-colors", d.done ? "bg-primary" : "bg-secondary")} />
-              <span className="text-xs text-muted-foreground">{d.day}</span>
+
+        <div className="overflow-x-auto">
+          <div className="min-w-max">
+            {/* Month labels */}
+            <div className="flex mb-1 ml-6">
+              {monthLabels.map((ml, i) => (
+                <div key={i} className="text-xs text-muted-foreground"
+                  style={{ width: `${(i < monthLabels.length - 1 ? monthLabels[i+1].week - ml.week : totalWeeks - ml.week) * 14}px` }}>
+                  {MONTH_NAMES[ml.month]}
+                </div>
+              ))}
             </div>
-          ))}
+
+            <div className="flex gap-0">
+              {/* Day labels */}
+              <div className="flex flex-col gap-[2px] mr-1">
+                {["", "Mon", "", "Wed", "", "Fri", ""].map((d, i) => (
+                  <div key={i} className="text-xs text-muted-foreground h-[12px] flex items-center" style={{width:"20px", fontSize:"9px"}}>{d}</div>
+                ))}
+              </div>
+
+              {/* Grid */}
+              <div className="flex gap-[2px]">
+                {Array.from({ length: totalWeeks }, (_, w) => (
+                  <div key={w} className="flex flex-col gap-[2px]">
+                    {Array.from({ length: 7 }, (_, d) => {
+                      const cell = cells.find(c => c.week === w && c.dayOfWeek === d)
+                      if (!cell) return <div key={d} className="w-[12px] h-[12px]" />
+                      const isToday = cell.date === getTodayKey()
+                      return (
+                        <div
+                          key={d}
+                          title={`${cell.date}${cell.done ? " ✓ solved" : ""}`}
+                          className={cn(
+                            "w-[12px] h-[12px] rounded-[2px] transition-colors cursor-pointer",
+                            isToday ? "ring-1 ring-primary" : "",
+                            cell.done
+                              ? "bg-primary hover:bg-primary/80"
+                              : "bg-secondary hover:bg-secondary/80"
+                          )}
+                        />
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-2 mt-3 justify-end">
+              <span className="text-xs text-muted-foreground">Less</span>
+              {[0, 1, 2, 3, 4].map(i => (
+                <div key={i} className={cn("w-[12px] h-[12px] rounded-[2px]", i === 0 ? "bg-secondary" : "bg-primary")}
+                  style={{ opacity: i === 0 ? 1 : 0.2 + i * 0.2 }} />
+              ))}
+              <span className="text-xs text-muted-foreground">More</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -853,7 +962,6 @@ export default function PracticePage() {
             <span className="text-sm text-muted-foreground font-medium">{SHEET_DATA.length} topics</span>
           </div>
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {SHEET_DATA.map((sheet, idx) => {
             const prog = getTopicProgress(sheet)
@@ -861,8 +969,7 @@ export default function PracticePage() {
             return (
               <div key={sheet.topic}
                 onClick={() => { setSelectedTopic(sheet); setView("topic") }}
-                className="glass-card rounded-xl border border-border p-4 hover:border-primary/40 transition-all cursor-pointer group"
-              >
+                className="glass-card rounded-xl border border-border p-4 hover:border-primary/40 transition-all cursor-pointer group">
                 <div className="flex items-start justify-between mb-3">
                   <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold", colorClass)}>
                     {sheet.icon}
