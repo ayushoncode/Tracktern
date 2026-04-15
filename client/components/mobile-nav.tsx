@@ -13,6 +13,11 @@ import {
   BookOpen,
   Menu,
   X,
+  Brain,
+  FileText,
+  Mail,
+  Calendar,
+  TrendingUp,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
@@ -26,6 +31,11 @@ const primaryNav = [
 ]
 
 const moreNav = [
+  { href: "/analytics", icon: TrendingUp, label: "Analytics" },
+  { href: "/mock-interview", icon: Brain, label: "Mock" },
+  { href: "/resume-analyzer", icon: FileText, label: "Resume" },
+  { href: "/follow-up", icon: Mail, label: "Follow-up" },
+  { href: "/calendar", icon: Calendar, label: "Calendar" },
   { href: "/skill-gap", icon: BarChart3, label: "Skill Gap" },
   { href: "/journal", icon: BookOpen, label: "Journal" },
   { href: "/community", icon: Users, label: "Community" },
@@ -43,7 +53,7 @@ export function MobileNav() {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setShowMore(false)}>
           <div className="absolute inset-0 bg-black/50" />
           <div
-            className="absolute bottom-16 left-0 right-0 bg-card border-t border-border rounded-t-2xl p-4 z-50"
+            className="absolute bottom-16 left-0 right-0 max-h-[70vh] overflow-y-auto bg-card border-t border-border rounded-t-2xl p-4 z-50"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
