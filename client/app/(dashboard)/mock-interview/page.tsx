@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { Brain, Play, Send, Clock, ChevronRight, RotateCcw, Trophy, Target, Mic, MicOff, Video, VideoOff, Star, Zap, Code2, Users, Settings2, FileText, Plus, CheckCircle, XCircle } from "lucide-react"
+import { Brain, Play, Send, Clock, ChevronRight, RotateCcw, Trophy, Target, Mic, MicOff, Video, VideoOff, Star, Zap, Code2, Users, Settings2, FileText, Plus, CheckCircle, XCircle, ArrowLeft } from "lucide-react"
 import { getToken } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
@@ -14,6 +14,19 @@ const ROUNDS = [
   { id: "HR", label: "HR Round", icon: Star, color: "text-pink-400", bg: "bg-pink-500/10", border: "border-pink-500/20", desc: "Culture fit & salary", time: 180 },
   { id: "Resume", label: "Resume Review", icon: FileText, color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20", desc: "Walk through your resume", time: 240 },
   { id: "Custom", label: "Custom Round", icon: Plus, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20", desc: "Define your own topic", time: 180 },
+]
+
+const COMPANY_SUGGESTIONS = [
+  { name: "Google", style: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  { name: "Amazon", style: "bg-orange-500/10 text-orange-400 border-orange-500/20" },
+  { name: "Meta", style: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
+  { name: "Microsoft", style: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
+  { name: "Apple", style: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
+  { name: "Netflix", style: "bg-red-500/10 text-red-400 border-red-500/20" },
+  { name: "Airbnb", style: "bg-pink-500/10 text-pink-400 border-pink-500/20" },
+  { name: "Uber", style: "bg-black/10 text-black border-black/20" },
+  { name: "Stripe", style: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
+  { name: "Tesla", style: "bg-red-500/10 text-red-400 border-red-500/20" },
 ]
 
 export default function MockInterviewPage() {
@@ -50,6 +63,12 @@ export default function MockInterviewPage() {
   const recognitionRef = useRef<any>(null)
   const timerRef = useRef<any>(null)
   const startTimeRef = useRef<number>(0)
+
+  const filteredCompanySuggestions = company.trim()
+    ? COMPANY_SUGGESTIONS.filter(item => item.name.toLowerCase().includes(company.toLowerCase()))
+    : []
+
+  const currentCompanyBadge = COMPANY_SUGGESTIONS.find(item => item.name.toLowerCase() === company.toLowerCase())
 
   useEffect(() => { setToken(getToken()) }, [])
 
@@ -102,7 +121,14 @@ export default function MockInterviewPage() {
     setMicOn(false)
   }
 
-const fetchQuestion = async () => {
+  const handleBackToSetup = () => {
+    clearInterval(timerRef.current)
+    setTimerActive(false)
+    stopSpeech()
+    setPhase("setup")
+  }
+
+  const fetchQuestion = async () => {
   setLoading(true)
   setAnswer("")
   setSelectedOption("")
@@ -240,6 +266,23 @@ const fetchQuestion = async () => {
                 🎯 Interviewing at <span className="font-bold">{company}</span>
               </p>
             )}
+
+            {company && filteredCompanySuggestions.length > 0 && (
+              <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
+                {filteredCompanySuggestions.map(item => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => setCompany(item.name)}
+                    className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-primary/10"
+                  >
+                    <span className={cn("inline-flex items-center gap-2 rounded-full border px-2 py-1 text-xs font-bold", item.style)}>
+                      {item.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ROLE */}
@@ -330,15 +373,27 @@ const fetchQuestion = async () => {
   // INTERVIEW
   if (phase === "interview") return (
     <div className="max-w-5xl mx-auto space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-bold text-foreground">
-            🚀 {company} Interview
-          </h2>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-3">
+          <button type="button" onClick={handleBackToSetup} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" /> Back to setup
+          </button>
 
-          <p className="text-sm text-muted-foreground">
-            Position: <span className="text-primary font-semibold">{role}</span>
-          </p>
+          <div className="flex items-center gap-3">
+            {company && (
+              <div className={cn("h-10 w-10 rounded-2xl flex items-center justify-center text-sm font-black border", currentCompanyBadge?.style ?? "bg-secondary border-border text-foreground")}>{company.slice(0, 2).toUpperCase()}</div>
+            )}
+
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-bold text-foreground">
+                🚀 {company} Interview
+              </h2>
+
+              <p className="text-sm text-muted-foreground">
+                Position: <span className="text-primary font-semibold">{role}</span>
+              </p>
+            </div>
+          </div>
 
           <div className="flex gap-2 mt-1">
             <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
