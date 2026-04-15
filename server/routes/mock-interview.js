@@ -9,29 +9,71 @@ const protect = (req, res, next) => {
   catch { res.status(401).json({ message: "Invalid token" }); }
 };
 
-const groq = async (messages, max_tokens = 1000) => {
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+const openai = async (messages, max_tokens = 1000) => {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${process.env.GROQ_API_KEY}` },
-    body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages, temperature: 0.7, max_tokens })
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${process.env.OPENAI_API_KEY}` },
+    body: JSON.stringify({ model: "gpt-4o", messages, temperature: 0.7, max_tokens })
   });
   const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
   return data.choices[0].message.content;
 };
 
 router.post("/question", protect, async (req, res) => {
   try {
-    const { company, role, type, difficulty, previousQuestions = [] } = req.body;
-    const prev = previousQuestions.length > 0 ? `Avoid these questions: ${previousQuestions.join(", ")}` : "";
-    const text = await groq([{ role: "user", content: `You are a senior interviewer at ${company} for ${role}. Generate ONE ${type} question at ${difficulty} difficulty. ${prev} Return ONLY valid JSON: {"question":"the question","type":"${type}","hints":["hint1","hint2"],"expectedTopics":["topic1","topic2"]}` }]);
+    const { company, role, type, difficulty, round, customTopic, previousQuestions = [] } = req.body;
+    const prev = previousQuestions.length > 0 ? `Do not repeat these: ${previousQuestions.slice(-3).join("; ")}` : "";
+    
+    let prompt = "";
+    if (round === "OA") {
+      prompt = `You are setting an Online Assessment for ${company} ${role}. Generate ONE MCQ question at ${difficulty} difficulty. ${prev} Return ONLY valid JSON: {"question":"question text","type":"MCQ","options":["A) opt1","B) opt2","C) opt3","D) opt4"],"correctAnswer":"A","explanation":"why this is correct","topic":"topic name"}`;
+    } else if (round === "Custom") {
+      prompt = `You are an interviewer at ${company} for ${role}. Generate ONE interview question about: ${customTopic}. Difficulty: ${difficulty}. ${prev} Return ONLY valid JSON: {"question":"question text","type":"${type}","hints":["hint1","hint2"],"expectedTopics":["topic1","topic2"],"timeLimit":120}`;
+    } else {
+      prompt = `You are a senior ${round} interviewer at ${company} hiring for ${role}. Generate ONE realistic ${round} interview question at ${difficulty} difficulty. ${prev} Return ONLY valid JSON: {"question":"question text","type":"${round}","hints":["hint1","hint2"],"expectedTopics":["topic1","topic2","topic3"],"timeLimit":${round === "System Design" ? 300 : round === "DSA" ? 120 : 180},"followUp":"a natural follow-up question"}`;
+    }
+    
+    const text = await openai([{ role: "user", content: prompt }]);
     res.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
   } catch (err) { res.status(500).json({ message: "AI error", error: err.message }); }
 });
 
 router.post("/score", protect, async (req, res) => {
   try {
-    const { question, answer, type, company, role } = req.body;
-    const text = await groq([{ role: "user", content: `You are a senior interviewer at ${company} for ${role}. Question: ${question} Answer: ${answer} Type: ${type}. Return ONLY valid JSON: {"score":85,"grade":"B+","strengths":["s1","s2"],"improvements":["i1","i2"],"idealAnswer":"brief ideal answer","feedback":"overall feedback","passed":true}` }], 800);
+    const { question, answer, type, company, role, round, transcript, timeUsed, hintsUsed } = req.body;
+    
+    const penalty = hintsUsed ? "Deduct 5 points for hint usage." : "";
+    const timeNote = timeUsed ? `Candidate used ${timeUsed} seconds.` : "";
+    
+    let prompt = "";
+    if (round === "OA") {
+      prompt = `MCQ Question: ${question.question}. Correct Answer: ${question.correctAnswer}. Candidate chose: ${answer}. Return ONLY valid JSON: {"score":${answer === question.correctAnswer ? 100 : 0},"correct":${answer === question.correctAnswer},"explanation":"${question.explanation}","feedback":"brief feedback","grade":"${answer === question.correctAnswer ? "A" : "F"}","passed":${answer === question.correctAnswer}}`;
+    } else {
+      prompt = `You are a senior interviewer at ${company} for ${role}.
+Question: ${question}
+Round Type: ${round || type}
+Candidate's Answer: ${answer}
+${transcript ? `Speech Transcript: ${transcript}` : ""}
+${timeNote} ${penalty}
+
+Evaluate thoroughly and return ONLY valid JSON:
+{
+  "score": 78,
+  "grade": "B+",
+  "strengths": ["specific strength 1", "specific strength 2", "specific strength 3"],
+  "improvements": ["specific improvement 1", "specific improvement 2"],
+  "idealAnswer": "comprehensive ideal answer in 3-4 sentences",
+  "feedback": "detailed personalized feedback in 2-3 sentences",
+  "communicationScore": 75,
+  "technicalScore": 80,
+  "confidenceScore": 70,
+  "passed": true,
+  "tips": ["actionable tip 1", "actionable tip 2", "actionable tip 3"]
+}`;
+    }
+    
+    const text = await openai([{ role: "user", content: prompt }], 1200);
     res.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
   } catch (err) { res.status(500).json({ message: "AI error", error: err.message }); }
 });
@@ -39,7 +81,16 @@ router.post("/score", protect, async (req, res) => {
 router.post("/resume", protect, async (req, res) => {
   try {
     const { resume, company, role } = req.body;
-    const text = await groq([{ role: "user", content: `You are a recruiter at ${company} hiring for ${role}. Resume: ${resume}. Return ONLY valid JSON: {"overallScore":75,"strengths":["s1","s2"],"missingSkills":["skill1","skill2"],"suggestions":["suggestion1","suggestion2"],"atsScore":80,"keywordsMissing":["kw1","kw2"],"summary":"2-3 sentence assessment"}` }], 1200);
+    const text = await openai([{ role: "user", content: `You are a senior recruiter at ${company} hiring for ${role}. Analyze this resume critically:\n${resume}\n\nReturn ONLY valid JSON: {"overallScore":75,"strengths":["s1","s2","s3"],"missingSkills":["skill1","skill2"],"suggestions":["s1","s2","s3"],"atsScore":80,"keywordsMissing":["kw1","kw2"],"summary":"2-3 sentence honest assessment","experienceGap":"what experience is missing","quickWins":["easy fix 1","easy fix 2"]}` }], 1500);
+    res.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
+  } catch (err) { res.status(500).json({ message: "AI error", error: err.message }); }
+});
+
+router.post("/final-report", protect, async (req, res) => {
+  try {
+    const { rounds, company, role, totalTime } = req.body;
+    const summary = rounds.map((r: any, i: number) => `Round ${i+1} (${r.type}): Score ${r.score}, Grade ${r.grade}`).join("\n");
+    const text = await openai([{ role: "user", content: `You are a hiring manager at ${company} for ${role}. Here are interview results:\n${summary}\nTotal time: ${totalTime}s\n\nReturn ONLY valid JSON: {"decision":"Strong Hire","overallGrade":"B+","avgScore":78,"summary":"overall assessment","topStrength":"biggest strength","topWeakness":"biggest weakness","hiringChance":72,"nextSteps":["step1","step2","step3"],"studyPlan":[{"week":1,"focus":"topic","tasks":["task1","task2"]},{"week":2,"focus":"topic","tasks":["task1","task2"]}]}` }], 1000);
     res.json(JSON.parse(text.replace(/```json|```/g, "").trim()));
   } catch (err) { res.status(500).json({ message: "AI error", error: err.message }); }
 });
