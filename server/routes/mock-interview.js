@@ -34,7 +34,6 @@ const groq = async (messages, max_tokens = 1000) => {
 
   const data = await response.json();
   if (!data.choices || !data.choices[0]) throw new Error("No response");
-
   return data.choices[0].message.content;
 };
 
@@ -43,7 +42,6 @@ router.post("/question", protect, async (req, res) => {
   try {
     const { company, role, type, difficulty } = req.body;
 
-    // 🔥 simple validation
     if (!company || company.length < 2) {
       return res.status(400).json({ message: "Invalid company name" });
     }
@@ -53,7 +51,11 @@ router.post("/question", protect, async (req, res) => {
     if (type === "OA") {
       prompt = `Generate ONE MCQ for ${company} ${role} at ${difficulty} difficulty.
 
-Return ONLY JSON:
+STRICT RULES:
+- Return ONLY JSON
+- Include exactly 4 options
+
+FORMAT:
 {
   "question": "text",
   "type": "OA",
@@ -72,7 +74,12 @@ Return ONLY JSON:
     }
 
     const text = await groq([{ role: "user", content: prompt }]);
-    const cleaned = text.replace(/```json|```/g, "").trim();
+
+    const cleaned = text
+      .replace(/```json|```/g, "")
+      .replace(/^[^{]*/, "")
+      .replace(/[^}]*$/, "")
+      .trim();
 
     let parsed;
     try {
@@ -81,7 +88,7 @@ Return ONLY JSON:
       parsed = { question: cleaned, type };
     }
 
-    // 🔥 fallback for MCQ
+    // fallback MCQ
     if (type === "OA" && !parsed.options) {
       parsed.options = [
         "A) True",
@@ -101,29 +108,66 @@ Return ONLY JSON:
 });
 
 
-// 📊 Score route (IMPORTANT FIX)
+// 📊 Score route (FULL FIX)
 router.post("/score", protect, async (req, res) => {
   try {
     const { question, answer, type, company, role } = req.body;
 
     const text = await groq([{
       role: "user",
-      content: `You are an interviewer at ${company}.
+      content: `You are a strict interviewer at ${company}.
 
 Question: ${question.question || question}
 Candidate Answer: ${answer}
 
+RULES:
+- If answer is wrong → low score
+- If answer is random → very low score
+- If correct → high score
+- Be strict
+
 Return ONLY JSON:
 {
-  "score": 85,
-  "grade": "B+",
-  "feedback": "2-3 line feedback",
-  "passed": true
+  "score": number (0-100),
+  "grade": "A/B/C/D/F",
+  "strengths": ["point1","point2"],
+  "improvements": ["point1","point2"],
+  "idealAnswer": "2-3 line correct answer",
+  "feedback": "2-3 line explanation",
+  "passed": true/false
 }`
     }]);
 
-    const cleaned = text.replace(/```json|```/g, "").trim();
-    res.json(JSON.parse(cleaned));
+    const cleaned = text
+      .replace(/```json|```/g, "")
+      .replace(/^[^{]*/, "")
+      .replace(/[^}]*$/, "")
+      .trim();
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      console.error("AI parsing failed:", text);
+
+      parsed = {
+        score: Math.floor(Math.random() * 40) + 40,
+        grade: "C",
+        strengths: ["Attempted the question"],
+        improvements: ["Could not fully evaluate answer"],
+        idealAnswer: "N/A",
+        feedback: "Fallback evaluation used",
+        passed: true
+      };
+    }
+
+    // 🔥 ensure fields always exist
+    parsed.strengths = parsed.strengths || ["Good attempt"];
+    parsed.improvements = parsed.improvements || ["Can improve accuracy"];
+    parsed.idealAnswer = parsed.idealAnswer || "N/A";
+
+    res.json(parsed);
 
   } catch (err) {
     console.error("Score error:", err.message);
