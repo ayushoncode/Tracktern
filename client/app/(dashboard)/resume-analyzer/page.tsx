@@ -45,8 +45,26 @@ type ResumeAnalysisResult = {
   quickWins?: string[]
 }
 
-const COMPANY_SUGGESTIONS = ["Google", "Amazon", "Microsoft", "Meta", "Adobe", "Atlassian"]
-const ROLE_SUGGESTIONS = ["SDE Intern", "Frontend Engineer", "Backend Engineer", "Full Stack Developer", "Data Analyst", "Product Manager"]
+const COMPANY_SUGGESTIONS = [
+  "Google","Amazon","Microsoft","Meta","Apple","Netflix",
+  "Uber","Airbnb","Stripe","Dropbox","Twitter","LinkedIn","Spotify",
+  "Flipkart","Swiggy","Zomato","Paytm","Razorpay","CRED","PhonePe",
+  "Adobe","Oracle","SAP","Salesforce","ServiceNow","VMware","Atlassian",
+  "Intel","NVIDIA","AMD","Qualcomm",
+  "TCS","Infosys","Wipro","HCL","Accenture","Capgemini","Cognizant",
+  "Goldman Sachs","Morgan Stanley","JPMorgan Chase","Visa","Mastercard",
+  "Zoho","Freshworks","BrowserStack","Postman","InMobi"
+]
+
+const ROLE_SUGGESTIONS = [
+  "SDE Intern","SDE","SDE 2","Software Engineer","Software Developer",
+  "Frontend Engineer","Backend Engineer","Full Stack Developer",
+  "Data Analyst","Data Scientist","ML Engineer","AI Engineer",
+  "DevOps Engineer","Cloud Engineer","Security Engineer",
+  "Product Manager","Associate Product Manager",
+  "QA Engineer","Test Engineer",
+  "Android Developer","iOS Developer"
+]
 
 export default function ResumeAnalyzerPage() {
   const [resume, setResume] = useState("")
