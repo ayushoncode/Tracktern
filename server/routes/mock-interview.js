@@ -323,4 +323,66 @@ Return ONLY JSON:
   }
 });
 
+// 📄 RESUME ROUTE
+router.post("/resume", protect, async (req, res) => {
+  try {
+    const { resume, company, role } = req.body;
+
+    if (!resume || typeof resume !== "string" || !resume.trim()) {
+      return res.status(400).json({ message: "Resume text is required" });
+    }
+
+    if (!company || typeof company !== "string" || !company.trim()) {
+      return res.status(400).json({ message: "Company is required" });
+    }
+
+    if (!role || typeof role !== "string" || !role.trim()) {
+      return res.status(400).json({ message: "Role is required" });
+    }
+
+    const raw = await groq([{
+      role: "user",
+      content: `You are a senior recruiter at ${company.trim()} hiring for ${role.trim()}.
+
+Analyze this resume critically:
+${resume.trim()}
+
+Return ONLY valid JSON:
+{
+  "overallScore": 75,
+  "strengths": ["s1", "s2", "s3"],
+  "missingSkills": ["skill1", "skill2"],
+  "suggestions": ["suggestion1", "suggestion2", "suggestion3"],
+  "atsScore": 80,
+  "keywordsMissing": ["kw1", "kw2"],
+  "summary": "2-3 sentence honest assessment",
+  "experienceGap": "what experience is missing",
+  "quickWins": ["easy fix 1", "easy fix 2"]
+}`
+    }], 1500);
+
+    const cleaned = cleanJSON(raw);
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      console.error("Resume JSON fail:", raw);
+      return res.status(500).json({ message: "Resume analysis parsing failed" });
+    }
+
+    parsed.strengths = Array.isArray(parsed.strengths) ? parsed.strengths : [];
+    parsed.missingSkills = Array.isArray(parsed.missingSkills) ? parsed.missingSkills : [];
+    parsed.suggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
+    parsed.keywordsMissing = Array.isArray(parsed.keywordsMissing) ? parsed.keywordsMissing : [];
+    parsed.summary = typeof parsed.summary === "string" ? parsed.summary : "Analysis complete.";
+
+    res.json(parsed);
+  } catch (err) {
+    console.error("Resume error:", err.message);
+    res.status(500).json({ message: "Error analyzing resume" });
+  }
+});
+
 module.exports = router;

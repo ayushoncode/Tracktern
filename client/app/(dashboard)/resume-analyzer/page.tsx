@@ -57,7 +57,7 @@ export default function ResumeAnalyzerPage() {
     return { words, chars }
   }, [resume])
 
-  const analyze = async (resumeText = resume) => {
+  const runAnalysis = async (resumeText = resume) => {
     const trimmedResume = resumeText.trim()
     const trimmedCompany = company.trim()
     const trimmedRole = role.trim()
@@ -93,7 +93,7 @@ export default function ResumeAnalyzerPage() {
       const data = await res.json().catch(() => null)
 
       if (!res.ok) {
-        setError(data?.message || "Could not analyze this resume right now. Please try again.")
+        setError(data?.error || data?.message || "Could not analyze this resume right now. Please try again.")
         return false
       }
 
@@ -156,13 +156,13 @@ export default function ResumeAnalyzerPage() {
         return
       }
 
-      const extractedResume = extractedText.trim()
+      const extractedResume = sanitizeResumeText(extractedText)
 
       setResume(extractedResume)
       setUploadedFileName(file.name)
 
       if (company.trim() && role.trim() && token) {
-        await analyze(extractedResume)
+        await runAnalysis(extractedResume)
       }
     } catch {
       setError("We could not read that file. Try a different PDF or DOCX, or paste the resume text manually.")
@@ -372,7 +372,9 @@ export default function ResumeAnalyzerPage() {
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <button
-              onClick={analyze}
+              onClick={() => {
+                void runAnalysis()
+              }}
               disabled={!canAnalyze}
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[180px]"
             >
@@ -535,6 +537,14 @@ async function extractTextFromDocx(file: File) {
   const arrayBuffer = await file.arrayBuffer()
   const { value } = await mammoth.extractRawText({ arrayBuffer })
   return value
+}
+
+function sanitizeResumeText(text: string) {
+  return text
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s([—–•])/g, " $1")
+    .trim()
 }
 
 function Field({
