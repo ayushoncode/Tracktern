@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { Bell, Flame, Rocket, LogOut, Layers, Zap } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -11,9 +12,13 @@ import {
 import Link from "next/link"
 import { getUser, removeToken } from "@/lib/api"
 
+const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+
 export function TopNavbar() {
   const [user, setUser] = useState<any>(null)
   const [focusMode, setFocusMode] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     const u = getUser()
@@ -22,11 +27,20 @@ export function TopNavbar() {
     if (mode === "true") setFocusMode(true)
   }, [])
 
+  useEffect(() => {
+    if (focusMode && pathname && !FOCUS_MODE_ROUTES.includes(pathname)) {
+      router.replace("/dashboard")
+    }
+  }, [focusMode, pathname, router])
+
   const toggleFocusMode = () => {
     const newMode = !focusMode
     setFocusMode(newMode)
     localStorage.setItem("tracktern_focus_mode", String(newMode))
     window.dispatchEvent(new CustomEvent("focusModeChange", { detail: newMode }))
+    if (newMode && pathname && !FOCUS_MODE_ROUTES.includes(pathname)) {
+      router.replace("/dashboard")
+    }
   }
 
   const handleSignOut = () => {
