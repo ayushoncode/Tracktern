@@ -16,18 +16,42 @@ const ROUNDS = [
   { id: "Custom", label: "Custom Round", icon: Plus, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20", desc: "Define your own topic", time: 180 },
 ]
 
-const COMPANY_SUGGESTIONS = [
-  { name: "Google", style: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
-  { name: "Amazon", style: "bg-orange-500/10 text-orange-400 border-orange-500/20" },
-  { name: "Meta", style: "bg-sky-500/10 text-sky-400 border-sky-500/20" },
-  { name: "Microsoft", style: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" },
-  { name: "Apple", style: "bg-slate-500/10 text-slate-400 border-slate-500/20" },
-  { name: "Netflix", style: "bg-red-500/10 text-red-400 border-red-500/20" },
-  { name: "Airbnb", style: "bg-pink-500/10 text-pink-400 border-pink-500/20" },
-  { name: "Uber", style: "bg-black/10 text-black border-black/20" },
-  { name: "Stripe", style: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
-  { name: "Tesla", style: "bg-red-500/10 text-red-400 border-red-500/20" },
+const COMPANIES = [
+  "Google","Amazon","Microsoft","Meta","Apple","Netflix",
+  "Uber","Airbnb","Stripe","Dropbox","Twitter","LinkedIn","Spotify",
+  "Flipkart","Swiggy","Zomato","Paytm","Razorpay","CRED","PhonePe",
+  "Adobe","Oracle","SAP","Salesforce","ServiceNow","VMware","Atlassian",
+  "Intel","NVIDIA","AMD","Qualcomm",
+  "TCS","Infosys","Wipro","HCL","Accenture","Capgemini","Cognizant",
+  "Goldman Sachs","Morgan Stanley","JPMorgan Chase","Visa","Mastercard",
+  "Zoho","Freshworks","BrowserStack","Postman","InMobi"
 ]
+
+const ROLES = [
+  "SDE Intern","SDE","SDE 2","Software Engineer","Software Developer",
+  "Frontend Engineer","Backend Engineer","Full Stack Developer",
+  "Data Analyst","Data Scientist","ML Engineer","AI Engineer",
+  "DevOps Engineer","Cloud Engineer","Security Engineer",
+  "Product Manager","Associate Product Manager",
+  "QA Engineer","Test Engineer",
+  "Android Developer","iOS Developer"
+]
+
+const COMPANY_TAG_STYLES: Record<string,string> = {
+  Google: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  Amazon: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+  Meta: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  Microsoft: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+  Apple: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+  Netflix: "bg-red-500/10 text-red-400 border-red-500/20",
+  Airbnb: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+  Uber: "bg-black/10 text-black border-black/20",
+  Stripe: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  Tesla: "bg-red-500/10 text-red-400 border-red-500/20",
+  LinkedIn: "bg-sky-700/10 text-sky-700 border-sky-700/20",
+  NVIDIA: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  AMD: "bg-violet-500/10 text-violet-400 border-violet-500/20"
+}
 
 export default function MockInterviewPage() {
   const [phase, setPhase] = useState<"setup"|"interview"|"scoring"|"result">("setup")
@@ -65,10 +89,14 @@ export default function MockInterviewPage() {
   const startTimeRef = useRef<number>(0)
 
   const filteredCompanySuggestions = company.trim()
-    ? COMPANY_SUGGESTIONS.filter(item => item.name.toLowerCase().includes(company.toLowerCase()))
+    ? COMPANIES.filter(item => item.toLowerCase().includes(company.toLowerCase()))
     : []
 
-  const currentCompanyBadge = COMPANY_SUGGESTIONS.find(item => item.name.toLowerCase() === company.toLowerCase())
+  const filteredRoleSuggestions = role.trim()
+    ? ROLES.filter(item => item.toLowerCase().includes(role.toLowerCase()))
+    : []
+
+  const currentCompanyBadgeStyle = COMPANY_TAG_STYLES[company] || "bg-secondary border-border text-foreground"
 
   useEffect(() => { setToken(getToken()) }, [])
 
@@ -271,14 +299,12 @@ export default function MockInterviewPage() {
               <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
                 {filteredCompanySuggestions.map(item => (
                   <button
-                    key={item.name}
+                    key={item}
                     type="button"
-                    onClick={() => setCompany(item.name)}
+                    onClick={() => setCompany(item)}
                     className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-primary/10"
                   >
-                    <span className={cn("inline-flex items-center gap-2 rounded-full border px-2 py-1 text-xs font-bold", item.style)}>
-                      {item.name}
-                    </span>
+                    <span className={cn("inline-flex items-center gap-2 rounded-full border px-2 py-1 text-xs font-bold", COMPANY_TAG_STYLES[item] || "border-border text-foreground")}>{item}</span>
                   </button>
                 ))}
               </div>
@@ -302,6 +328,21 @@ export default function MockInterviewPage() {
               <p className="text-xs text-purple-400 mt-1">
                 💼 Role: <span className="font-bold">{role}</span>
               </p>
+            )}
+
+            {role && filteredRoleSuggestions.length > 0 && (
+              <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
+                {filteredRoleSuggestions.map(item => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setRole(item)}
+                    className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-primary/10"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
@@ -381,7 +422,7 @@ export default function MockInterviewPage() {
 
           <div className="flex items-center gap-3">
             {company && (
-              <div className={cn("h-10 w-10 rounded-2xl flex items-center justify-center text-sm font-black border", currentCompanyBadge?.style ?? "bg-secondary border-border text-foreground")}>{company.slice(0, 2).toUpperCase()}</div>
+              <div className={cn("h-10 w-10 rounded-2xl flex items-center justify-center text-sm font-black border", currentCompanyBadgeStyle)}>{company.slice(0, 2).toUpperCase()}</div>
             )}
 
             <div className="flex flex-col gap-1">
