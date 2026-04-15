@@ -2,13 +2,11 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import {
   LayoutDashboard,
-  Briefcase,
-  Sparkles,
   BarChart3,
   Settings,
-  Code2,
   Users,
   BookOpen,
   Menu,
@@ -20,13 +18,12 @@ import {
   TrendingUp,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
 
 const primaryNav = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Home" },
-  { href: "/applications", icon: Briefcase, label: "Apps" },
-  { href: "/ai-prep", icon: Sparkles, label: "AI Prep" },
-  { href: "/practice", icon: Code2, label: "Practice" },
+  { href: "/analytics", icon: TrendingUp, label: "Analytics" },
+  { href: "/calendar", icon: Calendar, label: "Calendar" },
+  { href: "/settings", icon: Settings, label: "Settings" },
   { href: "/more", icon: Menu, label: "More" },
 ]
 
@@ -42,14 +39,40 @@ const moreNav = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
 
+const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+
 export function MobileNav() {
   const pathname = usePathname()
   const [showMore, setShowMore] = useState(false)
+  const [focusMode, setFocusMode] = useState(false)
+
+  useEffect(() => {
+    const syncFocusMode = () => {
+      setFocusMode(localStorage.getItem("tracktern_focus_mode") === "true")
+    }
+
+    syncFocusMode()
+    window.addEventListener("focusModeChange", syncFocusMode as EventListener)
+    window.addEventListener("storage", syncFocusMode)
+
+    return () => {
+      window.removeEventListener("focusModeChange", syncFocusMode as EventListener)
+      window.removeEventListener("storage", syncFocusMode)
+    }
+  }, [])
+
+  const visiblePrimaryNav = focusMode
+    ? primaryNav.filter((item) => item.href !== "/more")
+    : primaryNav
+
+  const visibleMoreNav = focusMode
+    ? moreNav.filter((item) => FOCUS_MODE_ROUTES.includes(item.href))
+    : moreNav
 
   return (
     <>
       {/* More Drawer */}
-      {showMore && (
+      {showMore && !focusMode && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setShowMore(false)}>
           <div className="absolute inset-0 bg-black/50" />
           <div
@@ -63,7 +86,7 @@ export function MobileNav() {
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {moreNav.map((item) => {
+              {visibleMoreNav.map((item) => {
                 const isActive = pathname === item.href
                 return (
                   <Link
@@ -90,9 +113,9 @@ export function MobileNav() {
       {/* Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
         <div className="flex items-center justify-around py-2">
-          {primaryNav.map((item) => {
+          {visiblePrimaryNav.map((item) => {
             if (item.href === "/more") {
-              const isMoreActive = moreNav.some(i => i.href === pathname)
+              const isMoreActive = visibleMoreNav.some(i => i.href === pathname)
               return (
                 <button
                   key="more"

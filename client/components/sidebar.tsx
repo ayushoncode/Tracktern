@@ -22,8 +22,30 @@ const navItems = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
 
+const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+
 export function Sidebar() {
   const pathname = usePathname()
+  const [focusMode, setFocusMode] = useState(false)
+
+  useEffect(() => {
+    const syncFocusMode = () => {
+      setFocusMode(localStorage.getItem("tracktern_focus_mode") === "true")
+    }
+
+    syncFocusMode()
+    window.addEventListener("focusModeChange", syncFocusMode as EventListener)
+    window.addEventListener("storage", syncFocusMode)
+
+    return () => {
+      window.removeEventListener("focusModeChange", syncFocusMode as EventListener)
+      window.removeEventListener("storage", syncFocusMode)
+    }
+  }, [])
+
+  const visibleNavItems = focusMode
+    ? navItems.filter((item) => FOCUS_MODE_ROUTES.includes(item.href))
+    : navItems
 
   const handleSignOut = () => {
     removeToken()
@@ -41,7 +63,7 @@ export function Sidebar() {
       </div>
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
         <ul className="space-y-0.5">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <li key={item.href}>
