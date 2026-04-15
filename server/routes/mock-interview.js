@@ -16,6 +16,18 @@ const protect = (req, res, next) => {
   }
 };
 
+// 🏢 Real companies list
+const COMPANIES = [
+  "Google","Amazon","Microsoft","Meta","Apple","Netflix",
+  "Uber","Airbnb","Stripe","Dropbox","Twitter","LinkedIn","Spotify",
+  "Flipkart","Swiggy","Zomato","Paytm","Razorpay","CRED","PhonePe",
+  "Adobe","Oracle","SAP","Salesforce","ServiceNow","VMware","Atlassian",
+  "Intel","NVIDIA","AMD","Qualcomm",
+  "TCS","Infosys","Wipro","HCL","Accenture","Capgemini","Cognizant",
+  "Goldman Sachs","Morgan Stanley","JPMorgan Chase","Visa","Mastercard",
+  "Zoho","Freshworks","BrowserStack","Postman","InMobi"
+];
+
 // 🤖 Groq API
 const groq = async (messages, max_tokens = 1000) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -42,34 +54,77 @@ router.post("/question", protect, async (req, res) => {
   try {
     const { company, role, type, difficulty } = req.body;
 
-    if (!company || company.length < 2) {
-      return res.status(400).json({ message: "Invalid company name" });
+    // ✅ strict company validation
+    const isValidCompany = COMPANIES.some(
+      c => c.toLowerCase() === company.toLowerCase()
+    );
+
+    if (!isValidCompany) {
+      return res.status(400).json({
+        message: "Please select a valid company"
+      });
+    }
+
+    // 🧠 company intelligence
+    let companyHint = "";
+
+    if (["google","meta"].includes(company.toLowerCase())) {
+      companyHint = "Focus on DSA, graphs, trees, optimization";
+    } else if (company.toLowerCase() === "amazon") {
+      companyHint = "Focus on arrays, strings, greedy";
+    } else if (company.toLowerCase() === "microsoft") {
+      companyHint = "Focus on DP, recursion";
+    } else if (["tcs","infosys","wipro"].includes(company.toLowerCase())) {
+      companyHint = "Focus on basic easy-medium DSA";
+    } else {
+      companyHint = "Focus on standard coding interview problems";
     }
 
     let prompt = "";
 
     if (type === "OA") {
-      prompt = `Generate ONE MCQ for ${company} ${role} at ${difficulty} difficulty.
+      prompt = `You are creating a REAL interview MCQ.
 
-STRICT RULES:
-- Return ONLY JSON
-- Include exactly 4 options
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
 
-FORMAT:
-{
-  "question": "text",
-  "type": "OA",
-  "options": ["A) opt1","B) opt2","C) opt3","D) opt4"],
-  "correctAnswer": "A"
-}`;
-    } else {
-      prompt = `Generate ONE ${type} interview question for ${company} ${role}.
+Company Style:
+${companyHint}
+
+RULES:
+- Must feel like real interview
+- No generic questions
+- EXACTLY 4 options
 
 Return ONLY JSON:
 {
   "question": "text",
+  "type": "OA",
+  "options": ["A) ...","B) ...","C) ...","D) ..."],
+  "correctAnswer": "A"
+}`;
+    } else {
+      prompt = `You are designing a REAL coding interview question.
+
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style:
+${companyHint}
+
+RULES:
+- Real interview style
+- Not generic
+- Clear problem
+
+Return ONLY JSON:
+{
+  "question": "problem statement",
   "type": "${type}",
-  "hints": ["hint1","hint2"]
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2"]
 }`;
     }
 
@@ -103,15 +158,14 @@ Return ONLY JSON:
 
   } catch (err) {
     console.error("Question error:", err.message);
-    res.status(500).json({ message: "Error" });
+    res.status(500).json({ message: "Error generating question" });
   }
 });
 
-
-// 📊 Score route (FULL FIX)
+// 📊 Score route
 router.post("/score", protect, async (req, res) => {
   try {
-    const { question, answer, type, company, role } = req.body;
+    const { question, answer, company } = req.body;
 
     const text = await groq([{
       role: "user",
@@ -121,14 +175,13 @@ Question: ${question.question || question}
 Candidate Answer: ${answer}
 
 RULES:
-- If answer is wrong → low score
-- If answer is random → very low score
-- If correct → high score
-- Be strict
+- Wrong answer → low score
+- Random answer → very low score
+- Correct → high score
 
 Return ONLY JSON:
 {
-  "score": number (0-100),
+  "score": number,
   "grade": "A/B/C/D/F",
   "strengths": ["point1","point2"],
   "improvements": ["point1","point2"],
@@ -152,19 +205,19 @@ Return ONLY JSON:
       console.error("AI parsing failed:", text);
 
       parsed = {
-        score: Math.floor(Math.random() * 40) + 40,
+        score: 50,
         grade: "C",
         strengths: ["Attempted the question"],
-        improvements: ["Could not fully evaluate answer"],
+        improvements: ["Could not fully evaluate"],
         idealAnswer: "N/A",
-        feedback: "Fallback evaluation used",
+        feedback: "Fallback evaluation",
         passed: true
       };
     }
 
-    // 🔥 ensure fields always exist
+    // ensure fields
     parsed.strengths = parsed.strengths || ["Good attempt"];
-    parsed.improvements = parsed.improvements || ["Can improve accuracy"];
+    parsed.improvements = parsed.improvements || ["Improve accuracy"];
     parsed.idealAnswer = parsed.idealAnswer || "N/A";
 
     res.json(parsed);
