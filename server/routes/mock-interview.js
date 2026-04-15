@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-// Auth middleware
+// 🔐 Auth middleware
 const protect = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Not authorized" });
@@ -16,7 +16,7 @@ const protect = (req, res, next) => {
   }
 };
 
-// Groq API
+// 🤖 Groq API
 const groq = async (messages, max_tokens = 1000) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -38,17 +38,22 @@ const groq = async (messages, max_tokens = 1000) => {
   return data.choices[0].message.content;
 };
 
-// Question route
+// 🧠 Question route
 router.post("/question", protect, async (req, res) => {
   try {
     const { company, role, type, difficulty } = req.body;
+
+    // 🔥 simple validation
+    if (!company || company.length < 2) {
+      return res.status(400).json({ message: "Invalid company name" });
+    }
 
     let prompt = "";
 
     if (type === "OA") {
       prompt = `Generate ONE MCQ for ${company} ${role} at ${difficulty} difficulty.
 
-Return JSON:
+Return ONLY JSON:
 {
   "question": "text",
   "type": "OA",
@@ -58,7 +63,7 @@ Return JSON:
     } else {
       prompt = `Generate ONE ${type} interview question for ${company} ${role}.
 
-Return JSON:
+Return ONLY JSON:
 {
   "question": "text",
   "type": "${type}",
@@ -69,11 +74,60 @@ Return JSON:
     const text = await groq([{ role: "user", content: prompt }]);
     const cleaned = text.replace(/```json|```/g, "").trim();
 
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      parsed = { question: cleaned, type };
+    }
+
+    // 🔥 fallback for MCQ
+    if (type === "OA" && !parsed.options) {
+      parsed.options = [
+        "A) True",
+        "B) False",
+        "C) Depends",
+        "D) None"
+      ];
+      parsed.correctAnswer = "A";
+    }
+
+    res.json(parsed);
+
+  } catch (err) {
+    console.error("Question error:", err.message);
+    res.status(500).json({ message: "Error" });
+  }
+});
+
+
+// 📊 Score route (IMPORTANT FIX)
+router.post("/score", protect, async (req, res) => {
+  try {
+    const { question, answer, type, company, role } = req.body;
+
+    const text = await groq([{
+      role: "user",
+      content: `You are an interviewer at ${company}.
+
+Question: ${question.question || question}
+Candidate Answer: ${answer}
+
+Return ONLY JSON:
+{
+  "score": 85,
+  "grade": "B+",
+  "feedback": "2-3 line feedback",
+  "passed": true
+}`
+    }]);
+
+    const cleaned = text.replace(/```json|```/g, "").trim();
     res.json(JSON.parse(cleaned));
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error" });
+    console.error("Score error:", err.message);
+    res.status(500).json({ message: "Error scoring" });
   }
 });
 
