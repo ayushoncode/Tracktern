@@ -133,7 +133,7 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          <div className="glass-card rounded-[26px] border border-white/10 bg-background/55 p-5 backdrop-blur-xl">
+          <div className="glass-card rounded-[26px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-6 backdrop-blur-xl">
             <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Calendar snapshot</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <SnapshotCard label="Total events" value={String(events.length)} />
@@ -144,7 +144,7 @@ export default function CalendarPage() {
 
             <button
               onClick={() => setShowForm(true)}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#7C3AED_0%,#9061F9_45%,#06B6D4_100%)] px-4 py-3 text-sm font-bold text-primary-foreground shadow-[0_18px_40px_rgba(124,58,237,0.28)] transition hover:opacity-95"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-3 text-sm font-bold text-primary-foreground shadow-[0_18px_40px_rgba(124,58,237,0.28)] transition hover:opacity-95"
             >
               <Plus className="h-4 w-4" />
               Add Event
@@ -154,7 +154,7 @@ export default function CalendarPage() {
       </section>
 
       {showForm ? (
-        <section className="glass-card rounded-[28px] border border-primary/20 p-4 shadow-[0_16px_50px_rgba(0,0,0,0.18)] sm:p-6">
+        <section className="glass-card rounded-[28px] border border-primary/20 bg-gradient-to-br from-white/5 to-transparent p-6 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-foreground">Create calendar event</h2>
@@ -171,7 +171,7 @@ export default function CalendarPage() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="e.g. Google Round 2"
-                className="h-11 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="h-11 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </FormField>
 
@@ -232,7 +232,7 @@ export default function CalendarPage() {
             <button
               onClick={addEvent}
               disabled={!form.title || !form.company || !form.date}
-              className="flex-1 rounded-2xl bg-[linear-gradient(135deg,#7C3AED_0%,#9061F9_45%,#06B6D4_100%)] px-4 py-3 text-sm font-bold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-3 text-sm font-bold text-primary-foreground transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Add to calendar
             </button>
@@ -247,16 +247,16 @@ export default function CalendarPage() {
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_360px]">
-        <section className="glass-card rounded-[28px] border border-white/8 p-4 shadow-[0_16px_50px_rgba(0,0,0,0.18)] sm:p-6">
+        <section className="glass-card rounded-[28px] border border-white/8 bg-gradient-to-br from-white/5 to-transparent p-6 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
           <div className="mb-5 flex items-center justify-between">
-            <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="rounded-xl border border-white/10 bg-white/5 p-2 text-muted-foreground transition hover:text-foreground">
+            <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="rounded-xl border border-white/10 bg-white/5 p-2 text-muted-foreground transition hover:scale-[0.98] hover:bg-white/10 hover:text-foreground">
               <ChevronLeft className="h-5 w-5" />
             </button>
             <div className="text-center">
               <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Schedule view</p>
-              <h2 className="mt-1 text-xl font-bold text-foreground sm:text-2xl">{monthYear}</h2>
+              <h2 className="mt-1 text-xl font-semibold text-foreground sm:text-2xl">{monthYear}</h2>
             </div>
-            <button onClick={() => setCurrentDate(new Date(year, month + 1))} className="rounded-xl border border-white/10 bg-white/5 p-2 text-muted-foreground transition hover:text-foreground">
+            <button onClick={() => setCurrentDate(new Date(year, month + 1))} className="rounded-xl border border-white/10 bg-white/5 p-2 text-muted-foreground transition hover:scale-[0.98] hover:bg-white/10 hover:text-foreground">
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
@@ -269,7 +269,7 @@ export default function CalendarPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-2 transition-all duration-300">
             {Array.from({ length: firstDay }).map((_, index) => (
               <div key={`empty-${index}`} />
             ))}
@@ -285,12 +285,12 @@ export default function CalendarPage() {
                   key={day}
                   onClick={() => setSelectedDate(isSelected ? "" : dateStr)}
                   className={cn(
-                    "min-h-[58px] rounded-2xl border p-2 text-left transition sm:min-h-[82px]",
+                    "min-h-[58px] rounded-2xl border p-2 text-left transition-all duration-200 sm:min-h-[82px]",
                     isSelected
-                      ? "border-primary bg-primary/15 shadow-[0_0_0_1px_rgba(124,58,237,0.18)]"
+                      ? "border-primary bg-[linear-gradient(180deg,rgba(124,58,237,0.18),rgba(124,58,237,0.08))] shadow-[0_0_0_1px_rgba(124,58,237,0.18),0_10px_25px_rgba(124,58,237,0.14)]"
                       : isToday
-                        ? "border-primary/30 bg-primary/8"
-                        : "border-white/8 bg-white/3 hover:bg-white/6"
+                        ? "border-primary/30 bg-primary/8 shadow-[0_0_0_1px_rgba(124,58,237,0.08)]"
+                        : "border-white/8 bg-white/3 hover:-translate-y-0.5 hover:bg-white/6 hover:shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
                   )}
                 >
                   <div className="flex items-start justify-between">
@@ -301,7 +301,7 @@ export default function CalendarPage() {
                   {dayEvents.length ? (
                     <div className="mt-2 space-y-1">
                       {dayEvents.slice(0, 2).map((event) => (
-                        <div key={event.id} className="truncate rounded-md bg-white/6 px-2 py-1 text-[10px] text-muted-foreground sm:text-[11px]">
+                        <div key={event.id} className="truncate rounded-lg border border-white/8 bg-white/7 px-2 py-1 text-[10px] text-muted-foreground sm:text-[11px]">
                           {event.company}
                         </div>
                       ))}
@@ -322,7 +322,7 @@ export default function CalendarPage() {
         </section>
 
         <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
-          <div className="glass-card rounded-[28px] border border-white/8 p-5 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
+          <div className="glass-card rounded-[28px] border border-white/8 bg-gradient-to-br from-white/5 to-transparent p-6 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
             <div className="mb-4 flex items-center gap-2">
               {selectedDate ? (
                 <>
@@ -361,7 +361,7 @@ export default function CalendarPage() {
             )}
           </div>
 
-          <div className="glass-card rounded-[28px] border border-white/8 p-5 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
+          <div className="glass-card rounded-[28px] border border-white/8 bg-gradient-to-br from-white/5 to-transparent p-6 shadow-[0_16px_50px_rgba(0,0,0,0.18)]">
             <h3 className="text-sm font-bold uppercase tracking-[0.16em] text-foreground">Planner stats</h3>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <StatBox label="Events" value={String(events.length)} />
@@ -431,7 +431,7 @@ function EventCard({
   compact?: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/4 p-4">
+    <div className="rounded-2xl border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] p-4 transition hover:bg-white/6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{event.title}</p>
@@ -443,7 +443,7 @@ function EventCard({
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <span className={cn("inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium", TYPE_COLORS[event.type])}>
+        <span className={cn("inline-flex rounded-full border px-2.5 py-1 text-[11px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]", TYPE_COLORS[event.type])}>
           {event.type}
         </span>
         <span className="inline-flex items-center gap-1 rounded-full border border-white/8 bg-white/4 px-2.5 py-1 text-[11px] text-muted-foreground">
