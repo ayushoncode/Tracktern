@@ -102,23 +102,55 @@ export default function MockInterviewPage() {
     setMicOn(false)
   }
 
-  const fetchQuestion = async () => {
-    setLoading(true); setAnswer(""); setSelectedOption(""); setCurrentScore(null); setShowHints(false); setHintsUsed(false); setTranscript("")
-    const round = ROUNDS.find(r => r.id === selectedRound)
-    setTimeLeft(round?.time || 120)
-    try {
-      const res = await fetch(`${API}/mock-interview/question`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ company, role, type: selectedRound, round: selectedRound, difficulty, customTopic, previousQuestions: history.map(h => h.question?.question || "") })
+const fetchQuestion = async () => {
+  setLoading(true)
+  setAnswer("")
+  setSelectedOption("")
+  setCurrentScore(null)
+  setShowHints(false)
+  setHintsUsed(false)
+  setTranscript("")
+
+  const round = ROUNDS.find(r => r.id === selectedRound)
+  setTimeLeft(round?.time || 120)
+
+  try {
+    const res = await fetch(`${API}/mock-interview/question`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        company,
+        role,
+        type: selectedRound,
+        difficulty,
+        customTopic
       })
-      const data = await res.json()
-      setQuestion(data)
-      setTimerActive(true)
-      startTimeRef.current = Date.now()
-    } catch {}
-    setLoading(false)
+    })
+
+    const data = await res.json()
+
+    // 💥 MAIN FIX
+    if (!res.ok) {
+      alert(data.message || "Something went wrong")
+      setLoading(false)
+      return
+    }
+
+    // ✅ only valid case
+    setQuestion(data)
+    setTimerActive(true)
+    startTimeRef.current = Date.now()
+
+  } catch (err) {
+    console.error(err)
+    alert("Server error")
   }
+
+  setLoading(false)
+}
 
   const handleStart = async () => {
     if (!company || !role) return

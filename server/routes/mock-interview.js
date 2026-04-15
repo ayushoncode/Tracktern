@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-// 🔐 Auth middleware
+// 🔐 AUTH
 const protect = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Not authorized" });
@@ -16,7 +16,7 @@ const protect = (req, res, next) => {
   }
 };
 
-// 🏢 REAL COMPANY LIST
+// 🏢 COMPANIES
 const COMPANIES = [
   "Google","Amazon","Microsoft","Meta","Apple","Netflix",
   "Uber","Airbnb","Stripe","Dropbox","Twitter","LinkedIn","Spotify",
@@ -28,25 +28,46 @@ const COMPANIES = [
   "Zoho","Freshworks","BrowserStack","Postman","InMobi"
 ];
 
-// 🤖 GROQ API
+// 🎯 ROLES
+const ROLES = [
+  "SDE Intern","SDE","SDE 2","Software Engineer","Software Developer",
+  "Frontend Engineer","Backend Engineer","Full Stack Developer",
+  "Data Analyst","Data Scientist","ML Engineer","AI Engineer",
+  "DevOps Engineer","Cloud Engineer","Security Engineer",
+  "Product Manager","Associate Product Manager",
+  "QA Engineer","Test Engineer",
+  "Android Developer","iOS Developer"
+];
+
+// 🤖 GROQ
 const groq = async (messages, max_tokens = 1000) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
       messages,
-      temperature: 0.7,
+      temperature: 0.6,
       max_tokens
     })
   });
 
   const data = await response.json();
-  if (!data.choices || !data.choices[0]) throw new Error("No response from AI");
+  if (!data.choices?.[0]?.message?.content) throw new Error("AI error");
+
   return data.choices[0].message.content;
+};
+
+// 🧹 CLEAN JSON
+const cleanJSON = (text) => {
+  return text
+    .replace(/```json|```/g, "")
+    .replace(/^[^{]*/, "")
+    .replace(/[^}]*$/, "")
+    .trim();
 };
 
 // 🧠 QUESTION ROUTE
@@ -54,7 +75,7 @@ router.post("/question", protect, async (req, res) => {
   try {
     let { company, role, type, difficulty } = req.body;
 
-    // 🔥 HARD VALIDATION
+    // 🔥 COMPANY VALIDATION
     if (!company || typeof company !== "string") {
       return res.status(400).json({ message: "Company is required" });
     }
@@ -65,13 +86,11 @@ router.post("/question", protect, async (req, res) => {
       return res.status(400).json({ message: "Invalid company name" });
     }
 
-    // 🔥 STRICT MATCH
     const matchedCompany = COMPANIES.find(
       c => c.toLowerCase() === inputCompany
     );
 
     if (!matchedCompany) {
-      console.log("❌ Blocked invalid company:", company);
       return res.status(400).json({
         message: "Invalid company. Please select from list."
       });
@@ -79,19 +98,57 @@ router.post("/question", protect, async (req, res) => {
 
     company = matchedCompany;
 
+    // 🔥 ROLE VALIDATION
+    if (!role || typeof role !== "string") {
+      return res.status(400).json({ message: "Role is required" });
+    }
+
+    const inputRole = role.trim().toLowerCase();
+
+    const matchedRole = ROLES.find(
+      r => r.toLowerCase() === inputRole
+    );
+
+    if (!matchedRole) {
+      return res.status(400).json({
+        message: "Invalid role. Please select from list."
+      });
+    }
+
+    role = matchedRole;
+
     // 🧠 COMPANY STYLE
     let companyHint = "";
 
     if (["google","meta"].includes(inputCompany)) {
-      companyHint = "Focus on DSA, graphs, trees, optimization";
+      companyHint = "DSA, graphs, trees, optimization";
     } else if (inputCompany === "amazon") {
-      companyHint = "Focus on arrays, strings, greedy";
+      companyHint = "arrays, strings, greedy";
     } else if (inputCompany === "microsoft") {
-      companyHint = "Focus on DP, recursion";
+      companyHint = "DP, recursion";
     } else if (["tcs","infosys","wipro"].includes(inputCompany)) {
-      companyHint = "Focus on easy-medium DSA";
+      companyHint = "easy-medium DSA";
     } else {
-      companyHint = "Focus on standard coding interview questions";
+      companyHint = "standard coding";
+    }
+
+    // 🧠 ROLE STYLE
+    let roleHint = "";
+
+    if (inputRole.includes("frontend")) {
+      roleHint = "JavaScript, React, DOM";
+    } else if (inputRole.includes("backend")) {
+      roleHint = "APIs, databases, Node.js";
+    } else if (inputRole.includes("full")) {
+      roleHint = "frontend + backend";
+    } else if (inputRole.includes("data")) {
+      roleHint = "SQL, analytics";
+    } else if (inputRole.includes("ml") || inputRole.includes("ai")) {
+      roleHint = "ML models, probability";
+    } else if (inputRole.includes("devops")) {
+      roleHint = "Docker, cloud, CI/CD";
+    } else {
+      roleHint = "DSA, algorithms";
     }
 
     let prompt = "";
@@ -103,13 +160,14 @@ Company: ${company}
 Role: ${role}
 Difficulty: ${difficulty}
 
-Company Style:
-${companyHint}
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
 
 RULES:
 - Real interview style
 - EXACTLY 4 options
 - No generic questions
+- Avoid repeated problems
 
 Return ONLY JSON:
 {
@@ -125,12 +183,13 @@ Company: ${company}
 Role: ${role}
 Difficulty: ${difficulty}
 
-Company Style:
-${companyHint}
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
 
 RULES:
 - Real interview question
 - Not generic
+- Avoid repeated problems
 
 Return ONLY JSON:
 {
@@ -141,22 +200,19 @@ Return ONLY JSON:
 }`;
     }
 
-    const text = await groq([{ role: "user", content: prompt }]);
-
-    const cleaned = text
-      .replace(/```json|```/g, "")
-      .replace(/^[^{]*/, "")
-      .replace(/[^}]*$/, "")
-      .trim();
+    const raw = await groq([{ role: "user", content: prompt }]);
+    const cleaned = cleanJSON(raw);
 
     let parsed;
+
     try {
       parsed = JSON.parse(cleaned);
     } catch {
+      console.error("JSON FAIL:", raw);
       parsed = { question: cleaned, type };
     }
 
-    // 🔥 fallback MCQ
+    // 🔥 MCQ fallback
     if (type === "OA" && !parsed.options) {
       parsed.options = [
         "A) True",
@@ -180,7 +236,7 @@ router.post("/score", protect, async (req, res) => {
   try {
     const { question, answer, company } = req.body;
 
-    const text = await groq([{
+    const raw = await groq([{
       role: "user",
       content: `You are a strict interviewer at ${company}.
 
@@ -204,22 +260,19 @@ Return ONLY JSON:
 }`
     }]);
 
-    const cleaned = text
-      .replace(/```json|```/g, "")
-      .replace(/^[^{]*/, "")
-      .replace(/[^}]*$/, "")
-      .trim();
+    const cleaned = cleanJSON(raw);
 
     let parsed;
 
     try {
       parsed = JSON.parse(cleaned);
     } catch {
+      console.error("Score JSON fail:", raw);
       parsed = {
         score: 50,
         grade: "C",
-        strengths: ["Attempted the question"],
-        improvements: ["Could not evaluate"],
+        strengths: ["Attempted"],
+        improvements: ["Improve accuracy"],
         idealAnswer: "N/A",
         feedback: "Fallback evaluation",
         passed: true
