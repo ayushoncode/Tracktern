@@ -263,7 +263,7 @@ export default function MockInterviewPage() {
   // SETUP
   if (phase === "setup") return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2"><Brain className="w-6 h-6 text-primary" /> AI Mock Interview</h2>
           <p className="text-muted-foreground mt-1">GPT-4 powered real interview simulation with speech recognition & instant scoring</p>
@@ -274,7 +274,7 @@ export default function MockInterviewPage() {
       </div>
 
       <div className="glass-card rounded-2xl border border-border p-6 space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
           {/* COMPANY */}
           <div>
@@ -365,10 +365,10 @@ export default function MockInterviewPage() {
           <div><label className="text-sm font-medium text-foreground mb-1.5 block">Custom Topic</label><input value={customTopic} onChange={e => setCustomTopic(e.target.value)} placeholder="e.g. React hooks, Database indexing, Leadership..." className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
         )}
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="text-sm font-medium text-foreground mb-2 block">Difficulty</label>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">Difficulty</label>
+              <div className="grid grid-cols-3 gap-2">
               {["Easy","Medium","Hard"].map(d => <button key={d} onClick={() => setDifficulty(d)} className={cn("py-2 rounded-xl text-sm font-medium border transition-all", difficulty === d ? d === "Easy" ? "bg-green-500/20 text-green-400 border-green-500/30" : d === "Medium" ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" : "bg-red-500/20 text-red-400 border-red-500/30" : "bg-secondary border-border text-muted-foreground")}>{d}</button>)}
             </div>
           </div>
@@ -392,7 +392,7 @@ export default function MockInterviewPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[{icon:Brain,title:"GPT-4 Powered",desc:"Real questions from actual company interviews"},{icon:Mic,title:"Speech to Text",desc:"Speak your answer, AI transcribes instantly"},{icon:Zap,title:"Instant Scoring",desc:"Grade, feedback, ideal answer after each round"}].map((f,i) => (
           <div key={i} className="glass-card rounded-xl border border-border p-4 text-center"><f.icon className="w-5 h-5 text-primary mx-auto mb-2" /><p className="text-xs font-semibold text-foreground">{f.title}</p><p className="text-xs text-muted-foreground mt-1">{f.desc}</p></div>
         ))}
@@ -414,7 +414,7 @@ export default function MockInterviewPage() {
   // INTERVIEW
   if (phase === "interview") return (
     <div className="max-w-5xl mx-auto space-y-4">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
           <button type="button" onClick={handleBackToSetup} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" /> Back to setup
@@ -436,7 +436,7 @@ export default function MockInterviewPage() {
             </div>
           </div>
 
-          <div className="flex gap-2 mt-1">
+          <div className="flex flex-wrap gap-2 mt-1">
             <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
               {company}
             </span>
@@ -446,7 +446,7 @@ export default function MockInterviewPage() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className={cn("flex items-center gap-2 px-4 py-2 rounded-full font-mono font-bold text-sm border", timeLeft < 30 ? "bg-red-500/20 text-red-400 border-red-500/30 animate-pulse" : timeLeft < 60 ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" : "bg-secondary text-foreground border-border")}><Clock className="w-4 h-4" />{formatTime(timeLeft)}</div>
           <div className="px-3 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold border border-primary/20">Q{currentQ}/{numQuestions}</div>
         </div>
@@ -480,7 +480,7 @@ export default function MockInterviewPage() {
               </div>
             ) : (
               <div className="glass-card rounded-2xl border border-border p-4 space-y-3">
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-1">
                   <label className="text-sm font-medium text-foreground">Your Answer</label>
                   <div className="flex gap-2">
                     <button onClick={isListening ? stopSpeech : startSpeech} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all", isListening ? "bg-red-500/20 text-red-400 border-red-500/30 animate-pulse" : "bg-secondary border-border text-muted-foreground hover:text-foreground")}>{isListening ? <><MicOff className="w-3.5 h-3.5" /> Stop</> : <><Mic className="w-3.5 h-3.5" /> Speak</>}</button>
@@ -488,7 +488,7 @@ export default function MockInterviewPage() {
                 </div>
                 {isListening && <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20"><div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" /><span className="text-xs text-red-400">Listening... speak your answer</span></div>}
                 <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder={selectedRound === "DSA" ? "Explain your approach, complexity, edge cases..." : selectedRound === "System Design" ? "Describe components, trade-offs, scaling..." : selectedRound === "Behavioral" ? "Situation → Task → Action → Result..." : "Your answer..."} className="w-full h-36 px-3 py-2.5 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" />
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <span className="text-xs text-muted-foreground">{answer.length} chars</span>
                   <button onClick={handleSubmit} disabled={!answer.trim()} className="flex items-center gap-2 px-5 py-2.5 rounded-xl gradient-purple text-primary-foreground text-sm font-bold hover:opacity-90 disabled:opacity-50"><Send className="w-4 h-4" /> Submit</button>
                 </div>
@@ -505,7 +505,7 @@ export default function MockInterviewPage() {
               <div className="h-2 bg-secondary rounded-full"><div className={cn("h-2 rounded-full transition-all", currentScore.score >= 80 ? "bg-green-500" : currentScore.score >= 60 ? "bg-yellow-500" : "bg-red-500")} style={{width:`${currentScore.score}%`}} /></div>
 
               {(currentScore.technicalScore || currentScore.communicationScore || currentScore.confidenceScore) && (
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {[{label:"Technical",val:currentScore.technicalScore,color:"text-blue-400"},{label:"Communication",val:currentScore.communicationScore,color:"text-green-400"},{label:"Confidence",val:currentScore.confidenceScore,color:"text-purple-400"}].map(m => (
                     <div key={m.label} className="glass-card rounded-xl border border-border p-3 text-center"><div className={cn("text-xl font-black", m.color)}>{m.val}</div><div className="text-xs text-muted-foreground">{m.label}</div></div>
                   ))}
@@ -513,7 +513,7 @@ export default function MockInterviewPage() {
               )}
 
               <p className="text-sm text-muted-foreground leading-relaxed">{currentScore.feedback}</p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div><p className="text-xs font-bold text-green-400 uppercase tracking-wide mb-2">✓ Strengths</p>{currentScore.strengths?.map((s: string, i: number) => <p key={i} className="text-xs text-foreground mb-1.5">• {s}</p>)}</div>
                 <div><p className="text-xs font-bold text-red-400 uppercase tracking-wide mb-2">✗ Improve</p>{currentScore.improvements?.map((s: string, i: number) => <p key={i} className="text-xs text-foreground mb-1.5">• {s}</p>)}</div>
               </div>
@@ -580,7 +580,7 @@ export default function MockInterviewPage() {
           <div className={cn("text-7xl font-black my-4", finalReport.overallGrade?.startsWith("A") ? "text-green-400" : finalReport.overallGrade?.startsWith("B") ? "text-blue-400" : "text-yellow-400")}>{finalReport.overallGrade}</div>
           <div className={cn("inline-block px-4 py-2 rounded-full text-sm font-bold border mb-4", finalReport.decision === "Strong Hire" ? "bg-green-500/20 text-green-400 border-green-500/30" : finalReport.decision === "Hire" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30")}>{finalReport.decision}</div>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-lg mx-auto">{finalReport.summary}</p>
-          <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="grid grid-cols-1 gap-4 mt-6 sm:grid-cols-3">
             <div className="text-center"><div className="text-2xl font-black text-primary">{finalReport.avgScore}</div><div className="text-xs text-muted-foreground">Avg Score</div></div>
             <div className="text-center"><div className="text-2xl font-black text-green-400">{finalReport.hiringChance}%</div><div className="text-xs text-muted-foreground">Hire Chance</div></div>
             <div className="text-center"><div className="text-2xl font-black text-blue-400">{history.length}</div><div className="text-xs text-muted-foreground">Questions</div></div>

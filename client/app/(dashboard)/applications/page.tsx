@@ -66,22 +66,22 @@ export default function ApplicationsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Applications</h2>
           <p className="text-muted-foreground text-sm mt-1">{companies.length} total applications</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="gradient-purple hover:opacity-90 text-primary-foreground">
+        <Button onClick={() => setIsModalOpen(true)} className="gradient-purple hover:opacity-90 text-primary-foreground w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" /> Add Company
         </Button>
       </div>
 
       {/* Kanban Board */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 overflow-x-auto">
+      <div className="grid grid-cols-1 gap-4 overflow-x-auto sm:grid-cols-2 lg:grid-cols-5">
         {COLUMNS.map((col) => {
           const colCompanies = companies.filter((c) => c.status === col.id)
           return (
-            <div key={col.id} className="glass-card rounded-xl border border-border min-w-[200px]">
+            <div key={col.id} className="glass-card rounded-xl border border-border min-w-0 sm:min-w-[200px]">
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${col.color}`} />

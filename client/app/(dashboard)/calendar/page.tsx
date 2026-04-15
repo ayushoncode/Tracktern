@@ -47,17 +47,17 @@ export default function CalendarPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div><h2 className="text-2xl font-bold text-foreground flex items-center gap-2"><Calendar className="w-6 h-6 text-primary" /> Interview Calendar</h2><p className="text-muted-foreground mt-1">Schedule interviews, deadlines and reminders</p></div>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-purple text-primary-foreground font-bold text-sm hover:opacity-90"><Plus className="w-4 h-4" /> Add Event</button>
+        <button onClick={() => setShowForm(true)} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl gradient-purple text-primary-foreground font-bold text-sm hover:opacity-90"><Plus className="w-4 h-4" /> Add Event</button>
       </div>
-      {showForm && <div className="glass-card rounded-2xl border border-primary/30 p-6 space-y-4">
+      {showForm && <div className="glass-card rounded-2xl border border-primary/30 p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between"><h3 className="font-bold text-foreground">Add Event</h3><button onClick={() => setShowForm(false)}><X className="w-5 h-5 text-muted-foreground" /></button></div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Title</label><input value={form.title} onChange={e => setForm({...form,title:e.target.value})} placeholder="e.g. Google Round 2" className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
           <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Company</label><input value={form.company} onChange={e => setForm({...form,company:e.target.value})} placeholder="e.g. Google" className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
           <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Type</label><select value={form.type} onChange={e => setForm({...form,type:e.target.value})} className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm">{EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Date</label><input type="date" value={form.date} onChange={e => setForm({...form,date:e.target.value})} className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm" /></div>
             <div><label className="text-xs font-medium text-muted-foreground mb-1 block">Time</label><input type="time" value={form.time} onChange={e => setForm({...form,time:e.target.value})} className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm" /></div>
           </div>
@@ -65,21 +65,21 @@ export default function CalendarPage() {
         <textarea value={form.notes} onChange={e => setForm({...form,notes:e.target.value})} placeholder="Notes..." className="w-full h-16 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50" />
         <button onClick={addEvent} disabled={!form.title||!form.company||!form.date} className="w-full py-3 rounded-xl gradient-purple text-primary-foreground font-bold hover:opacity-90 disabled:opacity-50">Add to Calendar</button>
       </div>}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 glass-card rounded-2xl border border-border p-5">
           <div className="flex items-center justify-between mb-4">
             <button onClick={() => setCurrentDate(new Date(year,month-1))} className="p-1.5 rounded-lg hover:bg-secondary"><ChevronLeft className="w-5 h-5 text-muted-foreground" /></button>
             <h3 className="font-bold text-foreground">{monthYear}</h3>
             <button onClick={() => setCurrentDate(new Date(year,month+1))} className="p-1.5 rounded-lg hover:bg-secondary"><ChevronRight className="w-5 h-5 text-muted-foreground" /></button>
           </div>
-          <div className="grid grid-cols-7 gap-1 mb-2">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => <div key={d} className="text-center text-xs font-medium text-muted-foreground py-1">{d}</div>)}</div>
+          <div className="grid grid-cols-7 gap-1 mb-2">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => <div key={d} className="text-center text-[10px] sm:text-xs font-medium text-muted-foreground py-1">{d.slice(0,3)}</div>)}</div>
           <div className="grid grid-cols-7 gap-1">
             {Array.from({length:firstDay}).map((_,i) => <div key={`e${i}`} />)}
             {Array.from({length:daysInMonth},(_,i) => i+1).map(day => {
               const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`
               const dayEvents = events.filter(e => e.date === dateStr)
               const isToday = dateStr === todayStr, isSelected = dateStr === selectedDate
-              return <button key={day} onClick={() => setSelectedDate(isSelected ? "" : dateStr)} className={cn("relative p-2 rounded-xl text-sm font-medium transition-all min-h-[44px] flex flex-col items-center", isSelected ? "bg-primary text-primary-foreground" : isToday ? "bg-primary/20 text-primary border border-primary/30" : "hover:bg-secondary text-foreground")}>
+              return <button key={day} onClick={() => setSelectedDate(isSelected ? "" : dateStr)} className={cn("relative p-1.5 sm:p-2 rounded-xl text-xs sm:text-sm font-medium transition-all min-h-[44px] flex flex-col items-center justify-center", isSelected ? "bg-primary text-primary-foreground" : isToday ? "bg-primary/20 text-primary border border-primary/30" : "hover:bg-secondary text-foreground")}>
                 <span>{day}</span>
                 {dayEvents.length > 0 && <div className="flex gap-0.5 mt-0.5">{dayEvents.slice(0,3).map((_,i) => <div key={i} className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-white" : "bg-primary")} />)}</div>}
               </button>

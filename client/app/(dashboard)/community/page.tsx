@@ -217,12 +217,12 @@ export default function CommunityPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Community Experiences</h2>
           <p className="text-muted-foreground">Real interview experiences from LeetCode, Codeforces and students</p>
         </div>
-        <Button onClick={() => setIsAdding(true)} className="gradient-purple hover:opacity-90 text-primary-foreground">
+        <Button onClick={() => setIsAdding(true)} className="gradient-purple hover:opacity-90 text-primary-foreground w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" /> Share Experience
         </Button>
       </div>
@@ -234,7 +234,7 @@ export default function CommunityPage() {
             <Button variant="ghost" size="icon" onClick={() => setIsAdding(false)}><X className="w-5 h-5" /></Button>
           </div>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Company</label>
                 <Input value={form.company} onChange={e => setForm({...form, company: e.target.value})} placeholder="e.g., Google" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
@@ -244,7 +244,7 @@ export default function CommunityPage() {
                 <Input value={form.role} onChange={e => setForm({...form, role: e.target.value})} placeholder="e.g., SWE Intern" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Type</label>
                 <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="w-full h-10 px-3 rounded-md bg-secondary border border-border text-foreground text-sm">
@@ -289,19 +289,19 @@ export default function CommunityPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex bg-secondary rounded-lg p-1 w-fit gap-1">
+      <div className="flex w-full gap-1 overflow-x-auto rounded-lg bg-secondary p-1">
         <button onClick={() => setActiveTab("leetcode")}
-          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+          className={cn("shrink-0 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
             activeTab === "leetcode" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
           🟡 LeetCode Discuss
         </button>
         <button onClick={() => setActiveTab("codeforces")}
-          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+          className={cn("shrink-0 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
             activeTab === "codeforces" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
           🔵 Codeforces Live Feed
         </button>
         <button onClick={() => setActiveTab("community")}
-          className={cn("px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
+          className={cn("shrink-0 px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2",
             activeTab === "community" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
           <Users className="w-4 h-4" /> Student Experiences {experiences.length > 0 && `(${experiences.length})`}
         </button>

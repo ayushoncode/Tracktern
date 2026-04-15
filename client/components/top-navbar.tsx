@@ -57,12 +57,12 @@ export function TopNavbar() {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
 
           {/* Focus Mode Toggle */}
           <button
             onClick={toggleFocusMode}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+            className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
               focusMode
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-secondary text-muted-foreground border-border hover:border-primary/50"
@@ -76,7 +76,7 @@ export function TopNavbar() {
           </button>
 
           {/* Streak */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-foreground text-sm font-medium">
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-foreground text-sm font-medium">
             <Flame className="w-4 h-4 text-orange-500" />
             <span>0 day streak</span>
           </div>
