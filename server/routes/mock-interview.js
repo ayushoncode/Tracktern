@@ -98,20 +98,50 @@ router.post("/question", protect, async (req, res) => {
 
     company = matchedCompany;
 
-    // 🔥 ROLE VALIDATION
+    // 🔥 SMART ROLE VALIDATION
     if (!role || typeof role !== "string") {
       return res.status(400).json({ message: "Role is required" });
     }
 
-    const inputRole = role.trim().toLowerCase();
+    let inputRole = role.trim().toLowerCase();
 
-    const matchedRole = ROLES.find(
-      r => r.toLowerCase() === inputRole
-    );
+    // normalize
+    inputRole = inputRole.replace(/engineer|developer|intern/g, "").trim();
+
+    const ROLE_ALIASES = {
+      frontend: "Frontend Engineer",
+      front: "Frontend Engineer",
+
+      backend: "Backend Engineer",
+      back: "Backend Engineer",
+
+      fullstack: "Full Stack Developer",
+      full: "Full Stack Developer",
+
+      data: "Data Analyst",
+      analyst: "Data Analyst",
+
+      ml: "ML Engineer",
+      ai: "AI Engineer",
+
+      devops: "DevOps Engineer",
+      cloud: "Cloud Engineer",
+
+      sde: "SDE",
+      software: "Software Engineer"
+    };
+
+    let matchedRole = ROLE_ALIASES[inputRole];
+
+    if (!matchedRole) {
+      matchedRole = ROLES.find(r =>
+        r.toLowerCase().includes(inputRole)
+      );
+    }
 
     if (!matchedRole) {
       return res.status(400).json({
-        message: "Invalid role. Please select from list."
+        message: "Invalid role. Please select a valid role."
       });
     }
 
@@ -135,17 +165,17 @@ router.post("/question", protect, async (req, res) => {
     // 🧠 ROLE STYLE
     let roleHint = "";
 
-    if (inputRole.includes("frontend")) {
+    if (matchedRole.includes("Frontend")) {
       roleHint = "JavaScript, React, DOM";
-    } else if (inputRole.includes("backend")) {
+    } else if (matchedRole.includes("Backend")) {
       roleHint = "APIs, databases, Node.js";
-    } else if (inputRole.includes("full")) {
+    } else if (matchedRole.includes("Full")) {
       roleHint = "frontend + backend";
-    } else if (inputRole.includes("data")) {
+    } else if (matchedRole.includes("Data")) {
       roleHint = "SQL, analytics";
-    } else if (inputRole.includes("ml") || inputRole.includes("ai")) {
+    } else if (matchedRole.includes("ML") || matchedRole.includes("AI")) {
       roleHint = "ML models, probability";
-    } else if (inputRole.includes("devops")) {
+    } else if (matchedRole.includes("DevOps")) {
       roleHint = "Docker, cloud, CI/CD";
     } else {
       roleHint = "DSA, algorithms";
@@ -212,7 +242,7 @@ Return ONLY JSON:
       parsed = { question: cleaned, type };
     }
 
-    // 🔥 MCQ fallback
+    // fallback MCQ
     if (type === "OA" && !parsed.options) {
       parsed.options = [
         "A) True",
