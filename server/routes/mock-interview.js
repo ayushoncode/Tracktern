@@ -128,7 +128,9 @@ router.post("/question", protect, async (req, res) => {
       cloud: "Cloud Engineer",
 
       sde: "SDE",
-      software: "Software Engineer"
+      software: "Software Engineer",
+
+      swe: "Software Engineer"
     };
 
     let matchedRole = ROLE_ALIASES[inputRole];

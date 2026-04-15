@@ -221,8 +221,47 @@ const fetchQuestion = async () => {
 
       <div className="glass-card rounded-2xl border border-border p-6 space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          <div><label className="text-sm font-medium text-foreground mb-1.5 block">Target Company</label><input value={company} onChange={e => setCompany(e.target.value)} placeholder="e.g. Google, Amazon, Flipkart" className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
-          <div><label className="text-sm font-medium text-foreground mb-1.5 block">Target Role</label><input value={role} onChange={e => setRole(e.target.value)} placeholder="e.g. SWE Intern, PM Intern" className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
+
+          {/* COMPANY */}
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">
+              Target Company
+            </label>
+
+            <input
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              placeholder="Type: Google, Amazon..."
+              className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+
+            {company && (
+              <p className="text-xs text-primary mt-1">
+                🎯 Interviewing at <span className="font-bold">{company}</span>
+              </p>
+            )}
+          </div>
+
+          {/* ROLE */}
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">
+              Target Role
+            </label>
+
+            <input
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              placeholder="Type: SWE, Frontend, Backend..."
+              className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+
+            {role && (
+              <p className="text-xs text-purple-400 mt-1">
+                💼 Role: <span className="font-bold">{role}</span>
+              </p>
+            )}
+          </div>
+
         </div>
 
         <div>
@@ -292,7 +331,25 @@ const fetchQuestion = async () => {
   if (phase === "interview") return (
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <div><h2 className="text-lg font-bold text-foreground">{company} — {role}</h2><p className="text-sm text-muted-foreground">{roundInfo?.label} · {difficulty}</p></div>
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-foreground">
+            🚀 {company} Interview
+          </h2>
+
+          <p className="text-sm text-muted-foreground">
+            Position: <span className="text-primary font-semibold">{role}</span>
+          </p>
+
+          <div className="flex gap-2 mt-1">
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+              {company}
+            </span>
+
+            <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-bold border border-purple-500/20">
+              {role}
+            </span>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
           <div className={cn("flex items-center gap-2 px-4 py-2 rounded-full font-mono font-bold text-sm border", timeLeft < 30 ? "bg-red-500/20 text-red-400 border-red-500/30 animate-pulse" : timeLeft < 60 ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" : "bg-secondary text-foreground border-border")}><Clock className="w-4 h-4" />{formatTime(timeLeft)}</div>
           <div className="px-3 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold border border-primary/20">Q{currentQ}/{numQuestions}</div>
