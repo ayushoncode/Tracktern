@@ -12,11 +12,11 @@ const protect = (req, res, next) => {
     req.userId = decoded.id;
     next();
   } catch {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
-// 🏢 Real companies list
+// 🏢 REAL COMPANY LIST
 const COMPANIES = [
   "Google","Amazon","Microsoft","Meta","Apple","Netflix",
   "Uber","Airbnb","Stripe","Dropbox","Twitter","LinkedIn","Spotify",
@@ -28,7 +28,7 @@ const COMPANIES = [
   "Zoho","Freshworks","BrowserStack","Postman","InMobi"
 ];
 
-// 🤖 Groq API
+// 🤖 GROQ API
 const groq = async (messages, max_tokens = 1000) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -45,39 +45,53 @@ const groq = async (messages, max_tokens = 1000) => {
   });
 
   const data = await response.json();
-  if (!data.choices || !data.choices[0]) throw new Error("No response");
+  if (!data.choices || !data.choices[0]) throw new Error("No response from AI");
   return data.choices[0].message.content;
 };
 
-// 🧠 Question route
+// 🧠 QUESTION ROUTE
 router.post("/question", protect, async (req, res) => {
   try {
-    const { company, role, type, difficulty } = req.body;
+    let { company, role, type, difficulty } = req.body;
 
-    // ✅ strict company validation
-    const isValidCompany = COMPANIES.some(
-      c => c.toLowerCase() === company.toLowerCase()
+    // 🔥 HARD VALIDATION
+    if (!company || typeof company !== "string") {
+      return res.status(400).json({ message: "Company is required" });
+    }
+
+    const inputCompany = company.trim().toLowerCase();
+
+    if (inputCompany.length < 3) {
+      return res.status(400).json({ message: "Invalid company name" });
+    }
+
+    // 🔥 STRICT MATCH
+    const matchedCompany = COMPANIES.find(
+      c => c.toLowerCase() === inputCompany
     );
 
-    if (!isValidCompany) {
+    if (!matchedCompany) {
+      console.log("❌ Blocked invalid company:", company);
       return res.status(400).json({
-        message: "Please select a valid company"
+        message: "Invalid company. Please select from list."
       });
     }
 
-    // 🧠 company intelligence
+    company = matchedCompany;
+
+    // 🧠 COMPANY STYLE
     let companyHint = "";
 
-    if (["google","meta"].includes(company.toLowerCase())) {
+    if (["google","meta"].includes(inputCompany)) {
       companyHint = "Focus on DSA, graphs, trees, optimization";
-    } else if (company.toLowerCase() === "amazon") {
+    } else if (inputCompany === "amazon") {
       companyHint = "Focus on arrays, strings, greedy";
-    } else if (company.toLowerCase() === "microsoft") {
+    } else if (inputCompany === "microsoft") {
       companyHint = "Focus on DP, recursion";
-    } else if (["tcs","infosys","wipro"].includes(company.toLowerCase())) {
-      companyHint = "Focus on basic easy-medium DSA";
+    } else if (["tcs","infosys","wipro"].includes(inputCompany)) {
+      companyHint = "Focus on easy-medium DSA";
     } else {
-      companyHint = "Focus on standard coding interview problems";
+      companyHint = "Focus on standard coding interview questions";
     }
 
     let prompt = "";
@@ -93,9 +107,9 @@ Company Style:
 ${companyHint}
 
 RULES:
-- Must feel like real interview
-- No generic questions
+- Real interview style
 - EXACTLY 4 options
+- No generic questions
 
 Return ONLY JSON:
 {
@@ -115,9 +129,8 @@ Company Style:
 ${companyHint}
 
 RULES:
-- Real interview style
+- Real interview question
 - Not generic
-- Clear problem
 
 Return ONLY JSON:
 {
@@ -143,7 +156,7 @@ Return ONLY JSON:
       parsed = { question: cleaned, type };
     }
 
-    // fallback MCQ
+    // 🔥 fallback MCQ
     if (type === "OA" && !parsed.options) {
       parsed.options = [
         "A) True",
@@ -162,7 +175,7 @@ Return ONLY JSON:
   }
 });
 
-// 📊 Score route
+// 📊 SCORE ROUTE
 router.post("/score", protect, async (req, res) => {
   try {
     const { question, answer, company } = req.body;
@@ -175,8 +188,8 @@ Question: ${question.question || question}
 Candidate Answer: ${answer}
 
 RULES:
-- Wrong answer → low score
-- Random answer → very low score
+- Wrong → low score
+- Random → very low score
 - Correct → high score
 
 Return ONLY JSON:
@@ -201,21 +214,18 @@ Return ONLY JSON:
 
     try {
       parsed = JSON.parse(cleaned);
-    } catch (e) {
-      console.error("AI parsing failed:", text);
-
+    } catch {
       parsed = {
         score: 50,
         grade: "C",
         strengths: ["Attempted the question"],
-        improvements: ["Could not fully evaluate"],
+        improvements: ["Could not evaluate"],
         idealAnswer: "N/A",
         feedback: "Fallback evaluation",
         passed: true
       };
     }
 
-    // ensure fields
     parsed.strengths = parsed.strengths || ["Good attempt"];
     parsed.improvements = parsed.improvements || ["Improve accuracy"];
     parsed.idealAnswer = parsed.idealAnswer || "N/A";
