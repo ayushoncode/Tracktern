@@ -9,17 +9,22 @@ import { GmailSync } from "@/components/gmail-sync"
 import { StatusPill } from "@/components/status-pill"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { getStats, getCompanies, getToken } from "@/lib/api"
+import { getCompanies, getStats, getToken, getUser } from "@/lib/api"
 import { STATUS_THEME } from "@/lib/status-theme"
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({ total: 0, applied: 0, shortlisted: 0, interview: 0, offer: 0, rejected: 0 })
   const [companies, setCompanies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [userName, setUserName] = useState("there")
 
   useEffect(() => {
     const token = getToken()
     if (!token) { window.location.href = "/"; return }
+    const user = getUser()
+    if (user?.name) {
+      setUserName(user.name)
+    }
     Promise.all([getStats(token), getCompanies(token)]).then(([s, c]) => {
       setStats(s)
       setCompanies(Array.isArray(c) ? c : [])
@@ -50,7 +55,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <AppPageHeader
-        title="Welcome back, Ayush"
+        title={`Welcome back, ${userName.split(" ")[0]}`}
         subtitle="A cleaner read on your pipeline, momentum, and next opportunities."
         icon={Sparkles}
         actionLabel="Manage applications"
