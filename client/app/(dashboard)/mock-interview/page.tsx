@@ -64,6 +64,7 @@ export default function MockInterviewPage() {
   const [resumeText, setResumeText] = useState("")
   const [resumeFileName, setResumeFileName] = useState("")
   const [extractingResume, setExtractingResume] = useState(false)
+  const [isDraggingResume, setIsDraggingResume] = useState(false)
   const [isPro, setIsPro] = useState(false)
 
   const [currentQ, setCurrentQ] = useState(0)
@@ -203,6 +204,23 @@ export default function MockInterviewPage() {
 
   const handleResumeFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
+    await processResumeFile(file)
+  }
+
+  const handleResumeDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDraggingResume(true)
+  }
+
+  const handleResumeDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDraggingResume(false)
+  }
+
+  const handleResumeDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    setIsDraggingResume(false)
+    const file = event.dataTransfer.files?.[0]
     await processResumeFile(file)
   }
 
@@ -430,7 +448,17 @@ export default function MockInterviewPage() {
         {selectedRound === "Resume" && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground block">Paste Resume</label>
-            <div className="rounded-2xl border border-border bg-secondary/50 p-4 space-y-3">
+            <div
+              onDragOver={handleResumeDragOver}
+              onDragLeave={handleResumeDragLeave}
+              onDrop={handleResumeDrop}
+              className={cn(
+                "rounded-2xl border p-4 space-y-3 transition-all duration-200",
+                isDraggingResume
+                  ? "border-cyan-400/60 bg-cyan-400/10 shadow-[0_0_0_1px_rgba(6,182,212,0.18)]"
+                  : "border-border bg-secondary/50"
+              )}
+            >
               <input
                 ref={resumeFileInputRef}
                 type="file"
@@ -441,7 +469,7 @@ export default function MockInterviewPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">Upload resume file</p>
-                  <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, or TXT. We extract the text here and use it to ask company-specific questions.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Drag and drop a PDF, DOCX, or TXT here, or choose a file. We extract the text here and use it to ask company-specific questions.</p>
                 </div>
                 <button
                   type="button"
