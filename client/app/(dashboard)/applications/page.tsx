@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Calendar, X, Link as LinkIcon, FileText } from "lucide-react"
+import { Building2, Calendar, FileText, Link as LinkIcon, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { getCompanies, addCompany, updateCompany, deleteCompany, getToken } from "@/lib/api"
+import { COMPANY_TYPE_LABELS, COMPANY_TYPE_OPTIONS, getCompanyType, type CompanyType } from "@/lib/company-type"
 import { STATUS_THEME } from "@/lib/status-theme"
 
 const COLUMNS = [
@@ -22,6 +23,7 @@ export default function ApplicationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newCompany, setNewCompany] = useState("")
   const [newRole, setNewRole] = useState("")
+  const [newCompanyType, setNewCompanyType] = useState<CompanyType>("product")
   const [newUrl, setNewUrl] = useState("")
   const [newDeadline, setNewDeadline] = useState("")
   const [newNotes, setNewNotes] = useState("")
@@ -42,10 +44,11 @@ export default function ApplicationsPage() {
     const token = getToken()!
     const data = await addCompany(token, {
       name: newCompany, role: newRole,
+      companyType: newCompanyType,
       jobUrl: newUrl, deadline: newDeadline, notes: newNotes,
     })
     setCompanies([data, ...companies])
-    setNewCompany(""); setNewRole(""); setNewUrl(""); setNewDeadline(""); setNewNotes("")
+    setNewCompany(""); setNewRole(""); setNewCompanyType("product"); setNewUrl(""); setNewDeadline(""); setNewNotes("")
     setIsModalOpen(false)
     setSubmitting(false)
   }
@@ -104,6 +107,10 @@ export default function ApplicationsPage() {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground text-sm truncate">{app.name}</p>
                         <p className="text-xs text-muted-foreground truncate">{app.role}</p>
+                        <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-white/10 bg-background/35 px-2 py-1 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                          <Building2 className="h-3 w-3" />
+                          {COMPANY_TYPE_LABELS[getCompanyType(app.companyType, app.name)]}
+                        </div>
                       </div>
                       <button onClick={() => handleDelete(app._id)} className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-400 transition-all">
                         <X className="w-3 h-3" />
@@ -149,6 +156,18 @@ export default function ApplicationsPage() {
               <div>
                 <label className="text-sm font-medium text-card-foreground mb-1.5 block">Role *</label>
                 <Input value={newRole} onChange={(e) => setNewRole(e.target.value)} placeholder="e.g., SWE Intern" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-card-foreground mb-1.5 block">Company Type *</label>
+                <select
+                  value={newCompanyType}
+                  onChange={(e) => setNewCompanyType(e.target.value as CompanyType)}
+                  className="w-full h-10 px-3 rounded-md bg-secondary border border-border text-foreground"
+                >
+                  {COMPANY_TYPE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-card-foreground mb-1.5 block"><LinkIcon className="w-4 h-4 inline mr-1" />Job URL</label>

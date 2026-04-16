@@ -44,8 +44,18 @@ router.get("/", protect, async (req, res) => {
 
 router.post("/", protect, async (req, res) => {
   try {
-    const { name, role, jobUrl, status, appliedDate, deadline, notes } = req.body;
-    const company = await Company.create({ userId: req.userId, name, role, jobUrl, status: status || "applied", appliedDate: appliedDate || Date.now(), deadline, notes });
+    const { name, role, companyType, jobUrl, status, appliedDate, deadline, notes } = req.body;
+    const company = await Company.create({
+      userId: req.userId,
+      name,
+      role,
+      companyType: ["startup", "product", "mnc"].includes(companyType) ? companyType : "product",
+      jobUrl,
+      status: status || "applied",
+      appliedDate: appliedDate || Date.now(),
+      deadline,
+      notes,
+    });
     const user = await User.findById(req.userId);
     const today = new Date().toDateString();
     const lastApplied = user.lastAppliedDate ? new Date(user.lastAppliedDate).toDateString() : null;
@@ -67,7 +77,7 @@ router.patch("/:id", protect, async (req, res) => {
   try {
     const company = await Company.findOne({ _id: req.params.id, userId: req.userId });
     if (!company) return res.status(404).json({ message: "Company not found" });
-    ["name","role","jobUrl","status","deadline","notes","followUpSent"].forEach(field => {
+    ["name","role","companyType","jobUrl","status","deadline","notes","followUpSent"].forEach(field => {
       if (req.body[field] !== undefined) company[field] = req.body[field];
     });
     await company.save();
