@@ -23,9 +23,10 @@ import {
   Users,
   Zap,
 } from "lucide-react"
+import Link from "next/link"
 
 import { Input } from "@/components/ui/input"
-import { getToken, loginUser, registerUser, saveToken, saveUser } from "@/lib/api"
+import { getToken, loginUser, registerUser, saveToken, saveUser, verifyOtp } from "@/lib/api"
 
 const PREVIEW_TABS = ["Dashboard", "Applications", "AI Prep", "Analytics", "Resume", "Follow-up", "Calendar", "Practice"]
 
@@ -36,9 +37,13 @@ export default function HomePage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
+  const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState("")
   const [activeSlide, setActiveSlide] = useState(0)
+  const isVerifying = Boolean(pendingVerificationEmail) && !isLogin
 
   useEffect(() => {
     const token = getToken()
@@ -54,8 +59,23 @@ export default function HomePage() {
     event.preventDefault()
     setLoading(true)
     setError("")
+    setSuccess("")
 
     try {
+      if (isVerifying) {
+        const data = await verifyOtp(pendingVerificationEmail, otp)
+
+        if (data.token) {
+          saveToken(data.token)
+          saveUser(data.user)
+          window.location.href = "/dashboard"
+          return
+        }
+
+        setError(data.message || "Invalid OTP")
+        return
+      }
+
       const data = isLogin
         ? await loginUser(email, password)
         : await registerUser(name, email, password)
@@ -64,14 +84,18 @@ export default function HomePage() {
         saveToken(data.token)
         saveUser(data.user)
         window.location.href = "/dashboard"
+      } else if (!isLogin && data.message) {
+        setPendingVerificationEmail(email)
+        setOtp("")
+        setSuccess("OTP sent to your email. Enter it below to verify your account.")
       } else {
         setError(data.message || "Something went wrong")
       }
     } catch {
       setError("Cannot connect to server.")
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   if (showAuth) {
@@ -106,27 +130,43 @@ export default function HomePage() {
               </div>
               <span className="text-xl font-black tracking-tight text-white">Tracktern</span>
             </div>
-            <h2 className="mb-1 text-2xl font-black text-white">{isLogin ? "Welcome back" : "Create your account"}</h2>
+            <h2 className="mb-1 text-2xl font-black text-white">
+              {isLogin ? "Welcome back" : isVerifying ? "Verify your account" : "Create your account"}
+            </h2>
             <p className="mb-6 text-sm text-gray-500">
-              {isLogin ? "Sign in to your dashboard" : "Free forever. No credit card needed."}
+              {isLogin
+                ? "Sign in to your dashboard"
+                : isVerifying
+                  ? `We sent an OTP to ${pendingVerificationEmail}`
+                  : "Free forever. No credit card needed."}
             </p>
             <div className="mb-5 flex rounded-xl border border-white/8 bg-white/5 p-1">
               <button
-                onClick={() => setIsLogin(true)}
+                onClick={() => {
+                  setIsLogin(true)
+                  setPendingVerificationEmail("")
+                  setError("")
+                  setSuccess("")
+                }}
                 className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${isLogin ? "bg-violet-600 text-white shadow-lg" : "text-gray-500 hover:text-white"}`}
               >
                 Sign In
               </button>
               <button
-                onClick={() => setIsLogin(false)}
+                onClick={() => {
+                  setIsLogin(false)
+                  setError("")
+                  setSuccess("")
+                }}
                 className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${!isLogin ? "bg-violet-600 text-white shadow-lg" : "text-gray-500 hover:text-white"}`}
               >
                 Sign Up
               </button>
             </div>
             {error ? <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div> : null}
+            {success ? <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{success}</div> : null}
             <form className="space-y-3" onSubmit={handleSubmit}>
-              {!isLogin ? (
+              {!isLogin && !isVerifying ? (
                 <Input
                   type="text"
                   placeholder="Full name"
@@ -136,56 +176,98 @@ export default function HomePage() {
                   className="h-12 rounded-xl border-white/10 bg-white/5 text-sm text-white placeholder:text-gray-600"
                 />
               ) : null}
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+              {!isVerifying ? (
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    required
+                    className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-gray-600"
+                  />
+                </div>
+              ) : (
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-300">
+                  Verifying account for <span className="font-semibold text-white">{pendingVerificationEmail}</span>
+                </div>
+              )}
+              {isVerifying ? (
                 <Input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value)}
                   required
-                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-gray-600"
+                  maxLength={6}
+                  className="h-12 rounded-xl border-white/10 bg-white/5 text-sm text-white placeholder:text-gray-600"
                 />
-              </div>
-              <div className="relative">
-                <FileText className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 pr-10 text-sm text-white placeholder:text-gray-600"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-300"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
+              ) : (
+                <div className="relative">
+                  <FileText className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    required
+                    className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 pr-10 text-sm text-white placeholder:text-gray-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              )}
+              {isLogin && !isVerifying && (
+                <div className="mt-2 text-right">
+                  <Link href="/auth/forgot-password" className="text-xs text-gray-400 transition hover:text-white">
+                    Forgot Password?
+                  </Link>
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={loading}
                 className="mt-2 h-12 w-full rounded-xl text-sm font-black text-white transition-all hover:scale-[1.01] hover:opacity-90 disabled:opacity-50"
                 style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 8px 32px rgba(124,58,237,0.4)" }}
               >
-                {loading ? "Please wait..." : isLogin ? "Sign In →" : "Create Free Account →"}
+                {loading ? "Please wait..." : isLogin ? "Sign In →" : isVerifying ? "Verify OTP →" : "Create Free Account →"}
               </button>
             </form>
-            <p className="mt-4 text-center text-sm text-gray-600">
-              {isLogin ? "No account? " : "Have an account? "}
+            {!isVerifying ? (
+              <p className="mt-4 text-center text-sm text-gray-600">
+                {isLogin ? "No account? " : "Have an account? "}
+                <button
+                  onClick={() => {
+                    setIsLogin(!isLogin)
+                    setPendingVerificationEmail("")
+                    setError("")
+                    setSuccess("")
+                  }}
+                  className="font-bold text-violet-400 transition-colors hover:text-violet-300"
+                >
+                  {isLogin ? "Sign up free" : "Sign in"}
+                </button>
+              </p>
+            ) : (
               <button
+                type="button"
                 onClick={() => {
-                  setIsLogin(!isLogin)
+                  setPendingVerificationEmail("")
+                  setOtp("")
                   setError("")
+                  setSuccess("")
                 }}
-                className="font-bold text-violet-400 transition-colors hover:text-violet-300"
+                className="mt-4 w-full text-center text-sm font-semibold text-violet-400 transition-colors hover:text-violet-300"
               >
-                {isLogin ? "Sign up free" : "Sign in"}
+                Edit email and sign up again
               </button>
-            </p>
+            )}
           </div>
         </div>
       </div>

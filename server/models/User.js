@@ -5,19 +5,24 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
+
   skills: { type: [String], default: [] },
   streak: { type: Number, default: 0 },
   longestStreak: { type: Number, default: 0 },
   lastAppliedDate: { type: Date, default: null },
+
+  // ✅ ADD THESE (OTP + verification)
+  isVerified: { type: Boolean, default: false },
+  otp: { type: String },
+  otpExpiry: { type: Date }
+
 }, { timestamps: true });
 
-userSchema.pre("save", function(next) {
-  if (!this.isModified("password")) return next();
-  bcrypt.hash(this.password, 12, (err, hash) => {
-    if (err) return next(err);
-    this.password = hash;
-    next();
-  });
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const hash = await bcrypt.hash(this.password, 12);
+  this.password = hash;
 });
 
 userSchema.methods.comparePassword = function(candidatePassword) {

@@ -6,15 +6,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://tracktern-ten.vercel.app",
-    /\.vercel\.app$/
-  ],
-  credentials: true
-}));
 app.use(express.json());
 
 const authRoutes = require("./routes/auth");
@@ -41,9 +34,10 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
-    app.listen(process.env.PORT || 5001, () => {
-      console.log(`✅ Server running on port ${process.env.PORT || 5001}`);
-    });
+const PORT = 5002;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
   })
   .catch((err) => {
     console.error("❌ MongoDB connection failed:", err.message);
