@@ -10,9 +10,9 @@ const router = express.Router();
 const generateToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-const shouldLogOtp =
-  process.env.LOG_OTP === "true" || process.env.NODE_ENV !== "production";
-const shouldReturnOtp = process.env.ALLOW_OTP_IN_RESPONSE === "true";
+const shouldLogOtp = process.env.LOG_OTP === "true";
+const shouldReturnOtp =
+  process.env.ALLOW_OTP_IN_RESPONSE === "true" && process.env.NODE_ENV !== "production";
 
 // 🔥 Generate OTP
 const generateOTP = () =>
@@ -39,24 +39,33 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Name, email, and password are required" });
     }
 
+    const otp = generateOTP();
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      if (existingUser.isVerified) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      existingUser.name = name;
+      existingUser.password = password;
+      existingUser.otp = otp;
+      existingUser.otpExpiry = Date.now() + 5 * 60 * 1000;
+      await existingUser.save();
+    } else {
+      await User.create({
+        name,
+        email,
+        password,
+        isVerified: false,
+        otp,
+        otpExpiry: Date.now() + 5 * 60 * 1000,
+      });
     }
 
-    const otp = generateOTP();
     if (shouldLogOtp) {
       console.log(`🔐 Register OTP for ${email}: ${otp}`);
     }
-
-    await User.create({
-      name,
-      email,
-      password,
-      isVerified: false,
-      otp,
-      otpExpiry: Date.now() + 5 * 60 * 1000,
-    });
 
     await sendEmail(email, "Verify your account", `Your OTP is ${otp}`);
 
@@ -165,6 +174,10 @@ router.post("/forgot-password", async (req, res) => {
 
     if (!user)
       return res.status(400).json({ message: "User not found" });
+
+    if (!user.isVerified) {
+      return res.status(400).json({ message: "Please verify email first" });
+    }
 
     const otp = generateOTP();
     if (shouldLogOtp) {

@@ -31,11 +31,7 @@ export default function ForgotPasswordPage() {
 
       if (data.message === "OTP sent to email") {
         setStep("reset");
-        setSuccess(
-          data.otp
-            ? `OTP for testing: ${data.otp}. Enter it below and reset your password.`
-            : "OTP sent. Check your email and enter the code below."
-        );
+        setSuccess("OTP sent. Check your email and enter the code below.");
       } else {
         setError(data.message || "Unable to send OTP");
       }
