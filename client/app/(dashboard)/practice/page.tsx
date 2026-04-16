@@ -668,12 +668,15 @@ function computeStreakStats(submissionCounts: Record<string, number>) {
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 const HEATMAP_DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""]
+const HEATMAP_CELL_SIZE = 13
+const HEATMAP_GRID_GAP = 4
+const HEATMAP_MONTH_GAP = 10
 const HEATMAP_LEVEL_STYLES = [
-  "bg-slate-700/70 hover:bg-slate-600/80",
-  "bg-blue-900/70 hover:bg-blue-800/80",
-  "bg-blue-700/75 hover:bg-blue-600/80",
-  "bg-sky-500/80 hover:bg-sky-400/85",
-  "bg-cyan-300 hover:bg-cyan-200",
+  "bg-[#261a36] hover:bg-[#312046]",
+  "bg-[#4c1d95]/70 hover:bg-[#5b21b6]/80",
+  "bg-[#6d28d9]/80 hover:bg-[#7c3aed]/85",
+  "bg-[#8b5cf6]/85 hover:bg-[#9f67ff]/90",
+  "bg-[#c084fc] hover:bg-[#d8a4ff]",
 ]
 
 type View = "home" | "topic" | "pattern"
@@ -780,6 +783,20 @@ export default function PracticePage() {
       lastMonth = c.month
     }
   })
+  const monthStartWeeks = useMemo(() => new Set(monthLabels.map((label) => label.week).filter((week) => week > 0)), [monthLabels])
+  const weekOffsets = useMemo(() => {
+    const offsets: number[] = []
+    let currentOffset = 0
+
+    for (let week = 0; week < totalWeeks; week += 1) {
+      offsets.push(currentOffset)
+      currentOffset += HEATMAP_CELL_SIZE + HEATMAP_GRID_GAP
+      if (monthStartWeeks.has(week + 1)) currentOffset += HEATMAP_MONTH_GAP
+    }
+
+    offsets.push(currentOffset)
+    return offsets
+  }, [monthStartWeeks, totalWeeks])
 
   // PATTERN VIEW
   if (view === "pattern" && selectedPattern) {
@@ -922,50 +939,56 @@ export default function PracticePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="glass-card rounded-xl border border-border p-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Flame className="w-5 h-5 text-orange-400" />
-            <span className="text-2xl font-bold text-foreground">{stats.currentStreak}</span>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
+          <div className="mb-1 flex items-center justify-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
+              <Flame className="h-5 w-5 text-[#c084fc]" />
+            </div>
+            <span className="text-2xl font-bold text-violet-50">{stats.currentStreak}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Current Streak</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Current Streak</p>
         </div>
-        <div className="glass-card rounded-xl border border-border p-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-2xl font-bold text-foreground">{totalSolved}</span>
+        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
+          <div className="mb-1 flex items-center justify-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
+              <Trophy className="h-5 w-5 text-[#c084fc]" />
+            </div>
+            <span className="text-2xl font-bold text-violet-50">{totalSolved}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Problems Solved</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Problems Solved</p>
         </div>
-        <div className="glass-card rounded-xl border border-border p-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Target className="w-5 h-5 text-primary" />
-            <span className="text-2xl font-bold text-foreground">{stats.activeDays}</span>
+        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
+          <div className="mb-1 flex items-center justify-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
+              <Target className="h-5 w-5 text-[#c084fc]" />
+            </div>
+            <span className="text-2xl font-bold text-violet-50">{stats.activeDays}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Active Days</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Active Days</p>
         </div>
       </div>
 
       {/* GitHub-style Yearly Heatmap */}
-      <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#111827] px-4 py-5 shadow-[0_20px_60px_rgba(2,6,23,0.28)] sm:px-6">
+      <div className="overflow-hidden rounded-[28px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,#161022_0%,#120d1d_100%)] px-4 py-5 shadow-[0_20px_60px_rgba(76,29,149,0.18)] sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-center gap-2 text-[15px] font-semibold text-slate-100 sm:text-[18px]">
+          <div className="flex items-center gap-2 text-[15px] font-semibold text-violet-50 sm:text-[18px]">
             <span className="text-3xl font-black tracking-tight text-white sm:text-[42px]">{stats.totalSubmissions}</span>
-            <span className="leading-none text-slate-300">submissions in the past one year</span>
-            <Info className="h-4 w-4 text-slate-500" />
+            <span className="leading-none text-violet-100/80">submissions in the past one year</span>
+            <Info className="h-4 w-4 text-violet-300/40" />
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:justify-end">
-            <div className="flex items-center gap-6 text-sm text-slate-400">
-              <span>Total active days: <span className="font-semibold text-slate-100">{stats.activeDays}</span></span>
-              <span>Max streak: <span className="font-semibold text-slate-100">{stats.maxStreak}</span></span>
+            <div className="flex items-center gap-6 text-sm text-violet-100/60">
+              <span>Total active days: <span className="font-semibold text-violet-50">{stats.activeDays}</span></span>
+              <span>Max streak: <span className="font-semibold text-violet-50">{stats.maxStreak}</span></span>
             </div>
             <button
               type="button"
-              className="inline-flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-100 shadow-sm transition-colors hover:bg-white/10"
+              className="inline-flex items-center justify-between gap-3 rounded-xl border border-[#8b5cf6]/20 bg-[#ffffff08] px-4 py-2.5 text-sm font-medium text-violet-50 shadow-sm transition-colors hover:bg-[#ffffff12]"
             >
               Current
-              <ChevronDown className="h-4 w-4 text-slate-400" />
+              <ChevronDown className="h-4 w-4 text-violet-200/60" />
             </button>
           </div>
         </div>
@@ -976,9 +999,10 @@ export default function PracticePage() {
               {monthLabels.map((label, index) => (
                 <div
                   key={`${label.month}-${label.week}`}
-                  className="text-xs font-medium text-slate-400"
+                  className="text-xs font-medium text-violet-100/60"
                   style={{
-                    width: `${(index < monthLabels.length - 1 ? monthLabels[index + 1].week - label.week : totalWeeks - label.week) * 16}px`,
+                    width: `${weekOffsets[index < monthLabels.length - 1 ? monthLabels[index + 1].week : totalWeeks] - weekOffsets[label.week]}px`,
+                    paddingLeft: monthStartWeeks.has(label.week) ? `${HEATMAP_MONTH_GAP}px` : "0px",
                   }}
                 >
                   {MONTH_NAMES[label.month]}
@@ -989,7 +1013,7 @@ export default function PracticePage() {
             <div className="mt-2 flex gap-2">
               <div className="flex flex-col gap-1 pr-1">
                 {HEATMAP_DAY_LABELS.map((day, index) => (
-                  <div key={`${day}-${index}`} className="flex h-[13px] w-5 items-center text-[10px] font-medium text-slate-500">
+                  <div key={`${day}-${index}`} className="flex h-[13px] w-5 items-center text-[10px] font-medium text-violet-200/35">
                     {day}
                   </div>
                 ))}
@@ -997,7 +1021,11 @@ export default function PracticePage() {
 
               <div className="flex gap-1">
                 {Array.from({ length: totalWeeks }, (_, week) => (
-                  <div key={week} className="flex flex-col gap-1">
+                  <div
+                    key={week}
+                    className="flex flex-col gap-1"
+                    style={{ marginLeft: monthStartWeeks.has(week) ? `${HEATMAP_MONTH_GAP}px` : "0px" }}
+                  >
                     {Array.from({ length: 7 }, (_, day) => {
                       const cell = heatmapCellMap.get(`${week}-${day}`)
                       if (!cell) return <div key={day} className="h-[13px] w-[13px]" />
@@ -1012,7 +1040,7 @@ export default function PracticePage() {
                           className={cn(
                             "h-[13px] w-[13px] rounded-[3px] border border-transparent transition-all",
                             HEATMAP_LEVEL_STYLES[level],
-                            isToday && "border-sky-200/80 ring-1 ring-sky-300/30"
+                            isToday && "border-violet-200/90 ring-1 ring-violet-300/40"
                           )}
                         />
                       )
@@ -1022,7 +1050,7 @@ export default function PracticePage() {
               </div>
             </div>
 
-            <div className="mt-5 flex items-center justify-end gap-2 text-xs text-slate-400">
+            <div className="mt-5 flex items-center justify-end gap-2 text-xs text-violet-100/60">
               <span>Less</span>
               {HEATMAP_LEVEL_STYLES.map((color, index) => (
                 <div key={index} className={cn("h-[13px] w-[13px] rounded-[3px]", color)} />
@@ -1034,44 +1062,42 @@ export default function PracticePage() {
       </div>
 
       {/* Daily Problem */}
-      <div className="glass-card rounded-[28px] border border-border p-5 sm:p-6">
+      <div className="rounded-[28px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.14)_0%,rgba(18,13,29,0.96)_100%)] p-5 shadow-[0_18px_48px_rgba(76,29,149,0.14)] sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#8b5cf6]/20 bg-[#8b5cf6]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#d8b4fe]">
               <Sparkles className="w-3.5 h-3.5" />
               Daily Problem
             </div>
-            <h3 className="mt-4 text-2xl font-black text-foreground">{dailyProblem.title}</h3>
+            <h3 className="mt-4 text-2xl font-black text-violet-50">{dailyProblem.title}</h3>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className={cn("text-xs px-2.5 py-1 rounded-full border font-medium", diffColor[dailyProblem.difficulty])}>
                 {dailyProblem.difficulty}
               </span>
-              <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-secondary/60 text-muted-foreground inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#8b5cf6]/16 bg-[#ffffff08] px-2.5 py-1 text-xs text-violet-100/70">
                 <CalendarDays className="w-3.5 h-3.5" />
                 {dailyDone ? "Completed today" : "Not solved yet"}
               </span>
-              <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-secondary/60 text-muted-foreground inline-flex items-center gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#8b5cf6]/16 bg-[#ffffff08] px-2.5 py-1 text-xs text-violet-100/70">
                 <Activity className="w-3.5 h-3.5" />
                 {stats.totalSubmissions} tracked submissions
               </span>
             </div>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              Solve today’s featured problem to keep your momentum up. Daily solves and pattern-sheet solves now both feed the same submission tracker and heatmap.
-            </p>
+    
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 lg:w-[360px]">
-            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Current</p>
-              <p className="mt-2 text-2xl font-black text-foreground">{stats.currentStreak}</p>
+            <div className="rounded-2xl border border-[#8b5cf6]/16 bg-[#ffffff08] px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-violet-100/50">Current</p>
+              <p className="mt-2 text-2xl font-black text-violet-50">{stats.currentStreak}</p>
             </div>
-            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Max</p>
-              <p className="mt-2 text-2xl font-black text-foreground">{stats.maxStreak}</p>
+            <div className="rounded-2xl border border-[#8b5cf6]/16 bg-[#ffffff08] px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-violet-100/50">Max</p>
+              <p className="mt-2 text-2xl font-black text-violet-50">{stats.maxStreak}</p>
             </div>
-            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Active Days</p>
-              <p className="mt-2 text-2xl font-black text-foreground">{stats.activeDays}</p>
+            <div className="rounded-2xl border border-[#8b5cf6]/16 bg-[#ffffff08] px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-violet-100/50">Active Days</p>
+              <p className="mt-2 text-2xl font-black text-violet-50">{stats.activeDays}</p>
             </div>
           </div>
         </div>
@@ -1088,12 +1114,12 @@ export default function PracticePage() {
           {!dailyDone ? (
             <button
               onClick={markDailyDone}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400 hover:bg-green-500/20"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#8b5cf6]/22 bg-[#8b5cf6]/14 px-4 py-3 text-sm font-medium text-[#e9d5ff] hover:bg-[#8b5cf6]/22"
             >
               <CheckCircle className="w-4 h-4" /> Mark as Solved
             </button>
           ) : (
-            <div className="inline-flex items-center justify-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400">
+            <div className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#8b5cf6]/22 bg-[#8b5cf6]/14 px-4 py-3 text-sm font-medium text-[#e9d5ff]">
               <CheckCircle className="w-4 h-4" /> Come back tomorrow for a new one
             </div>
           )}
