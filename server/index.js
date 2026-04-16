@@ -24,9 +24,17 @@ app.use("/api/auth", authRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/ai", require("./routes/ai"));
 app.use("/api/journal", require("./routes/journal"));
+app.use("/api/mock-interview", require("./routes/mock-interview"));
+app.use("/api/community", require("./routes/community"));
+
 
 app.get("/", (req, res) => {
   res.json({ message: "Tracktern API is running 🚀" });
+});
+
+// ✅ ADD THIS
+app.get("/api/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 mongoose
@@ -41,5 +49,3 @@ mongoose
     console.error("❌ MongoDB connection failed:", err.message);
     process.exit(1);
   });
-app.use("/api/mock-interview", require("./routes/mock-interview"));
-app.use("/api/community", require("./routes/community"));
