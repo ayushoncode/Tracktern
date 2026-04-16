@@ -28,6 +28,8 @@ const buildOtpResponse = (message, otp) => {
   return response;
 };
 
+const getTokenFromRequest = (req) => req.headers.authorization?.split(" ")[1];
+
 
 // =============================
 // 👉 REGISTER (send OTP)
@@ -236,7 +238,7 @@ router.post("/reset-password", async (req, res) => {
 // =============================
 router.get("/me", async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = getTokenFromRequest(req);
 
     if (!token)
       return res.status(401).json({ message: "No token provided" });
@@ -250,6 +252,49 @@ router.get("/me", async (req, res) => {
 
     res.json(user);
 
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+});
+
+router.post("/change-password", async (req, res) => {
+  try {
+    const token = getTokenFromRequest(req);
+    const { currentPassword, newPassword } = req.body;
+
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current password and new password are required" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ message: "New password must be different from current password" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }

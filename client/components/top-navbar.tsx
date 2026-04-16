@@ -13,6 +13,12 @@ import Link from "next/link"
 import { getUser, removeToken } from "@/lib/api"
 
 const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+const formatDisplayName = (name: string) =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
 export function TopNavbar() {
   const [user, setUser] = useState<any>(null)
@@ -49,7 +55,7 @@ export function TopNavbar() {
     window.location.href = "/"
   }
 
-  const userName = user?.name || "there"
+  const userName = formatDisplayName(user?.name || "there")
   const userEmail = user?.email || ""
   const streak = Number(user?.streak || 0)
 

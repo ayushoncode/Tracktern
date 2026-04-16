@@ -1,17 +1,30 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, Mail, Bell, Shield, LogOut, CheckCircle } from "lucide-react"
+import { User, Mail, Bell, Shield, LogOut, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
-import { getUser, removeToken } from "@/lib/api"
+import { changePassword, getToken, getUser, removeToken } from "@/lib/api"
+
+const formatDisplayName = (value: string) =>
+  value
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ")
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile")
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmNewPassword, setConfirmNewPassword] = useState("")
+  const [passwordError, setPasswordError] = useState("")
+  const [passwordSuccess, setPasswordSuccess] = useState("")
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
   const [notifications, setNotifications] = useState({
     emailUpdates: true,
     interviewReminders: true,
@@ -23,7 +36,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const user = getUser()
     if (user) {
-      setName(user.name || "")
+      setName(formatDisplayName(user.name || ""))
       setEmail(user.email || "")
     }
   }, [])
@@ -36,6 +49,52 @@ export default function SettingsPage() {
 
   const toggleNotification = (key: keyof typeof notifications) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  const handlePasswordUpdate = async () => {
+    setPasswordError("")
+    setPasswordSuccess("")
+
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      setPasswordError("Please fill in all password fields.")
+      return
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError("New password must be at least 6 characters.")
+      return
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("New password and confirm password do not match.")
+      return
+    }
+
+    const token = getToken()
+    if (!token) {
+      setPasswordError("Your session expired. Please sign in again.")
+      return
+    }
+
+    setIsUpdatingPassword(true)
+
+    try {
+      const response = await changePassword(token, currentPassword, newPassword)
+
+      if (response?.message === "Password updated successfully") {
+        setPasswordSuccess(response.message)
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmNewPassword("")
+        return
+      }
+
+      setPasswordError(response?.message || "Could not update password.")
+    } catch {
+      setPasswordError("Could not update password.")
+    } finally {
+      setIsUpdatingPassword(false)
+    }
   }
 
   const initials = name
@@ -198,20 +257,54 @@ export default function SettingsPage() {
             <div className="glass-card rounded-xl border border-border p-6 space-y-6">
               <h3 className="text-lg font-semibold text-foreground">Security</h3>
               <div className="space-y-4">
+                {passwordError ? (
+                  <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{passwordError}</span>
+                  </div>
+                ) : null}
+                {passwordSuccess ? (
+                  <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
+                    <CheckCircle className="h-4 w-4 shrink-0" />
+                    <span>{passwordSuccess}</span>
+                  </div>
+                ) : null}
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Current Password</label>
-                  <Input type="password" placeholder="Enter current password" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">New Password</label>
-                  <Input type="password" placeholder="Enter new password" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-1.5 block">Confirm New Password</label>
-                  <Input type="password" placeholder="Confirm new password" className="bg-secondary border-border text-foreground placeholder:text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
+                  />
                 </div>
-                <Button className="gradient-purple hover:opacity-90 text-primary-foreground">
-                  Update Password
+                <Button
+                  onClick={handlePasswordUpdate}
+                  disabled={isUpdatingPassword}
+                  className="gradient-purple hover:opacity-90 text-primary-foreground disabled:opacity-60"
+                >
+                  {isUpdatingPassword ? "Updating..." : "Update Password"}
                 </Button>
               </div>
             </div>
