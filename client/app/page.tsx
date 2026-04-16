@@ -6,9 +6,8 @@ import {
   BarChart3,
   BookOpen,
   Brain,
-  Briefcase,
   Calendar,
-  CheckCircle2,
+  CheckCircle,
   ChevronRight,
   Code2,
   Eye,
@@ -18,6 +17,7 @@ import {
   Mail,
   Rocket,
   Sparkles,
+  Star,
   Target,
   TrendingUp,
   Users,
@@ -27,148 +27,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { getToken, loginUser, registerUser, saveToken, saveUser } from "@/lib/api"
 
-const PRODUCT_PILLARS = [
-  {
-    eyebrow: "Track",
-    title: "Applications, statuses, deadlines, and pipeline visibility",
-    description: "Replace messy sheets with a clean application workspace that shows stage progression, company type, and momentum.",
-    icon: Briefcase,
-    accent: "border-blue-500/20 bg-[linear-gradient(180deg,rgba(59,130,246,0.12),rgba(15,15,24,0.94))]",
-  },
-  {
-    eyebrow: "Prepare",
-    title: "AI prep, mock interviews, and resume analysis",
-    description: "Move from applying to actually getting ready with role-targeted prep plans, mock rounds, and resume feedback.",
-    icon: Brain,
-    accent: "border-violet-500/20 bg-[linear-gradient(180deg,rgba(139,92,246,0.12),rgba(15,15,24,0.94))]",
-  },
-  {
-    eyebrow: "Improve",
-    title: "Analytics, skill gaps, and conversion insights",
-    description: "See where your pipeline leaks, which roles perform best, and which skills are holding back interview conversion.",
-    icon: TrendingUp,
-    accent: "border-amber-500/20 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(15,15,24,0.94))]",
-  },
-]
-
-const FEATURE_GRID = [
-  {
-    title: "Application Kanban",
-    description: "Track applied, shortlisted, interview, offer, and rejected stages with company type and deadline context.",
-    icon: Briefcase,
-  },
-  {
-    title: "Advanced Analytics",
-    description: "Trend charts, period comparisons, funnel leaks, top roles, and role-level success insights.",
-    icon: BarChart3,
-  },
-  {
-    title: "AI Prep Workspace",
-    description: "Generate targeted interview questions, revision priorities, and 3-day prep plans per company.",
-    icon: Sparkles,
-  },
-  {
-    title: "Mock Interviews",
-    description: "Practice technical, behavioral, custom, and resume-based rounds with AI-generated questions.",
-    icon: Brain,
-  },
-  {
-    title: "Resume Analyzer",
-    description: "Upload or paste your resume and get company-role specific feedback, missing keywords, and quick wins.",
-    icon: FileSearch,
-  },
-  {
-    title: "Follow-up Emails",
-    description: "Generate polished follow-up drafts based on the application stage and target role.",
-    icon: Mail,
-  },
-  {
-    title: "Interview Calendar",
-    description: "Keep deadlines, interviews, and follow-ups visible in one planning surface.",
-    icon: Calendar,
-  },
-  {
-    title: "Skill Gap Analysis",
-    description: "See which skills are most demanded across your applications and where you still have coverage gaps.",
-    icon: Target,
-  },
-  {
-    title: "Daily Practice",
-    description: "Keep momentum with structured coding practice so prep does not stop after applying.",
-    icon: Code2,
-  },
-  {
-    title: "Interview Journal",
-    description: "Capture what happened in rounds, what you learned, and what to improve before the next one.",
-    icon: BookOpen,
-  },
-  {
-    title: "Community Intel",
-    description: "Browse shared interview experiences and external community signals inside the same workflow.",
-    icon: Users,
-  },
-  {
-    title: "Student-Friendly Setup",
-    description: "One platform for internship hunting instead of juggling docs, sheets, notes, and prep tools separately.",
-    icon: Zap,
-  },
-]
-
-const WORKFLOW_STEPS = [
-  {
-    label: "01",
-    title: "Capture every opportunity",
-    text: "Save company, role, company type, deadline, and status the moment you apply.",
-  },
-  {
-    label: "02",
-    title: "Prep with context",
-    text: "Generate tailored prep plans, resume suggestions, and follow-up emails for that exact role.",
-  },
-  {
-    label: "03",
-    title: "Review the pipeline",
-    text: "Use analytics to see trends, drop-offs, top-performing roles, and company mix.",
-  },
-  {
-    label: "04",
-    title: "Improve every cycle",
-    text: "Use skill gap analysis, daily practice, and journal notes to iterate with each application batch.",
-  },
-]
-
-const SHOWCASE_TABS = [
-  {
-    label: "Pipeline",
-    title: "A real internship CRM, not just a tracker",
-    points: ["Status-aware application board", "Company type tagging", "Recent pipeline activity", "Cleaner dashboard hierarchy"],
-    metrics: [
-      { label: "Applications", value: "38", tone: "bg-blue-500/15 text-blue-300 border-blue-500/20" },
-      { label: "Interviews", value: "7", tone: "bg-violet-500/15 text-violet-300 border-violet-500/20" },
-      { label: "Offers", value: "2", tone: "bg-green-500/15 text-green-300 border-green-500/20" },
-    ],
-  },
-  {
-    label: "Analytics",
-    title: "See trends, comparisons, and conversion leaks",
-    points: ["Applications over time", "This week vs last week", "Biggest drop-off insight", "Success rate by role"],
-    metrics: [
-      { label: "Response rate", value: "42%", tone: "bg-amber-500/15 text-amber-300 border-amber-500/20" },
-      { label: "Best role", value: "SWE", tone: "bg-violet-500/15 text-violet-300 border-violet-500/20" },
-      { label: "Top type", value: "Product", tone: "bg-blue-500/15 text-blue-300 border-blue-500/20" },
-    ],
-  },
-  {
-    label: "AI Stack",
-    title: "From resume to follow-up, AI is built into the workflow",
-    points: ["Resume analyzer", "Mock interview rounds", "AI prep plans", "Follow-up email drafting"],
-    metrics: [
-      { label: "Questions", value: "10", tone: "bg-blue-500/15 text-blue-300 border-blue-500/20" },
-      { label: "Prep plan", value: "3 days", tone: "bg-violet-500/15 text-violet-300 border-violet-500/20" },
-      { label: "Quick wins", value: "6", tone: "bg-green-500/15 text-green-300 border-green-500/20" },
-    ],
-  },
-]
+const PREVIEW_TABS = ["Dashboard", "Applications", "AI Prep", "Analytics", "Resume", "Follow-up", "Calendar", "Practice"]
 
 export default function HomePage() {
   const [showAuth, setShowAuth] = useState(false)
@@ -179,7 +38,7 @@ export default function HomePage() {
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [activeShowcase, setActiveShowcase] = useState(0)
+  const [activeSlide, setActiveSlide] = useState(0)
 
   useEffect(() => {
     const token = getToken()
@@ -187,9 +46,7 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveShowcase((current) => (current + 1) % SHOWCASE_TABS.length)
-    }, 3500)
+    const timer = setInterval(() => setActiveSlide((prev) => (prev + 1) % PREVIEW_TABS.length), 3200)
     return () => clearInterval(timer)
   }, [])
 
@@ -217,56 +74,57 @@ export default function HomePage() {
     setLoading(false)
   }
 
-  const activePanel = SHOWCASE_TABS[activeShowcase]
-
   if (showAuth) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#08080f] p-4">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.28),transparent_42%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.18),transparent_28%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),transparent)]" />
-
+      <div
+        className="relative flex min-h-screen items-center justify-center overflow-hidden p-4"
+        style={{ background: "radial-gradient(ellipse at 50% -20%, #3b1f6e 0%, #080810 55%)" }}
+      >
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute top-0 left-1/2 h-[300px] w-[600px] -translate-x-1/2 opacity-30"
+            style={{ background: "radial-gradient(ellipse,#7c3aed,transparent 70%)" }}
+          />
+        </div>
         <div className="relative z-10 w-full max-w-md">
           <button
             onClick={() => setShowAuth(false)}
-            className="mb-6 inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-white"
+            className="mb-6 flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-white"
           >
-            <ChevronRight className="h-4 w-4 rotate-180" />
-            Back
+            ← Back
           </button>
-
-          <div className="rounded-[28px] border border-white/10 bg-[rgba(15,15,25,0.9)] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)]">
-                <Rocket className="h-5 w-5 text-white" />
+          <div
+            className="rounded-2xl border border-white/10 p-8"
+            style={{ background: "rgba(15,15,25,0.9)", backdropFilter: "blur(24px)" }}
+          >
+            <div className="mb-6 flex items-center gap-2.5">
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-xl"
+                style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)" }}
+              >
+                <Rocket className="h-4 w-4 text-white" />
               </div>
-              <div>
-                <p className="text-lg font-black tracking-tight text-white">Tracktern</p>
-                <p className="text-sm text-gray-500">Internship operating system</p>
-              </div>
+              <span className="text-xl font-black tracking-tight text-white">Tracktern</span>
             </div>
-
-            <h2 className="text-2xl font-black text-white">{isLogin ? "Welcome back" : "Create your workspace"}</h2>
-            <p className="mb-6 mt-1 text-sm text-gray-500">
-              {isLogin ? "Sign in to manage applications, prep, and analytics." : "Start tracking applications and interview prep in one place."}
+            <h2 className="mb-1 text-2xl font-black text-white">{isLogin ? "Welcome back" : "Create your account"}</h2>
+            <p className="mb-6 text-sm text-gray-500">
+              {isLogin ? "Sign in to your dashboard" : "Free forever. No credit card needed."}
             </p>
-
             <div className="mb-5 flex rounded-xl border border-white/8 bg-white/5 p-1">
               <button
                 onClick={() => setIsLogin(true)}
-                className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${isLogin ? "bg-violet-600 text-white" : "text-gray-500 hover:text-white"}`}
+                className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${isLogin ? "bg-violet-600 text-white shadow-lg" : "text-gray-500 hover:text-white"}`}
               >
                 Sign In
               </button>
               <button
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${!isLogin ? "bg-violet-600 text-white" : "text-gray-500 hover:text-white"}`}
+                className={`flex-1 rounded-lg py-2 text-sm font-bold transition-all ${!isLogin ? "bg-violet-600 text-white shadow-lg" : "text-gray-500 hover:text-white"}`}
               >
                 Sign Up
               </button>
             </div>
-
             {error ? <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">{error}</div> : null}
-
             <form className="space-y-3" onSubmit={handleSubmit}>
               {!isLogin ? (
                 <Input
@@ -275,10 +133,9 @@ export default function HomePage() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   required
-                  className="h-12 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-gray-600"
+                  className="h-12 rounded-xl border-white/10 bg-white/5 text-sm text-white placeholder:text-gray-600"
                 />
               ) : null}
-
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
                 <Input
@@ -287,10 +144,9 @@ export default function HomePage() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   required
-                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 text-white placeholder:text-gray-600"
+                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-gray-600"
                 />
               </div>
-
               <div className="relative">
                 <FileText className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
                 <Input
@@ -299,32 +155,30 @@ export default function HomePage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
-                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 pr-10 text-white placeholder:text-gray-600"
+                  className="h-12 rounded-xl border-white/10 bg-white/5 pl-10 pr-10 text-sm text-white placeholder:text-gray-600"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((current) => !current)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 transition-colors hover:text-gray-300"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] text-sm font-black text-white transition hover:opacity-90 disabled:opacity-50"
+                className="mt-2 h-12 w-full rounded-xl text-sm font-black text-white transition-all hover:scale-[1.01] hover:opacity-90 disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 8px 32px rgba(124,58,237,0.4)" }}
               >
-                {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Free Account"}
-                <ArrowRight className="h-4 w-4" />
+                {loading ? "Please wait..." : isLogin ? "Sign In →" : "Create Free Account →"}
               </button>
             </form>
-
             <p className="mt-4 text-center text-sm text-gray-600">
               {isLogin ? "No account? " : "Have an account? "}
               <button
                 onClick={() => {
-                  setIsLogin((current) => !current)
+                  setIsLogin(!isLogin)
                   setError("")
                 }}
                 className="font-bold text-violet-400 transition-colors hover:text-violet-300"
@@ -339,381 +193,521 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#08080f] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.22),transparent_34%),radial-gradient(circle_at_80%_18%,rgba(59,130,246,0.14),transparent_22%),linear-gradient(180deg,#08080f_0%,#090913_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
+    <div className="min-h-screen overflow-x-hidden" style={{ background: "#08080f", fontFamily: "system-ui,-apple-system,sans-serif" }}>
+      <style>{`
+        @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+        @keyframes pulse-glow { 0%,100% { box-shadow:0 0 40px rgba(124,58,237,0.3); } 50% { box-shadow:0 0 80px rgba(124,58,237,0.6); } }
+        .fade-up-1 { animation: fadeUp 0.7s ease 0.1s both; }
+        .fade-up-2 { animation: fadeUp 0.7s ease 0.2s both; }
+        .fade-up-3 { animation: fadeUp 0.7s ease 0.3s both; }
+        .fade-up-4 { animation: fadeUp 0.7s ease 0.4s both; }
+        .ticker-wrap { overflow:hidden; }
+        .ticker-track { display:flex; animation: ticker 25s linear infinite; white-space:nowrap; }
+        .card-hover { transition: transform 0.2s ease, border-color 0.2s ease; }
+        .card-hover:hover { transform: translateY(-3px); }
+      `}</style>
 
-      <div className="relative z-10">
-        <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/6 bg-[rgba(8,8,15,0.78)] backdrop-blur-2xl">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)]">
-                <Rocket className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-lg font-black tracking-tight text-white">Tracktern</p>
-                <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Internship OS</p>
-              </div>
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(8,8,15,0.8)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)" }}>
+              <Rocket className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-lg font-black tracking-tight text-white">Tracktern</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setShowAuth(true)
+                setIsLogin(true)
+              }}
+              className="rounded-lg px-4 py-2 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => {
+                setShowAuth(true)
+                setIsLogin(false)
+              }}
+              className="rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 hover:shadow-lg"
+              style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 4px 20px rgba(124,58,237,0.35)" }}
+            >
+              Get Started Free
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <section className="relative overflow-hidden px-6 pt-32 pb-8" style={{ minHeight: "100vh", display: "flex", alignItems: "center" }}>
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-1/2 h-[600px] w-[900px] -translate-x-1/2" style={{ background: "radial-gradient(ellipse at 50% 0%,rgba(124,58,237,0.25) 0%,transparent 65%)" }} />
+          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(rgba(124,58,237,0.08) 1px,transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div className="absolute bottom-0 left-0 right-0 h-32" style={{ background: "linear-gradient(to top,#08080f,transparent)" }} />
+        </div>
+
+        <div className="relative z-10 mx-auto w-full max-w-5xl">
+          <div className="mb-12 text-center">
+            <div
+              className="fade-up-1 mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-widest"
+              style={{ background: "rgba(124,58,237,0.12)", borderColor: "rgba(124,58,237,0.35)", color: "#c4b5fd" }}
+            >
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
+              AI-Powered Internship Tracker
             </div>
 
-            <div className="hidden items-center gap-6 md:flex">
-              <a href="#features" className="text-sm text-gray-400 transition-colors hover:text-white">Features</a>
-              <a href="#platform" className="text-sm text-gray-400 transition-colors hover:text-white">Platform</a>
-              <a href="#workflow" className="text-sm text-gray-400 transition-colors hover:text-white">Workflow</a>
-            </div>
+            <h1 className="fade-up-2 mb-6 font-black leading-[0.92] tracking-tight text-white" style={{ fontSize: "clamp(52px,8vw,96px)" }}>
+              Land your
+              <br />
+              <span style={{ background: "linear-gradient(135deg,#c4b5fd 0%,#818cf8 50%,#67e8f9 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                dream internship
+              </span>
+            </h1>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(true)
-                }}
-                className="rounded-lg px-4 py-2 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
-              >
-                Sign In
-              </button>
+            <p className="fade-up-3 mx-auto mb-10 max-w-[620px] text-gray-400 leading-relaxed" style={{ fontSize: "clamp(16px,2vw,20px)" }}>
+              Stop losing track on Excel sheets and WhatsApp.
+              <br />
+              Tracktern organizes applications, prep, analytics, and follow-ups in one place.
+            </p>
+
+            <div className="fade-up-4 mb-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <button
                 onClick={() => {
                   setShowAuth(true)
                   setIsLogin(false)
                 }}
-                className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_32px_rgba(124,58,237,0.32)] transition hover:scale-[1.02] hover:opacity-95"
+                className="flex items-center gap-2.5 rounded-2xl px-9 py-4 text-lg font-black text-white transition-all hover:scale-105"
+                style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 0 50px rgba(124,58,237,0.45)", animation: "pulse-glow 3s ease-in-out infinite" }}
               >
-                Get Started
-                <ArrowRight className="h-4 w-4" />
+                Get Started Free <ArrowRight className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => {
+                  setShowAuth(true)
+                  setIsLogin(true)
+                }}
+                className="flex items-center gap-2 rounded-2xl border px-7 py-4 text-base font-bold text-gray-300 transition-all hover:border-white/25 hover:text-white"
+                style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.1)" }}
+              >
+                Sign In <ChevronRight className="h-4 w-4" />
               </button>
             </div>
-          </div>
-        </nav>
 
-        <section className="px-6 pb-18 pt-32">
-          <div className="mx-auto grid max-w-7xl gap-10 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-violet-200">
-                <span className="inline-block h-2 w-2 rounded-full bg-violet-400" />
-                Built for internship pipelines
+            <div className="fade-up-4 mb-14 flex items-center justify-center gap-3">
+              <div className="flex -space-x-2">
+                {[["A", "#7c3aed"], ["R", "#4f46e5"], ["P", "#0ea5e9"], ["S", "#10b981"], ["K", "#f59e0b"], ["M", "#ec4899"]].map(([label, color], index) => (
+                  <div key={index} className="flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-black text-white" style={{ background: color, borderColor: "#08080f" }}>
+                    {label}
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, index) => <Star key={index} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />)}
+              </div>
+              <span className="text-sm text-gray-500">Loved by 100+ students</span>
+            </div>
+          </div>
+
+          <div className="relative mx-auto" style={{ maxWidth: "940px" }}>
+            <div className="absolute -inset-2 rounded-3xl opacity-40 blur-2xl" style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)" }} />
+            <div className="relative overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(12,12,22,0.95)", backdropFilter: "blur(10px)" }}>
+              <div className="flex items-center gap-2 px-4 py-3" style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="flex gap-1.5">
+                  <div className="h-3 w-3 rounded-full" style={{ background: "#ff5f57" }} />
+                  <div className="h-3 w-3 rounded-full" style={{ background: "#ffbd2e" }} />
+                  <div className="h-3 w-3 rounded-full" style={{ background: "#28c840" }} />
+                </div>
+                <div className="mx-4 flex h-6 flex-1 items-center rounded-lg px-3 text-xs" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>
+                  tracktern.com/dashboard
+                </div>
+                <div className="flex gap-2">
+                  {PREVIEW_TABS.map((_, index) => (
+                    <div
+                      key={index}
+                      onClick={() => setActiveSlide(index)}
+                      className="cursor-pointer rounded-full transition-all"
+                      style={{ width: index === activeSlide ? "20px" : "6px", height: "6px", background: index === activeSlide ? "#7c3aed" : "rgba(255,255,255,0.2)" }}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <h1 className="mt-8 max-w-4xl text-5xl font-black leading-[0.94] tracking-[-0.04em] text-white sm:text-6xl xl:text-7xl">
-                The SaaS workspace for
-                <span className="block bg-[linear-gradient(135deg,#d8b4fe_0%,#93c5fd_52%,#67e8f9_100%)] bg-clip-text text-transparent">
-                  applying, prepping, and improving
-                </span>
-              </h1>
+              <div className="p-6" style={{ minHeight: "430px" }}>
+                {activeSlide === 0 ? <DashboardSlide /> : null}
+                {activeSlide === 1 ? <ApplicationsSlide /> : null}
+                {activeSlide === 2 ? <AIPrepSlide /> : null}
+                {activeSlide === 3 ? <AnalyticsSlide /> : null}
+                {activeSlide === 4 ? <ResumeSlide /> : null}
+                {activeSlide === 5 ? <FollowUpSlide /> : null}
+                {activeSlide === 6 ? <CalendarSlide /> : null}
+                {activeSlide === 7 ? <PracticeSlide /> : null}
+              </div>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-400">
-                Tracktern brings your application board, analytics, AI prep, resume feedback, follow-up drafts,
-                calendar, practice, journal, and community intel into one focused workflow.
-              </p>
+              <div className="flex items-center gap-3 px-4 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.02)" }}>
+                {PREVIEW_TABS.map((label, index) => (
+                  <button
+                    key={label}
+                    onClick={() => setActiveSlide(index)}
+                    className="rounded-full px-3 py-1.5 text-xs font-bold transition-all"
+                    style={{
+                      background: index === activeSlide ? "rgba(124,58,237,0.25)" : "transparent",
+                      color: index === activeSlide ? "#c4b5fd" : "rgba(255,255,255,0.3)",
+                      border: index === activeSlide ? "1px solid rgba(124,58,237,0.4)" : "1px solid transparent",
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+      <div className="overflow-hidden border-y py-4" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
+        <div className="ticker-wrap">
+          <div className="ticker-track">
+            {[...Array(2)].map((_, rep) => (
+              <div key={rep} className="flex items-center gap-8 px-4">
+                {[
+                  "Application Tracker",
+                  "AI Interview Prep",
+                  "Resume Analyzer",
+                  "Follow-up Emails",
+                  "Interview Calendar",
+                  "Advanced Analytics",
+                  "Skill Gap Analyzer",
+                  "Daily Practice",
+                  "Community Experiences",
+                  "Interview Journal",
+                  "100% Free",
+                ].map((item) => (
+                  <div key={item} className="flex shrink-0 items-center gap-3">
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#7c3aed" }} />
+                    <span className="whitespace-nowrap text-sm font-bold" style={{ color: "rgba(255,255,255,0.3)" }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <section className="px-6 py-16">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-6 text-center md:grid-cols-4">
+          {[
+            { value: "100%", label: "Free Forever" },
+            { value: "11+", label: "Powerful Features" },
+            { value: "700+", label: "DSA Problems" },
+            { value: "AI", label: "Powered Prep" },
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="mb-1 text-3xl font-black" style={{ background: "linear-gradient(135deg,#c4b5fd,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                {stat.value}
+              </div>
+              <div className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-12 text-center">
+            <h2 className="mb-3 text-white font-black tracking-tight" style={{ fontSize: "clamp(32px,5vw,52px)" }}>Sound familiar?</h2>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "18px" }}>Every student faces this. Most never fix it.</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="card-hover rounded-2xl p-8" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.15)" }}>
+              <div className="mb-5 text-xs font-black uppercase tracking-widest" style={{ color: "#f87171" }}>😓 Without Tracktern</div>
+              {[
+                "Applications lost in WhatsApp & email",
+                "Excel sheets nobody updates",
+                "Missing deadlines and follow-ups",
+                "Zero prep strategy before interviews",
+                "No clue which skills you're missing",
+              ].map((item, index) => (
+                <div key={item} className="flex items-start gap-3 py-3" style={{ borderBottom: index < 4 ? "1px solid rgba(239,68,68,0.08)" : "none" }}>
+                  <span className="mt-0.5 shrink-0 font-black" style={{ color: "#ef4444" }}>✕</span>
+                  <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{item}</span>
+                </div>
+              ))}
+            </div>
+            <div className="card-hover rounded-2xl p-8" style={{ background: "rgba(124,58,237,0.05)", border: "1px solid rgba(124,58,237,0.2)" }}>
+              <div className="mb-5 text-xs font-black uppercase tracking-widest" style={{ color: "#a78bfa" }}>✅ With Tracktern</div>
+              {[
+                "One dashboard — every application tracked",
+                "AI prep, resume help, and follow-up drafts",
+                "Analytics so you see pipeline leaks",
+                "Know exactly which skills to build",
+                "Land more interviews, convert more offers",
+              ].map((item, index) => (
+                <div key={item} className="flex items-start gap-3 py-3" style={{ borderBottom: index < 4 ? "1px solid rgba(124,58,237,0.08)" : "none" }}>
+                  <span className="mt-0.5 shrink-0 font-black" style={{ color: "#7c3aed" }}>✓</span>
+                  <span className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-16" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <p className="mb-3 text-xs font-black uppercase tracking-widest" style={{ color: "#7c3aed" }}>Everything included · Free</p>
+            <h2 className="font-black tracking-tight text-white" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
+              One app. Every tool
+              <br />
+              you need.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              { icon: BarChart3, color: "#7c3aed", title: "Application Tracker", tag: "Core", desc: "Kanban board with status flow, company type, deadlines, and a cleaner dashboard overview." },
+              { icon: Brain, color: "#0ea5e9", title: "AI Interview Prep", tag: "AI ✨", desc: "Top questions, skills to revise, and personalized prep plans for any company and role." },
+              { icon: TrendingUp, color: "#f59e0b", title: "Advanced Analytics", tag: "Smart", desc: "Trends, comparisons, funnel leaks, top-performing roles, and company-type insights." },
+              { icon: FileSearch, color: "#10b981", title: "Resume Analyzer", tag: "AI", desc: "Upload or paste your resume to get targeted feedback, missing keywords, and quick wins." },
+              { icon: Mail, color: "#14b8a6", title: "Follow-up Emails", tag: "Workflow", desc: "Generate polished follow-up drafts that match the company, role, and application stage." },
+              { icon: Calendar, color: "#6366f1", title: "Interview Calendar", tag: "Planning", desc: "See deadlines, interviews, and follow-ups in one place instead of juggling reminders." },
+              { icon: Target, color: "#ef4444", title: "Skill Gap Analyzer", tag: "Growth", desc: "See exactly which skills companies want and where you still need to improve." },
+              { icon: Code2, color: "#a78bfa", title: "Daily Practice", tag: "DSA", desc: "Pattern-wise practice with 700+ curated problems so preparation stays consistent." },
+              { icon: BookOpen, color: "#f97316", title: "Interview Journal", tag: "Reflection", desc: "Write down what happened in rounds so every interview improves the next one." },
+              { icon: Users, color: "#ec4899", title: "Community", tag: "Social", desc: "Explore real interview experiences and community signals inside the same workflow." },
+              { icon: Sparkles, color: "#22c55e", title: "AI Mock Interview", tag: "Practice", desc: "Practice technical, behavioral, custom, and resume-based rounds with AI." },
+              { icon: Zap, color: "#facc15", title: "Gmail Sync", tag: "Coming Soon", desc: "Auto-detect offers, interviews, and rejections so your tracker updates itself." },
+            ].map((feature) => (
+              <div
+                key={feature.title}
+                className="card-hover rounded-2xl p-6"
+                style={{
+                  background: `linear-gradient(180deg,${feature.color}12,rgba(255,255,255,0.03))`,
+                  border: `1px solid ${feature.color}25`,
+                }}
+              >
+                <div className="mb-5 flex items-start justify-between">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${feature.color}18` }}>
+                    <feature.icon className="h-5 w-5" style={{ color: feature.color }} />
+                  </div>
+                  <span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ background: `${feature.color}18`, color: feature.color }}>{feature.tag}</span>
+                </div>
+                <h3 className="mb-2 text-lg font-black text-white">{feature.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div
+            className="relative overflow-hidden rounded-3xl p-10"
+            style={{ background: "linear-gradient(135deg,rgba(16,185,129,0.06),rgba(16,185,129,0.02))", border: "1px solid rgba(16,185,129,0.15)" }}
+          >
+            <div className="absolute top-0 right-0 h-64 w-64 opacity-10" style={{ background: "radial-gradient(circle,#10b981,transparent 70%)" }} />
+            <div className="relative z-10 grid items-center gap-10 md:grid-cols-2">
+              <div>
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-widest" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)" }}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse" />
+                  Coming Soon
+                </div>
+                <h3 className="mb-4 font-black tracking-tight text-white" style={{ fontSize: "clamp(28px,4vw,40px)" }}>Gmail Auto-Detection</h3>
+                <p className="mb-6 leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  Connect Gmail and Tracktern automatically detects offer letters, rejection emails,
+                  and interview invites — updating your tracker without lifting a finger.
+                </p>
+                {[
+                  "Auto-detect offers & rejections",
+                  "Interview invite notifications",
+                  "Full company email history",
+                  "Zero manual updates ever",
+                ].map((item) => (
+                  <div key={item} className="mb-2.5 flex items-center gap-2.5">
+                    <CheckCircle className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
+                    <span className="text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>{item}</span>
+                  </div>
+                ))}
                 <button
                   onClick={() => {
                     setShowAuth(true)
                     setIsLogin(false)
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] px-8 py-4 text-base font-black text-white shadow-[0_18px_48px_rgba(124,58,237,0.3)] transition hover:scale-[1.02]"
+                  className="mt-6 flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white transition-all hover:scale-105"
+                  style={{ background: "linear-gradient(135deg,#10b981,#059669)" }}
                 >
-                  Create free account
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    setShowAuth(true)
-                    setIsLogin(true)
-                  }}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-base font-semibold text-gray-200 transition hover:border-white/20 hover:bg-white/7"
-                >
-                  Sign in
-                  <ChevronRight className="h-4 w-4" />
+                  Get Early Access <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
-
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {[
-                  { label: "Track", text: "Applications, stages, deadlines, company type" },
-                  { label: "Prepare", text: "AI prep plans, mock interviews, resume analyzer" },
-                  { label: "Improve", text: "Analytics, skill gaps, journal, daily practice" },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4 backdrop-blur-xl">
-                    <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{item.label}</p>
-                    <p className="mt-2 text-sm leading-6 text-gray-300">{item.text}</p>
+              <div className="overflow-hidden rounded-2xl" style={{ background: "rgba(8,8,15,0.8)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                <div className="flex items-center justify-between p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" style={{ color: "#10b981" }} />
+                    <span className="text-sm font-black text-white">Gmail Sync</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-[36px] bg-[radial-gradient(circle,rgba(124,58,237,0.28),transparent_60%)] blur-3xl" />
-              <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[rgba(13,13,21,0.92)] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-                <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
-                  <div>
-                    <p className="text-sm font-semibold text-white">Tracktern workspace</p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Product mock</p>
-                  </div>
-                  <div className="flex gap-2">
-                    {SHOWCASE_TABS.map((tab, index) => (
-                      <button
-                        key={tab.label}
-                        onClick={() => setActiveShowcase(index)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition ${activeShowcase === index ? "bg-white text-black" : "bg-white/5 text-gray-400 hover:text-white"}`}
-                      >
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
+                  <span className="rounded-full px-2 py-1 text-xs font-bold" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>Coming Soon</span>
                 </div>
-
-                <div className="grid gap-4 lg:grid-cols-[0.28fr_0.72fr]">
-                  <div className="rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-4">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">Modules</p>
-                    <div className="mt-4 space-y-2">
-                      {[
-                        "Dashboard",
-                        "Applications",
-                        "Analytics",
-                        "AI Prep",
-                        "Mock Interview",
-                        "Resume",
-                        "Follow-up",
-                      ].map((item) => {
-                        const isActive =
-                          (activeShowcase === 0 && item === "Applications") ||
-                          (activeShowcase === 1 && item === "Analytics") ||
-                          (activeShowcase === 2 && item === "AI Prep")
-
-                        return (
-                          <div
-                            key={item}
-                            className={`rounded-2xl border px-3 py-2 text-sm transition ${
-                              isActive
-                                ? "border-violet-500/30 bg-violet-500/14 text-white"
-                                : "border-white/6 bg-white/[0.02] text-gray-400"
-                            }`}
-                          >
-                            {item}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Live surface</p>
-                          <h3 className="mt-3 text-2xl font-bold text-white">{activePanel.title}</h3>
-                        </div>
-                        <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-2 text-right">
-                          <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">Mode</p>
-                          <p className="mt-1 text-sm font-semibold text-white">{activePanel.label}</p>
-                        </div>
+                <div className="space-y-2.5 p-4">
+                  {[
+                    { company: "Google", message: "Interview scheduled for...", color: "#f59e0b", icon: "📅", time: "2m ago" },
+                    { company: "Microsoft", message: "Congratulations! Offer...", color: "#10b981", icon: "🎉", time: "1h ago" },
+                    { company: "Flipkart", message: "Application received...", color: "#7c3aed", icon: "✅", time: "3h ago" },
+                    { company: "Razorpay", message: "Moving to next round...", color: "#0ea5e9", icon: "🔥", time: "1d ago" },
+                  ].map((item) => (
+                    <div key={item.company} className="flex items-center gap-3 rounded-xl p-3 transition-colors" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base" style={{ background: `${item.color}18` }}>
+                        {item.icon}
                       </div>
-
-                      <div className="mt-5">
-                        {activeShowcase === 0 ? <PipelineMock /> : null}
-                        {activeShowcase === 1 ? <AnalyticsMock /> : null}
-                        {activeShowcase === 2 ? <AIStackMock /> : null}
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-black text-white">{item.company}</div>
+                        <div className="truncate text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{item.message}</div>
                       </div>
+                      <div className="shrink-0 text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>{item.time}</div>
                     </div>
-
-                    <div className="grid gap-3 sm:grid-cols-3">
-                      {activePanel.metrics.map((metric) => (
-                        <div key={metric.label} className={`rounded-2xl border px-4 py-4 ${metric.tone}`}>
-                          <p className="text-[11px] uppercase tracking-[0.18em]">{metric.label}</p>
-                          <p className="mt-2 text-2xl font-black">{metric.value}</p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="rounded-[24px] border border-violet-500/20 bg-[linear-gradient(180deg,rgba(139,92,246,0.14),rgba(15,15,24,0.92))] p-5">
-                      <p className="text-xs uppercase tracking-[0.18em] text-violet-200/70">What makes it different</p>
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        {activePanel.points.map((point) => (
-                          <div key={point} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-background/30 p-3">
-                            <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-300" />
-                            <p className="text-sm text-gray-300">{point}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  ))}
+                  <div className="pt-1 text-center text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>Auto-synced from your inbox</div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="platform" className="px-6 py-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8 max-w-3xl">
-              <p className="text-xs uppercase tracking-[0.22em] text-gray-500">Platform</p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                A broader product than the landing page used to show
-              </h2>
-              <p className="mt-4 text-base leading-7 text-gray-400">
-                The app already had many product surfaces that were invisible on the homepage. Now the landing page presents
-                the product like a real SaaS suite instead of a single-page tracker.
-              </p>
+      <section className="relative overflow-hidden px-6 py-28">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 h-[400px] w-[700px] -translate-x-1/2 -translate-y-1/2 opacity-15" style={{ background: "radial-gradient(ellipse,#7c3aed,transparent 65%)" }} />
+        </div>
+        <div className="relative z-10 mx-auto max-w-2xl text-center">
+          <h2 className="mb-5 font-black leading-[0.92] tracking-tight text-white" style={{ fontSize: "clamp(40px,7vw,72px)" }}>
+            Ready to land
+            <br />
+            <span style={{ background: "linear-gradient(135deg,#c4b5fd,#818cf8,#67e8f9)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              your internship?
+            </span>
+          </h2>
+          <p className="mb-10 text-lg" style={{ color: "rgba(255,255,255,0.4)" }}>
+            Join students who stopped guessing and started tracking.
+          </p>
+          <button
+            onClick={() => {
+              setShowAuth(true)
+              setIsLogin(false)
+            }}
+            className="inline-flex items-center gap-3 rounded-2xl px-12 py-5 text-xl font-black text-white transition-all hover:scale-105"
+            style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", boxShadow: "0 0 80px rgba(124,58,237,0.5)" }}
+          >
+            Start Tracking Free <ArrowRight className="h-6 w-6" />
+          </button>
+          <p className="mt-4 text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>No credit card · Free forever · Built by a student</p>
+        </div>
+      </section>
+
+      <footer className="px-6 py-8" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md" style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)" }}>
+              <Rocket className="h-3 w-3 text-white" />
             </div>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>Tracktern — Built by Ayush</span>
+          </div>
+          <div className="flex items-center gap-6 text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <button onClick={() => { setShowAuth(true); setIsLogin(false) }} className="transition-colors hover:text-white">Sign Up</button>
+            <button onClick={() => { setShowAuth(true); setIsLogin(true) }} className="transition-colors hover:text-white">Sign In</button>
+            <a href="/community" className="flex items-center gap-1 transition-colors hover:text-white">
+              <Users className="h-3.5 w-3.5" /> Community
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
 
-            <div className="grid gap-5 lg:grid-cols-3">
-              {PRODUCT_PILLARS.map((pillar) => (
-                <div key={pillar.title} className={`rounded-[28px] border p-6 ${pillar.accent}`}>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-background/35">
-                    <pillar.icon className="h-5 w-5 text-white" />
-                  </div>
-                  <p className="mt-5 text-xs uppercase tracking-[0.2em] text-gray-500">{pillar.eyebrow}</p>
-                  <h3 className="mt-3 text-2xl font-bold text-white">{pillar.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-gray-300">{pillar.description}</p>
-                </div>
-              ))}
+function DashboardSlide() {
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <div className="text-lg font-black text-white">Hey Ayush 👋</div>
+          <div className="text-sm text-gray-500">Your internship dashboard</div>
+        </div>
+        <div className="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
+          🔥 3 day streak
+        </div>
+      </div>
+      <div className="mb-5 grid grid-cols-4 gap-3">
+        {[
+          { value: "12", label: "Applied", color: "#7c3aed", progress: 60 },
+          { value: "4", label: "Shortlisted", color: "#0ea5e9", progress: 33 },
+          { value: "2", label: "Interview", color: "#f59e0b", progress: 17 },
+          { value: "1", label: "Offer 🎉", color: "#10b981", progress: 8 },
+        ].map((item) => (
+          <div key={item.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="mb-1 text-2xl font-black text-white">{item.value}</div>
+            <div className="mb-2 text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{item.label}</div>
+            <div className="h-1 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }}>
+              <div className="h-1 rounded-full" style={{ width: `${item.progress}%`, background: item.color }} />
             </div>
           </div>
-        </section>
-
-        <section id="features" className="px-6 py-16">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-3xl">
-                <p className="text-xs uppercase tracking-[0.22em] text-gray-500">Feature Stack</p>
-                <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  Everything the product actually ships today
-                </h2>
-              </div>
-              <p className="max-w-xl text-sm leading-7 text-gray-400">
-                This section now mirrors the dashboard capabilities instead of hiding them. The goal is clearer recognition:
-                visitors should understand this is an internship operating system.
-              </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {FEATURE_GRID.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-5 transition hover:-translate-y-1 hover:border-white/14"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                    <feature.icon className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="mt-5 text-xl font-semibold text-white">{feature.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-gray-400">{feature.description}</p>
-                </div>
-              ))}
-            </div>
+        ))}
+      </div>
+      <div className="overflow-hidden rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="grid grid-cols-4 px-4 py-2.5 text-xs font-bold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.3)" }}>
+          <span>Company</span><span>Role</span><span>Date</span><span>Status</span>
+        </div>
+        {[
+          { company: "Google", role: "SWE Intern", date: "Apr 10", status: "Interview", color: "#f59e0b" },
+          { company: "Microsoft", role: "PM Intern", date: "Apr 8", status: "Shortlisted", color: "#0ea5e9" },
+          { company: "Flipkart", role: "SDE Intern", date: "Apr 5", status: "Applied", color: "#7c3aed" },
+          { company: "Razorpay", role: "Backend", date: "Apr 3", status: "Offer", color: "#10b981" },
+        ].map((row) => (
+          <div key={row.company} className="grid grid-cols-4 items-center px-4 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+            <span className="text-sm font-bold text-white">{row.company}</span>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{row.role}</span>
+            <span className="text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>{row.date}</span>
+            <span className="w-fit rounded-full px-2.5 py-1 text-xs font-black" style={{ background: `${row.color}20`, color: row.color }}>{row.status}</span>
           </div>
-        </section>
-
-        <section id="workflow" className="px-6 py-10">
-          <div className="mx-auto max-w-7xl rounded-[36px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-6 sm:p-8 lg:p-10">
-            <div className="mb-10 max-w-3xl">
-              <p className="text-xs uppercase tracking-[0.22em] text-gray-500">Workflow</p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                How Tracktern fits the full internship cycle
-              </h2>
-              <p className="mt-4 text-base leading-7 text-gray-400">
-                The landing page now explains the operating model: capture opportunities, prep with context, review the
-                pipeline, and improve the next batch using actual feedback loops.
-              </p>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-4">
-              {WORKFLOW_STEPS.map((step) => (
-                <div key={step.label} className="rounded-[24px] border border-white/8 bg-background/30 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">{step.label}</p>
-                  <h3 className="mt-4 text-xl font-semibold text-white">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-gray-400">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-6 py-18">
-          <div className="mx-auto max-w-6xl rounded-[36px] border border-violet-500/20 bg-[linear-gradient(135deg,rgba(124,58,237,0.18),rgba(59,130,246,0.08),rgba(15,15,24,0.95))] p-8 text-center shadow-[0_24px_90px_rgba(0,0,0,0.32)] sm:p-12">
-            <p className="text-xs uppercase tracking-[0.22em] text-violet-200/70">Ready to use the full platform?</p>
-            <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-black tracking-tight text-white sm:text-5xl">
-              Stop stitching together five tools for one internship hunt
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-              Track applications, understand the pipeline, prepare smarter, and improve every cycle from one SaaS-style workspace.
-            </p>
-            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-              <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(false)
-                }}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-black text-black transition hover:opacity-90"
-              >
-                Start free
-                <ArrowRight className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(true)
-                }}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10"
-              >
-                Sign in
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </section>
+        ))}
       </div>
     </div>
   )
 }
 
-function PipelineMock() {
+function ApplicationsSlide() {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          { label: "Applied", value: "38", tone: "border-blue-500/20 bg-blue-500/10 text-blue-300" },
-          { label: "Interview", value: "7", tone: "border-violet-500/20 bg-violet-500/10 text-violet-300" },
-          { label: "Offer", value: "2", tone: "border-green-500/20 bg-green-500/10 text-green-300" },
-        ].map((item) => (
-          <div key={item.label} className={`rounded-2xl border p-4 ${item.tone}`}>
-            <p className="text-[11px] uppercase tracking-[0.18em]">{item.label}</p>
-            <p className="mt-2 text-2xl font-black">{item.value}</p>
-          </div>
-        ))}
+    <div>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <div className="text-lg font-black text-white">Applications</div>
+          <div className="text-sm text-gray-500">Kanban board view</div>
+        </div>
+        <div className="rounded-lg px-3 py-1.5 text-sm font-bold text-white" style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)" }}>+ Add Company</div>
       </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-5 gap-3">
         {[
-          {
-            title: "Applied",
-            tone: "border-blue-500/20 bg-[linear-gradient(180deg,rgba(59,130,246,0.12),rgba(17,17,24,0.92))]",
-            cards: ["Google · SWE", "Notion · PM"],
-          },
-          {
-            title: "Interview",
-            tone: "border-violet-500/20 bg-[linear-gradient(180deg,rgba(139,92,246,0.12),rgba(17,17,24,0.92))]",
-            cards: ["Razorpay · SDE", "Adobe · Intern"],
-          },
-          {
-            title: "Offer",
-            tone: "border-green-500/20 bg-[linear-gradient(180deg,rgba(34,197,94,0.12),rgba(17,17,24,0.92))]",
-            cards: ["Postman · SWE"],
-          },
+          { title: "Applied", dot: "#3b82f6", cards: ["Google — ML", "Amazon — SDE"] },
+          { title: "Shortlisted", dot: "#f59e0b", cards: ["Microsoft — PM"] },
+          { title: "Interview", dot: "#8b5cf6", cards: ["JPMorgan — SWE"] },
+          { title: "Offer", dot: "#10b981", cards: ["Postman — SWE"] },
+          { title: "Rejected", dot: "#ef4444", cards: [] },
         ].map((column) => (
-          <div key={column.title} className={`rounded-2xl border p-3 ${column.tone}`}>
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-semibold text-white">{column.title}</p>
-              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[11px] text-gray-300">{column.cards.length}</span>
+          <div key={column.title}>
+            <div className="mb-2 flex items-center gap-1.5">
+              <div className="h-2 w-2 rounded-full" style={{ background: column.dot }} />
+              <span className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.5)" }}>{column.title}</span>
             </div>
             <div className="space-y-2">
               {column.cards.map((card) => (
-                <div key={card} className="rounded-xl border border-white/8 bg-background/35 p-3">
-                  <p className="text-sm font-medium text-white">{card}</p>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-gray-500">Company type tagged</p>
+                <div key={card} className="rounded-lg p-2.5 text-xs font-medium text-white" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  {card}
+                  <div className="mt-1 text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>Type tagged</div>
                 </div>
               ))}
+              {column.cards.length === 0 ? (
+                <div className="rounded-lg p-3 text-center text-xs" style={{ border: "1px dashed rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.2)" }}>Empty</div>
+              ) : null}
             </div>
           </div>
         ))}
@@ -722,98 +716,211 @@ function PipelineMock() {
   )
 }
 
-function AnalyticsMock() {
+function AIPrepSlide() {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-2xl border border-blue-500/20 bg-[linear-gradient(180deg,rgba(59,130,246,0.12),rgba(17,17,24,0.92))] p-4">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-blue-200/70">Applications over time</p>
-              <p className="mt-2 text-sm text-white">Trend view</p>
+    <div>
+      <div className="mb-1 text-lg font-black text-white">AI Prep for Google</div>
+      <div className="mb-5 text-sm text-gray-500">Software Engineer Intern</div>
+      <div className="mb-4">
+        <div className="mb-3 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Top 10 Interview Questions</div>
+        <div className="space-y-2">
+          {[
+            "Design a URL shortener like bit.ly",
+            "Explain system design for WhatsApp",
+            "What is consistent hashing?",
+            "How does garbage collection work?",
+            "Design an LRU cache",
+          ].map((question, index) => (
+            <div key={question} className="flex items-center gap-3 rounded-xl p-3 text-sm" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-black" style={{ background: "rgba(124,58,237,0.3)", color: "#c4b5fd" }}>{index + 1}</span>
+              <span style={{ color: "rgba(255,255,255,0.8)" }}>{question}</span>
             </div>
-            <p className="text-xs text-blue-200/70">Last 30 days</p>
-          </div>
-          <div className="mt-4 flex h-32 items-end gap-2">
-            {[28, 44, 39, 52, 48, 61, 58, 72].map((height, index) => (
-              <div key={index} className="flex-1 rounded-t-xl bg-blue-400/80 transition-all duration-500" style={{ height: `${height}%` }} />
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="mb-2 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Skills to Revise</div>
+        <div className="flex flex-wrap gap-2">
+          {["System Design", "DSA", "OS", "DBMS", "Networking"].map((skill) => (
+            <span key={skill} className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: "rgba(124,58,237,0.2)", color: "#c4b5fd", border: "1px solid rgba(124,58,237,0.3)" }}>{skill}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AnalyticsSlide() {
+  return (
+    <div>
+      <div className="mb-1 text-lg font-black text-white">Advanced Analytics</div>
+      <div className="mb-5 text-sm text-gray-500">Trends, comparisons, and conversion insights</div>
+      <div className="grid grid-cols-[1.3fr_0.7fr] gap-4">
+        <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mb-3 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Applications over time</div>
+          <div className="flex h-36 items-end gap-2">
+            {[35, 48, 44, 52, 57, 61, 54, 70].map((height, index) => (
+              <div key={index} className="flex-1 rounded-t-xl" style={{ height: `${height}%`, background: "linear-gradient(180deg,#3b82f6,#8b5cf6)" }} />
             ))}
           </div>
         </div>
-
         <div className="space-y-3">
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">Comparison</p>
-            <p className="mt-2 text-2xl font-black text-white">+20%</p>
-            <p className="mt-1 text-sm text-gray-400">Applications vs last month</p>
+          <div className="rounded-xl p-4" style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.2)" }}>
+            <div className="text-xs font-black uppercase tracking-wider" style={{ color: "#93c5fd" }}>Response rate</div>
+            <div className="mt-2 text-2xl font-black text-white">42%</div>
           </div>
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-amber-300">Biggest drop-off</p>
-            <p className="mt-2 text-lg font-bold text-white">60% after application</p>
-            <p className="mt-1 text-sm text-gray-300">Tighten resume targeting</p>
+          <div className="rounded-xl p-4" style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.2)" }}>
+            <div className="text-xs font-black uppercase tracking-wider" style={{ color: "#fcd34d" }}>Biggest drop-off</div>
+            <div className="mt-2 text-sm font-bold text-white">60% after application</div>
+          </div>
+          <div className="rounded-xl p-4" style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.2)" }}>
+            <div className="text-xs font-black uppercase tracking-wider" style={{ color: "#c4b5fd" }}>Best role</div>
+            <div className="mt-2 text-sm font-bold text-white">SWE — 40% response</div>
           </div>
         </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          { role: "SWE", rate: "40%" },
-          { role: "Product", rate: "28%" },
-          { role: "Data", rate: "18%" },
-        ].map((item) => (
-          <div key={item.role} className="rounded-2xl border border-white/8 bg-background/35 p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">{item.role}</p>
-            <p className="mt-2 text-xl font-bold text-white">{item.rate}</p>
-            <div className="mt-3 h-2 rounded-full bg-white/8">
-              <div className="h-2 rounded-full bg-violet-400" style={{ width: item.rate }} />
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   )
 }
 
-function AIStackMock() {
+function ResumeSlide() {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-[0.95fr_1.05fr]">
-        <div className="rounded-2xl border border-violet-500/20 bg-[linear-gradient(180deg,rgba(139,92,246,0.12),rgba(17,17,24,0.92))] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-violet-200/70">AI prep plan</p>
-          <div className="mt-4 space-y-3">
-            {["Revise JavaScript closures", "Mock interview on projects", "Follow-up email for recruiter"].map((task, index) => (
-              <div key={task} className="flex items-start gap-3 rounded-xl border border-white/8 bg-background/35 p-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-bold text-violet-200">
-                  {index + 1}
-                </div>
-                <p className="text-sm text-gray-200">{task}</p>
+    <div>
+      <div className="mb-1 text-lg font-black text-white">Resume Analyzer</div>
+      <div className="mb-5 text-sm text-gray-500">Company-role specific feedback</div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mb-3 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Scores</div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Overall", value: "84", color: "#10b981" },
+              { label: "ATS", value: "79", color: "#3b82f6" },
+            ].map((item) => (
+              <div key={item.label} className="rounded-lg p-3" style={{ background: `${item.color}14`, border: `1px solid ${item.color}25` }}>
+                <div className="text-xs font-bold" style={{ color: item.color }}>{item.label}</div>
+                <div className="mt-1 text-2xl font-black text-white">{item.value}</div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="space-y-3">
-          <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-blue-300">Resume analyzer</p>
-            <p className="mt-2 text-lg font-bold text-white">ATS score 84</p>
-            <p className="mt-1 text-sm text-gray-300">Missing: metrics, TypeScript, system design</p>
+        <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mb-3 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Missing Keywords</div>
+          <div className="flex flex-wrap gap-2">
+            {["TypeScript", "Metrics", "System Design", "Leadership"].map((item) => (
+              <span key={item} className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ background: "rgba(239,68,68,0.12)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.2)" }}>
+                {item}
+              </span>
+            ))}
           </div>
-          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-green-300">Follow-up draft</p>
-            <p className="mt-2 text-sm leading-6 text-gray-200">
-              “Thanks again for the interview. I enjoyed discussing my project work and wanted to reiterate my interest...”
-            </p>
+          <div className="mt-4 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
+            Quick wins: add quantified impact, tools used, and role-specific keywords.
           </div>
         </div>
       </div>
+    </div>
+  )
+}
 
-      <div className="grid gap-3 sm:grid-cols-4">
-        {["Mock Interview", "Resume Review", "Skill Gaps", "Journal Notes"].map((item) => (
-          <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4 text-center">
-            <p className="text-sm font-semibold text-white">{item}</p>
-            <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-gray-500">Integrated</p>
+function FollowUpSlide() {
+  return (
+    <div>
+      <div className="mb-1 text-lg font-black text-white">Follow-up Emails</div>
+      <div className="mb-5 text-sm text-gray-500">Polished drafts in one click</div>
+      <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="mb-3 flex items-center justify-between">
+          <div className="text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Draft preview</div>
+          <span className="rounded-full px-2 py-1 text-xs font-bold" style={{ background: "rgba(16,185,129,0.14)", color: "#10b981" }}>Ready to send</span>
+        </div>
+        <div className="space-y-3 text-sm leading-7" style={{ color: "rgba(255,255,255,0.75)" }}>
+          <p>Subject: Follow-up on Software Engineer Intern application at Google</p>
+          <p>Hi team, I wanted to follow up regarding my application and reiterate my interest in the role...</p>
+          <p>Best regards,<br />Ayush</p>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        {["Subject ready", "Body generated", "Copy in 1 click"].map((item) => (
+          <div key={item} className="rounded-lg p-3 text-center text-xs font-bold text-white" style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.18)" }}>
+            {item}
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function CalendarSlide() {
+  return (
+    <div>
+      <div className="mb-1 text-lg font-black text-white">Interview Calendar</div>
+      <div className="mb-5 text-sm text-gray-500">Deadlines, interviews, and follow-ups</div>
+      <div className="grid grid-cols-[1fr_0.9fr] gap-4">
+        <div className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mb-3 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(255,255,255,0.4)" }}>Week view</div>
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {["M", "T", "W", "T", "F", "S", "S"].map((day) => (
+              <div key={day} className="text-xs font-bold" style={{ color: "rgba(255,255,255,0.35)" }}>{day}</div>
+            ))}
+            {[14, 15, 16, 17, 18, 19, 20].map((date, index) => (
+              <div
+                key={date}
+                className="rounded-lg px-2 py-3 text-sm font-bold"
+                style={{
+                  background: index === 2 ? "rgba(124,58,237,0.2)" : index === 4 ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.04)",
+                  color: "white",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}
+              >
+                {date}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3">
+          {[
+            { title: "Google interview", color: "#8b5cf6" },
+            { title: "Razorpay follow-up", color: "#10b981" },
+            { title: "Adobe deadline", color: "#f59e0b" },
+          ].map((item) => (
+            <div key={item.title} className="rounded-xl p-4" style={{ background: `${item.color}12`, border: `1px solid ${item.color}25` }}>
+              <div className="text-sm font-black text-white">{item.title}</div>
+              <div className="mt-1 text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>Everything in one timeline</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PracticeSlide() {
+  return (
+    <div>
+      <div className="mb-1 text-lg font-black text-white">Daily Practice</div>
+      <div className="mb-5 text-sm text-gray-500">Pattern-Wise Mastery — 22 topics</div>
+      <div className="mb-4 grid grid-cols-4 gap-2">
+        {[
+          { title: "Array + Hashing", patterns: 2, score: "0/34" },
+          { title: "Binary Search", patterns: 6, score: "0/41" },
+          { title: "Dynamic Programming", patterns: 12, score: "0/166" },
+          { title: "Trees", patterns: 12, score: "0/73" },
+        ].map((card) => (
+          <div key={card.title} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="mb-1 text-xs font-black leading-tight text-white">{card.title}</div>
+            <div className="mb-2 text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>{card.patterns} patterns</div>
+            <div className="mb-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }}>
+              <div className="h-1 rounded-full" style={{ width: "5%", background: "#7c3aed" }} />
+            </div>
+            <div className="text-xs font-bold" style={{ color: "#c4b5fd" }}>{card.score}</div>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-xl p-4" style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
+        <div className="mb-2 text-xs font-black uppercase tracking-wider" style={{ color: "rgba(196,181,253,0.7)" }}>Today's Problem</div>
+        <div className="font-black text-white">Climbing Stairs</div>
+        <div className="mt-2 flex items-center gap-2">
+          <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: "rgba(16,185,129,0.2)", color: "#10b981" }}>Easy</span>
+          <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>Dynamic Programming</span>
+        </div>
       </div>
     </div>
   )
