@@ -10,9 +10,23 @@ const router = express.Router();
 const generateToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
+const shouldLogOtp =
+  process.env.LOG_OTP === "true" || process.env.NODE_ENV !== "production";
+const shouldReturnOtp = process.env.ALLOW_OTP_IN_RESPONSE === "true";
+
 // 🔥 Generate OTP
 const generateOTP = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
+
+const buildOtpResponse = (message, otp) => {
+  const response = { message };
+
+  if (shouldReturnOtp) {
+    response.otp = otp;
+  }
+
+  return response;
+};
 
 
 // =============================
@@ -31,6 +45,9 @@ router.post("/register", async (req, res) => {
     }
 
     const otp = generateOTP();
+    if (shouldLogOtp) {
+      console.log(`🔐 Register OTP for ${email}: ${otp}`);
+    }
 
     await User.create({
       name,
@@ -43,7 +60,7 @@ router.post("/register", async (req, res) => {
 
     await sendEmail(email, "Verify your account", `Your OTP is ${otp}`);
 
-    res.status(201).json({ message: "OTP sent to email" });
+    res.status(201).json(buildOtpResponse("OTP sent to email", otp));
 
   } catch (err) {
     console.error("ERROR:", err);
@@ -150,6 +167,9 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(400).json({ message: "User not found" });
 
     const otp = generateOTP();
+    if (shouldLogOtp) {
+      console.log(`🔐 Reset OTP for ${email}: ${otp}`);
+    }
 
     user.otp = otp;
     user.otpExpiry = Date.now() + 5 * 60 * 1000;
@@ -158,7 +178,7 @@ router.post("/forgot-password", async (req, res) => {
 
     await sendEmail(email, "Reset Password OTP", `Your OTP is ${otp}`);
 
-    res.json({ message: "OTP sent to email" });
+    res.json(buildOtpResponse("OTP sent to email", otp));
 
   } catch (err) {
     res.status(500).json({ message: "Server error" });

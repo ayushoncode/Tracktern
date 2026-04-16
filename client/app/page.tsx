@@ -87,7 +87,11 @@ export default function HomePage() {
       } else if (!isLogin && data.message) {
         setPendingVerificationEmail(email)
         setOtp("")
-        setSuccess("OTP sent to your email. Enter it below to verify your account.")
+        setSuccess(
+          data.otp
+            ? `OTP for testing: ${data.otp}. Enter it below to verify your account.`
+            : "OTP sent to your email. Enter it below to verify your account."
+        )
       } else {
         setError(data.message || "Something went wrong")
       }
