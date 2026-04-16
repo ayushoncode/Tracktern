@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play, CalendarDays, Sparkles, Activity } from "lucide-react"
+import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play, CalendarDays, Sparkles, Activity, Info, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const SHEET_DATA = [
@@ -667,6 +667,14 @@ function computeStreakStats(submissionCounts: Record<string, number>) {
 }
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+const HEATMAP_DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""]
+const HEATMAP_LEVEL_STYLES = [
+  "bg-slate-700/70 hover:bg-slate-600/80",
+  "bg-blue-900/70 hover:bg-blue-800/80",
+  "bg-blue-700/75 hover:bg-blue-600/80",
+  "bg-sky-500/80 hover:bg-sky-400/85",
+  "bg-cyan-300 hover:bg-cyan-200",
+]
 
 type View = "home" | "topic" | "pattern"
 interface SelectedPattern { topic: typeof SHEET_DATA[0]; subPattern: typeof SHEET_DATA[0]["subPatterns"][0] }
@@ -759,6 +767,9 @@ export default function PracticePage() {
   }
 
   const { cells, totalWeeks } = buildYearHeatmap(submissionCounts)
+  const heatmapCellMap = useMemo(() => {
+    return new Map(cells.map((cell) => [`${cell.week}-${cell.dayOfWeek}`, cell]))
+  }, [cells])
 
   // Month labels
   const monthLabels: { month: number; week: number }[] = []
@@ -936,57 +947,72 @@ export default function PracticePage() {
       </div>
 
       {/* GitHub-style Yearly Heatmap */}
-      <div className="glass-card rounded-xl border border-border p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <span className="text-sm font-semibold text-foreground">{stats.totalSubmissions} submissions in the past one year</span>
+      <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#111827] px-4 py-5 shadow-[0_20px_60px_rgba(2,6,23,0.28)] sm:px-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex items-center gap-2 text-[15px] font-semibold text-slate-100 sm:text-[18px]">
+            <span className="text-3xl font-black tracking-tight text-white sm:text-[42px]">{stats.totalSubmissions}</span>
+            <span className="leading-none text-slate-300">submissions in the past one year</span>
+            <Info className="h-4 w-4 text-slate-500" />
           </div>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>Total active days: <span className="text-foreground font-medium">{stats.activeDays}</span></span>
-            <span>Max streak: <span className="text-foreground font-medium">{stats.maxStreak}</span></span>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:justify-end">
+            <div className="flex items-center gap-6 text-sm text-slate-400">
+              <span>Total active days: <span className="font-semibold text-slate-100">{stats.activeDays}</span></span>
+              <span>Max streak: <span className="font-semibold text-slate-100">{stats.maxStreak}</span></span>
+            </div>
+            <button
+              type="button"
+              className="inline-flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-100 shadow-sm transition-colors hover:bg-white/10"
+            >
+              Current
+              <ChevronDown className="h-4 w-4 text-slate-400" />
+            </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="mt-6 overflow-x-auto pb-1">
           <div className="min-w-max">
-            {/* Month labels */}
-            <div className="flex mb-1 ml-6">
-              {monthLabels.map((ml, i) => (
-                <div key={i} className="text-xs text-muted-foreground"
-                  style={{ width: `${(i < monthLabels.length - 1 ? monthLabels[i+1].week - ml.week : totalWeeks - ml.week) * 14}px` }}>
-                  {MONTH_NAMES[ml.month]}
+            <div className="ml-8 flex">
+              {monthLabels.map((label, index) => (
+                <div
+                  key={`${label.month}-${label.week}`}
+                  className="text-xs font-medium text-slate-400"
+                  style={{
+                    width: `${(index < monthLabels.length - 1 ? monthLabels[index + 1].week - label.week : totalWeeks - label.week) * 16}px`,
+                  }}
+                >
+                  {MONTH_NAMES[label.month]}
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-0">
-              {/* Day labels */}
-              <div className="flex flex-col gap-[2px] mr-1">
-                {["", "Mon", "", "Wed", "", "Fri", ""].map((d, i) => (
-                  <div key={i} className="text-xs text-muted-foreground h-[12px] flex items-center" style={{width:"20px", fontSize:"9px"}}>{d}</div>
+            <div className="mt-2 flex gap-2">
+              <div className="flex flex-col gap-1 pr-1">
+                {HEATMAP_DAY_LABELS.map((day, index) => (
+                  <div key={`${day}-${index}`} className="flex h-[13px] w-5 items-center text-[10px] font-medium text-slate-500">
+                    {day}
+                  </div>
                 ))}
               </div>
 
-              {/* Grid */}
-              <div className="flex gap-[2px]">
-                {Array.from({ length: totalWeeks }, (_, w) => (
-                  <div key={w} className="flex flex-col gap-[2px]">
-                    {Array.from({ length: 7 }, (_, d) => {
-                      const cell = cells.find(c => c.week === w && c.dayOfWeek === d)
-                      if (!cell) return <div key={d} className="w-[12px] h-[12px]" />
+              <div className="flex gap-1">
+                {Array.from({ length: totalWeeks }, (_, week) => (
+                  <div key={week} className="flex flex-col gap-1">
+                    {Array.from({ length: 7 }, (_, day) => {
+                      const cell = heatmapCellMap.get(`${week}-${day}`)
+                      if (!cell) return <div key={day} className="h-[13px] w-[13px]" />
+
+                      const level = getHeatmapLevel(cell.count)
                       const isToday = cell.date === getTodayKey()
+
                       return (
                         <div
-                          key={d}
+                          key={day}
                           title={`${cell.date}${cell.count > 0 ? ` • ${cell.count} submission${cell.count > 1 ? "s" : ""}` : ""}`}
                           className={cn(
-                            "w-[12px] h-[12px] rounded-[2px] transition-colors cursor-pointer",
-                            isToday ? "ring-1 ring-primary" : "",
-                            getHeatmapLevel(cell.count) === 0 && "bg-secondary hover:bg-secondary/80",
-                            getHeatmapLevel(cell.count) === 1 && "bg-emerald-500/35 hover:bg-emerald-500/45",
-                            getHeatmapLevel(cell.count) === 2 && "bg-emerald-500/60 hover:bg-emerald-500/70",
-                            getHeatmapLevel(cell.count) === 3 && "bg-green-500/80 hover:bg-green-500/90",
-                            getHeatmapLevel(cell.count) === 4 && "bg-green-400 hover:bg-green-300"
+                            "h-[13px] w-[13px] rounded-[3px] border border-transparent transition-all",
+                            HEATMAP_LEVEL_STYLES[level],
+                            isToday && "border-sky-200/80 ring-1 ring-sky-300/30"
                           )}
                         />
                       )
@@ -996,19 +1022,12 @@ export default function PracticePage() {
               </div>
             </div>
 
-            {/* Legend */}
-            <div className="flex items-center gap-2 mt-3 justify-end">
-              <span className="text-xs text-muted-foreground">Less</span>
-              {[
-                "bg-secondary",
-                "bg-emerald-500/35",
-                "bg-emerald-500/60",
-                "bg-green-500/80",
-                "bg-green-400"
-              ].map((color, i) => (
-                <div key={i} className={cn("w-[12px] h-[12px] rounded-[2px]", color)} />
+            <div className="mt-5 flex items-center justify-end gap-2 text-xs text-slate-400">
+              <span>Less</span>
+              {HEATMAP_LEVEL_STYLES.map((color, index) => (
+                <div key={index} className={cn("h-[13px] w-[13px] rounded-[3px]", color)} />
               ))}
-              <span className="text-xs text-muted-foreground">More</span>
+              <span>More</span>
             </div>
           </div>
         </div>
