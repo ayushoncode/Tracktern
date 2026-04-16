@@ -1,18 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Mail, Calendar, X, Link as LinkIcon, FileText, ToggleLeft } from "lucide-react"
+import { Plus, Calendar, X, Link as LinkIcon, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { getCompanies, addCompany, updateCompany, deleteCompany, getToken } from "@/lib/api"
+import { STATUS_THEME } from "@/lib/status-theme"
 
 const COLUMNS = [
-  { id: "applied", title: "Applied", color: "bg-blue-500" },
-  { id: "shortlisted", title: "Shortlisted", color: "bg-yellow-500" },
-  { id: "interview", title: "Interview", color: "bg-purple-500" },
-  { id: "offer", title: "Offer", color: "bg-green-500" },
-  { id: "rejected", title: "Rejected", color: "bg-red-500" },
+  { id: "applied", title: "Applied" },
+  { id: "shortlisted", title: "Shortlisted" },
+  { id: "interview", title: "Interview" },
+  { id: "offer", title: "Offer" },
+  { id: "rejected", title: "Rejected" },
 ]
 
 export default function ApplicationsPage() {
@@ -80,21 +81,22 @@ export default function ApplicationsPage() {
       <div className="grid grid-cols-1 gap-4 overflow-x-auto sm:grid-cols-2 lg:grid-cols-5">
         {COLUMNS.map((col) => {
           const colCompanies = companies.filter((c) => c.status === col.id)
+          const theme = STATUS_THEME[col.id as keyof typeof STATUS_THEME]
           return (
-            <div key={col.id} className="glass-card rounded-xl border border-border min-w-0 sm:min-w-[200px]">
+            <div key={col.id} className={`glass-card rounded-xl border min-w-0 sm:min-w-[200px] ${theme.cardClassName}`}>
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${col.color}`} />
+                  <div className={`w-2 h-2 rounded-full ${theme.dotClassName}`} />
                   <span className="text-sm font-medium text-foreground">{col.title}</span>
                 </div>
                 <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">{colCompanies.length}</span>
               </div>
               <div className="p-3 space-y-3 min-h-32">
                 {colCompanies.length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-4">No applications</p>
+                  <p className="text-xs text-muted-foreground text-center py-4">No applications here yet</p>
                 )}
                 {colCompanies.map((app) => (
-                  <div key={app._id} className="bg-secondary/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group">
+                  <div key={app._id} className={`rounded-lg p-3 border transition-colors group ${theme.softClassName}`}>
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-sm font-medium text-foreground shrink-0">
                         {app.name.charAt(0)}

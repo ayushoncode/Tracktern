@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Sparkles, Mail, Clock, CheckCircle, Copy, Check } from "lucide-react"
+import { EmptyState } from "@/components/empty-state"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
@@ -63,7 +64,15 @@ export default function AIPrepPage() {
           </div>
           <div className="p-2 space-y-1 overflow-y-auto">
             {companies.length === 0 && (
-              <p className="text-sm text-muted-foreground p-3 text-center">No companies yet!</p>
+              <div className="p-3">
+                <EmptyState
+                  icon={Sparkles}
+                  title="No prep targets yet"
+                  subtitle="Add a company in Applications and this workspace will generate interview questions, revision topics, and follow-up drafts."
+                  ctaLabel="Add application"
+                  ctaHref="/applications"
+                />
+              </div>
             )}
             {companies.map((company) => (
               <button key={company._id} onClick={() => loadPrep(company)}
@@ -179,9 +188,13 @@ export default function AIPrepPage() {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            Select a company to generate AI prep
-          </div>
+          <EmptyState
+            icon={Sparkles}
+            title="Pick a company to start prep"
+            subtitle="Choose a tracked application to generate a focused interview plan and a follow-up email draft."
+            ctaLabel="Manage applications"
+            ctaHref="/applications"
+          />
         )}
       </div>
     </div>

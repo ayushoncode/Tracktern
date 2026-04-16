@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Plus, Calendar, Building2, X, Trash2 } from "lucide-react"
+import { EmptyState } from "@/components/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -107,9 +108,13 @@ export default function JournalPage() {
 
       <div className="space-y-4">
         {entries.length === 0 && (
-          <div className="glass-card rounded-xl p-8 border border-border text-center text-muted-foreground">
-            No journal entries yet. Add your first interview experience!
-          </div>
+          <EmptyState
+            icon={Building2}
+            title="Your interview journal is empty"
+            subtitle="Capture what was asked, where you got stuck, and what you would do differently before the details fade."
+            ctaLabel="New entry"
+            onCta={() => setIsAdding(true)}
+          />
         )}
         {entries.map((entry) => (
           <div key={entry._id} className="glass-card rounded-xl p-5 border border-border hover:border-primary/30 transition-colors group">

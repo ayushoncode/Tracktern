@@ -12,23 +12,23 @@ interface StatCardProps {
 const colorVariants = {
   blue: {
     bg: "bg-blue-500/10",
-    text: "text-blue-400",
-    border: "border-blue-500/20",
+    text: "text-blue-300",
+    border: "border-blue-500/20 bg-[linear-gradient(180deg,rgba(59,130,246,0.12),rgba(17,17,24,0.92))]",
   },
   yellow: {
-    bg: "bg-yellow-500/10",
-    text: "text-yellow-400",
-    border: "border-yellow-500/20",
+    bg: "bg-amber-500/10",
+    text: "text-amber-300",
+    border: "border-amber-500/20 bg-[linear-gradient(180deg,rgba(245,158,11,0.12),rgba(17,17,24,0.92))]",
   },
   purple: {
-    bg: "bg-primary/10",
-    text: "text-primary",
-    border: "border-primary/20",
+    bg: "bg-violet-500/10",
+    text: "text-violet-300",
+    border: "border-violet-500/20 bg-[linear-gradient(180deg,rgba(139,92,246,0.12),rgba(17,17,24,0.92))]",
   },
   green: {
     bg: "bg-green-500/10",
-    text: "text-green-400",
-    border: "border-green-500/20",
+    text: "text-green-300",
+    border: "border-green-500/20 bg-[linear-gradient(180deg,rgba(34,197,94,0.12),rgba(17,17,24,0.92))]",
   },
 }
 
@@ -37,9 +37,10 @@ export function StatCard({ title, value, icon: Icon, color, change }: StatCardPr
 
   return (
     <div className={cn(
-      "glass-card rounded-xl p-5 border",
+      "glass-card rounded-xl p-5 border relative overflow-hidden",
       colors.border
     )}>
+      <div className="absolute inset-x-0 top-0 h-px bg-white/8" />
       <div className="flex items-start justify-between">
         <div>
           <p className="text-muted-foreground text-sm font-medium">{title}</p>

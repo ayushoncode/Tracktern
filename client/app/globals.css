@@ -91,13 +91,16 @@
 }
 
 .glass-card {
-  background: #111118;
+  background: linear-gradient(180deg, rgba(21, 21, 31, 0.98), rgba(16, 16, 24, 0.94));
   border: 0.5px solid rgba(255, 255, 255, 0.08);
-  transition: border-color 150ms ease;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .glass-card:hover {
   border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
 }
 
 .gradient-purple {
@@ -106,6 +109,14 @@
 
 .gradient-purple:hover {
   background: #6D28D9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card,
+  .glass-card:hover {
+    transform: none;
+    transition: border-color 150ms ease;
+  }
 }
 
 .page-title {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Users, Plus, X, Star, Search, ExternalLink, ChevronDown, RefreshCw } from "lucide-react"
+import { EmptyState } from "@/components/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -321,9 +322,11 @@ export default function CommunityPage() {
               ))}
             </div>
           ) : lcPosts.length === 0 ? (
-            <div className="glass-card rounded-xl p-12 border border-border text-center">
-              <p className="text-muted-foreground">No results found. Try a different company.</p>
-            </div>
+            <EmptyState
+              icon={Search}
+              title="No LeetCode discussions found"
+              subtitle="Try another company name or broaden the search to a larger employer with more interview reports."
+            />
           ) : (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">Showing {lcPosts.length} results for <span className="text-foreground font-medium">{searchCompany}</span> from LeetCode Discuss</p>
@@ -396,10 +399,13 @@ export default function CommunityPage() {
               ))}
             </div>
           ) : cfActions.length === 0 ? (
-            <div className="glass-card rounded-xl p-12 border border-border text-center">
-              <p className="text-muted-foreground mb-3">Could not load CF feed.</p>
-              <button onClick={loadCFActions} className="text-sm text-primary hover:opacity-80">Try again</button>
-            </div>
+            <EmptyState
+              icon={RefreshCw}
+              title="Could not load the Codeforces feed"
+              subtitle="Refresh to retry the live feed, or use the company shortcuts above to open Codeforces search directly."
+              ctaLabel="Try again"
+              onCta={loadCFActions}
+            />
           ) : (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
@@ -452,11 +458,13 @@ export default function CommunityPage() {
               <div className="text-muted-foreground animate-pulse">Loading...</div>
             </div>
           ) : experiences.length === 0 ? (
-            <div className="glass-card rounded-xl p-12 border border-border text-center">
-              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-foreground font-medium mb-1">No experiences yet</p>
-              <p className="text-muted-foreground text-sm">Be the first to share your interview experience!</p>
-            </div>
+            <EmptyState
+              icon={Users}
+              title="No student experiences yet"
+              subtitle="Be the first to share what was asked, what tripped you up, and what helped you clear the round."
+              ctaLabel="Share experience"
+              onCta={() => setIsAdding(true)}
+            />
           ) : (
             experiences.map((exp: any) => (
               <div key={exp._id} className="glass-card rounded-xl border border-border p-5">
