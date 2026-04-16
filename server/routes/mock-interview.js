@@ -73,7 +73,7 @@ const cleanJSON = (text) => {
 // 🧠 QUESTION ROUTE
 router.post("/question", protect, async (req, res) => {
   try {
-    let { company, role, type, round, difficulty, customTopic, resume } = req.body;
+    let { company, role, type, round, difficulty, customTopic, resume, previousQuestions = [] } = req.body;
     const interviewRound = (round || type || "DSA").trim();
 
     // 🔥 COMPANY VALIDATION
@@ -186,6 +186,15 @@ router.post("/question", protect, async (req, res) => {
 
     let prompt = "";
     const trimmedResume = typeof resume === "string" ? resume.trim() : "";
+    const previousQuestionText = Array.isArray(previousQuestions)
+      ? previousQuestions
+          .filter((question) => typeof question === "string" && question.trim())
+          .slice(-5)
+          .join("\n- ")
+      : "";
+    const previousQuestionRule = previousQuestionText
+      ? `\nAVOID REPEATING THESE PREVIOUS QUESTIONS:\n- ${previousQuestionText}\n`
+      : "";
 
     if (interviewRound === "OA") {
       prompt = `You are creating a REAL interview MCQ.
@@ -196,12 +205,14 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Real interview style
 - EXACTLY 4 options
 - No generic questions
 - Avoid repeated problems
+- Choose a different concept or scenario than earlier questions
 
 Return ONLY JSON:
 {
@@ -219,12 +230,14 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Ask a realistic system design question
 - Focus on architecture, scale, trade-offs, reliability, and APIs
 - Do not ask DSA/coding-only questions
 - Avoid generic textbook prompts
+- If previous questions covered one system area, switch to a different product or scaling challenge
 
 Return ONLY JSON:
 {
@@ -243,12 +256,14 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Ask a realistic behavioral question
 - Use STAR-style prompting
 - Do not ask DSA or coding questions
 - Keep it specific to the company and role
+- Ask about a different situation or competency than earlier questions
 
 Return ONLY JSON:
 {
@@ -267,11 +282,13 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Ask a realistic HR round question
 - Focus on motivation, culture fit, communication, compensation, and work style
 - Do not ask DSA or coding questions
+- Ask about a different HR theme than earlier questions
 
 Return ONLY JSON:
 {
@@ -296,6 +313,7 @@ ${trimmedResume.slice(0, 5000)}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Ask a question based on the candidate's resume, projects, or experience
@@ -303,6 +321,8 @@ RULES:
 - Tailor it to the target company and role
 - Do not ask DSA or coding questions unless the resume clearly suggests it
 - Keep the question practical and follow-up friendly
+- Ask about a DIFFERENT project, internship, skill, achievement, or decision than prior questions
+- If earlier questions focused on one project, switch to another part of the resume
 
 Return ONLY JSON:
 {
@@ -322,11 +342,13 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Ask one realistic question about the custom topic
 - Do not default to DSA unless the custom topic is explicitly DSA
 - Keep the question sharp and practical
+- Choose a different angle than earlier questions on the same custom topic
 
 Return ONLY JSON:
 {
@@ -345,12 +367,14 @@ Difficulty: ${difficulty}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
+${previousQuestionRule}
 
 RULES:
 - Real DSA / coding interview question
 - Not generic
 - Avoid repeated problems
 - Focus on algorithms, data structures, complexity, and edge cases
+- Use a different pattern or problem framing than earlier questions
 
 Return ONLY JSON:
 {

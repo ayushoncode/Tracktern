@@ -242,6 +242,9 @@ export default function MockInterviewPage() {
 
   const round = ROUNDS.find(r => r.id === selectedRound)
   setTimeLeft(round?.time || 120)
+  const previousQuestions = history
+    .map(item => item?.question?.question || item?.question)
+    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
 
   try {
     const res = await fetch(`${API}/mock-interview/question`, {
@@ -256,7 +259,8 @@ export default function MockInterviewPage() {
         type: selectedRound,
         difficulty,
         customTopic,
-        resume: resumeText
+        resume: resumeText,
+        previousQuestions
       })
     })
 
