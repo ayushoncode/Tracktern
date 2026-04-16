@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play } from "lucide-react"
+import { useState, useEffect, useMemo } from "react"
+import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play, CalendarDays, Sparkles, Activity } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const SHEET_DATA = [
@@ -587,8 +587,8 @@ function getDailyProblem() {
   return DAILY_PROBLEMS[dayOfYear % DAILY_PROBLEMS.length]
 }
 
-function buildYearHeatmap(history: Record<string, boolean>) {
-  const cells: { date: string; done: boolean; month: number; week: number; dayOfWeek: number }[] = []
+function buildYearHeatmap(submissionCounts: Record<string, number>) {
+  const cells: { date: string; count: number; month: number; week: number; dayOfWeek: number }[] = []
   const today = new Date()
   const startDate = new Date(today)
   startDate.setDate(today.getDate() - 364)
@@ -600,7 +600,7 @@ function buildYearHeatmap(history: Record<string, boolean>) {
     const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`
     cells.push({
       date: key,
-      done: history[key] === true,
+      count: submissionCounts[key] || 0,
       month: cur.getMonth(),
       week: weekIdx,
       dayOfWeek: cur.getDay(),
@@ -609,6 +609,61 @@ function buildYearHeatmap(history: Record<string, boolean>) {
     if (cur.getDay() === 0) weekIdx++
   }
   return { cells, totalWeeks: weekIdx + 1 }
+}
+
+function getHeatmapLevel(count: number) {
+  if (count <= 0) return 0
+  if (count === 1) return 1
+  if (count <= 3) return 2
+  if (count <= 5) return 3
+  return 4
+}
+
+function computeStreakStats(submissionCounts: Record<string, number>) {
+  const activeKeys = Object.keys(submissionCounts)
+    .filter((key) => (submissionCounts[key] || 0) > 0)
+    .sort()
+
+  if (activeKeys.length === 0) {
+    return { currentStreak: 0, maxStreak: 0, activeDays: 0, totalSubmissions: 0 }
+  }
+
+  let maxStreak = 1
+  let running = 1
+
+  for (let i = 1; i < activeKeys.length; i += 1) {
+    const prev = new Date(activeKeys[i - 1])
+    const curr = new Date(activeKeys[i])
+    const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 1) {
+      running += 1
+      maxStreak = Math.max(maxStreak, running)
+    } else {
+      running = 1
+    }
+  }
+
+  let currentStreak = 0
+  const walk = new Date()
+  while (true) {
+    const key = `${walk.getFullYear()}-${String(walk.getMonth() + 1).padStart(2, "0")}-${String(walk.getDate()).padStart(2, "0")}`
+    if ((submissionCounts[key] || 0) > 0) {
+      currentStreak += 1
+      walk.setDate(walk.getDate() - 1)
+    } else {
+      break
+    }
+  }
+
+  const totalSubmissions = Object.values(submissionCounts).reduce((sum, value) => sum + value, 0)
+
+  return {
+    currentStreak,
+    maxStreak,
+    activeDays: activeKeys.length,
+    totalSubmissions,
+  }
 }
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
@@ -621,28 +676,58 @@ export default function PracticePage() {
   const [selectedTopic, setSelectedTopic] = useState<typeof SHEET_DATA[0] | null>(null)
   const [selectedPattern, setSelectedPattern] = useState<SelectedPattern | null>(null)
   const [solved, setSolved] = useState<Record<string, boolean>>({})
-  const [streak, setStreak] = useState(0)
+  const [solvedDates, setSolvedDates] = useState<Record<string, string>>({})
   const [dailyDone, setDailyDone] = useState(false)
   const [history, setHistory] = useState<Record<string, boolean>>({})
-  const [totalActiveDays, setTotalActiveDays] = useState(0)
+  const [submissionCounts, setSubmissionCounts] = useState<Record<string, number>>({})
 
   const dailyProblem = getDailyProblem()
 
   useEffect(() => {
     const savedSolved = JSON.parse(localStorage.getItem("lc_solved") || "{}")
+    const savedSolvedDates = JSON.parse(localStorage.getItem("lc_solved_dates") || "{}")
     const savedHistory = JSON.parse(localStorage.getItem("daily_history") || "{}")
-    const savedStreak = parseInt(localStorage.getItem("lc_streak") || "0")
+    const savedSubmissionCounts = JSON.parse(localStorage.getItem("practice_submission_counts") || "{}")
+    const seededCounts = Object.keys(savedSubmissionCounts).length > 0
+      ? savedSubmissionCounts
+      : Object.fromEntries(
+          Object.entries(savedHistory)
+            .filter(([, done]) => done === true)
+            .map(([key]) => [key, 1])
+        )
     setSolved(savedSolved)
+    setSolvedDates(savedSolvedDates)
     setHistory(savedHistory)
-    setStreak(savedStreak)
+    setSubmissionCounts(seededCounts)
     setDailyDone(savedHistory[getTodayKey()] === true)
-    setTotalActiveDays(Object.values(savedHistory).filter(Boolean).length)
   }, [])
 
   const toggleSolved = (problemKey: string) => {
-    const newSolved = { ...solved, [problemKey]: !solved[problemKey] }
+    const isSolved = !!solved[problemKey]
+    const todayKey = getTodayKey()
+    const recordedDate = solvedDates[problemKey]
+    const nextSolved = !isSolved
+    const newSolved = { ...solved, [problemKey]: nextSolved }
+    const newSolvedDates = { ...solvedDates }
+    const newSubmissionCounts = { ...submissionCounts }
+
+    if (nextSolved) {
+      newSolvedDates[problemKey] = todayKey
+      newSubmissionCounts[todayKey] = (newSubmissionCounts[todayKey] || 0) + 1
+    } else if (recordedDate) {
+      newSubmissionCounts[recordedDate] = Math.max((newSubmissionCounts[recordedDate] || 1) - 1, 0)
+      if (newSubmissionCounts[recordedDate] === 0) {
+        delete newSubmissionCounts[recordedDate]
+      }
+      delete newSolvedDates[problemKey]
+    }
+
     setSolved(newSolved)
+    setSolvedDates(newSolvedDates)
+    setSubmissionCounts(newSubmissionCounts)
     localStorage.setItem("lc_solved", JSON.stringify(newSolved))
+    localStorage.setItem("lc_solved_dates", JSON.stringify(newSolvedDates))
+    localStorage.setItem("practice_submission_counts", JSON.stringify(newSubmissionCounts))
   }
 
   const getSubPatternProgress = (topic: string, spName: string, count: number) => {
@@ -659,24 +744,21 @@ export default function PracticePage() {
 
   const totalSolved = SHEET_DATA.reduce((acc, t) => acc + getTopicProgress(t).done, 0)
   const grandTotal = SHEET_DATA.reduce((a, b) => a + b.total, 0)
+  const stats = useMemo(() => computeStreakStats(submissionCounts), [submissionCounts])
 
   const markDailyDone = () => {
     if (dailyDone) return
     const todayKey = getTodayKey()
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`
-    const newStreak = history[yKey] ? streak + 1 : 1
     const newHistory = { ...history, [todayKey]: true }
+    const newSubmissionCounts = { ...submissionCounts, [todayKey]: (submissionCounts[todayKey] || 0) + 1 }
     setDailyDone(true)
-    setStreak(newStreak)
     setHistory(newHistory)
-    setTotalActiveDays(prev => prev + 1)
+    setSubmissionCounts(newSubmissionCounts)
     localStorage.setItem("daily_history", JSON.stringify(newHistory))
-    localStorage.setItem("lc_streak", newStreak.toString())
+    localStorage.setItem("practice_submission_counts", JSON.stringify(newSubmissionCounts))
   }
 
-  const { cells, totalWeeks } = buildYearHeatmap(history)
+  const { cells, totalWeeks } = buildYearHeatmap(submissionCounts)
 
   // Month labels
   const monthLabels: { month: number; week: number }[] = []
@@ -833,9 +915,9 @@ export default function PracticePage() {
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Flame className="w-5 h-5 text-orange-400" />
-            <span className="text-2xl font-bold text-foreground">{streak}</span>
+            <span className="text-2xl font-bold text-foreground">{stats.currentStreak}</span>
           </div>
-          <p className="text-xs text-muted-foreground">Day Streak</p>
+          <p className="text-xs text-muted-foreground">Current Streak</p>
         </div>
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
@@ -847,7 +929,7 @@ export default function PracticePage() {
         <div className="glass-card rounded-xl border border-border p-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Target className="w-5 h-5 text-primary" />
-            <span className="text-2xl font-bold text-foreground">{totalActiveDays}</span>
+            <span className="text-2xl font-bold text-foreground">{stats.activeDays}</span>
           </div>
           <p className="text-xs text-muted-foreground">Active Days</p>
         </div>
@@ -857,11 +939,11 @@ export default function PracticePage() {
       <div className="glass-card rounded-xl border border-border p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-sm font-semibold text-foreground">{totalActiveDays} submissions in the past one year</span>
+            <span className="text-sm font-semibold text-foreground">{stats.totalSubmissions} submissions in the past one year</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>Total active days: <span className="text-foreground font-medium">{totalActiveDays}</span></span>
-            <span>Max streak: <span className="text-foreground font-medium">{streak}</span></span>
+            <span>Total active days: <span className="text-foreground font-medium">{stats.activeDays}</span></span>
+            <span>Max streak: <span className="text-foreground font-medium">{stats.maxStreak}</span></span>
           </div>
         </div>
 
@@ -896,13 +978,15 @@ export default function PracticePage() {
                       return (
                         <div
                           key={d}
-                          title={`${cell.date}${cell.done ? " ✓ solved" : ""}`}
+                          title={`${cell.date}${cell.count > 0 ? ` • ${cell.count} submission${cell.count > 1 ? "s" : ""}` : ""}`}
                           className={cn(
                             "w-[12px] h-[12px] rounded-[2px] transition-colors cursor-pointer",
                             isToday ? "ring-1 ring-primary" : "",
-                            cell.done
-                              ? "bg-primary hover:bg-primary/80"
-                              : "bg-secondary hover:bg-secondary/80"
+                            getHeatmapLevel(cell.count) === 0 && "bg-secondary hover:bg-secondary/80",
+                            getHeatmapLevel(cell.count) === 1 && "bg-emerald-500/35 hover:bg-emerald-500/45",
+                            getHeatmapLevel(cell.count) === 2 && "bg-emerald-500/60 hover:bg-emerald-500/70",
+                            getHeatmapLevel(cell.count) === 3 && "bg-green-500/80 hover:bg-green-500/90",
+                            getHeatmapLevel(cell.count) === 4 && "bg-green-400 hover:bg-green-300"
                           )}
                         />
                       )
@@ -915,9 +999,14 @@ export default function PracticePage() {
             {/* Legend */}
             <div className="flex items-center gap-2 mt-3 justify-end">
               <span className="text-xs text-muted-foreground">Less</span>
-              {[0, 1, 2, 3, 4].map(i => (
-                <div key={i} className={cn("w-[12px] h-[12px] rounded-[2px]", i === 0 ? "bg-secondary" : "bg-primary")}
-                  style={{ opacity: i === 0 ? 1 : 0.2 + i * 0.2 }} />
+              {[
+                "bg-secondary",
+                "bg-emerald-500/35",
+                "bg-emerald-500/60",
+                "bg-green-500/80",
+                "bg-green-400"
+              ].map((color, i) => (
+                <div key={i} className={cn("w-[12px] h-[12px] rounded-[2px]", color)} />
               ))}
               <span className="text-xs text-muted-foreground">More</span>
             </div>
@@ -926,26 +1015,67 @@ export default function PracticePage() {
       </div>
 
       {/* Daily Problem */}
-      <div className="glass-card rounded-xl border border-border p-5">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Problem of the Day</span>
-          {dailyDone && <span className="text-xs px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 font-medium">✓ Solved today</span>}
+      <div className="glass-card rounded-[28px] border border-border p-5 sm:p-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              <Sparkles className="w-3.5 h-3.5" />
+              Daily Problem
+            </div>
+            <h3 className="mt-4 text-2xl font-black text-foreground">{dailyProblem.title}</h3>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className={cn("text-xs px-2.5 py-1 rounded-full border font-medium", diffColor[dailyProblem.difficulty])}>
+                {dailyProblem.difficulty}
+              </span>
+              <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-secondary/60 text-muted-foreground inline-flex items-center gap-1.5">
+                <CalendarDays className="w-3.5 h-3.5" />
+                {dailyDone ? "Completed today" : "Not solved yet"}
+              </span>
+              <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-secondary/60 text-muted-foreground inline-flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5" />
+                {stats.totalSubmissions} tracked submissions
+              </span>
+            </div>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              Solve today’s featured problem to keep your momentum up. Daily solves and pattern-sheet solves now both feed the same submission tracker and heatmap.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3 lg:w-[360px]">
+            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Current</p>
+              <p className="mt-2 text-2xl font-black text-foreground">{stats.currentStreak}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Max</p>
+              <p className="mt-2 text-2xl font-black text-foreground">{stats.maxStreak}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-secondary/40 px-4 py-3 text-center">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Active Days</p>
+              <p className="mt-2 text-2xl font-black text-foreground">{stats.activeDays}</p>
+            </div>
+          </div>
         </div>
-        <h3 className="text-lg font-bold text-foreground mb-2">{dailyProblem.title}</h3>
-        <span className={cn("text-xs px-2 py-1 rounded-full border font-medium", diffColor[dailyProblem.difficulty])}>{dailyProblem.difficulty}</span>
-        <div className="flex gap-3 mt-4">
-          <a href={dailyProblem.link} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg gradient-purple text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity">
+
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={dailyProblem.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl gradient-purple px-4 py-3 text-sm font-bold text-primary-foreground hover:opacity-90"
+          >
             Solve on LeetCode <ExternalLink className="w-4 h-4" />
           </a>
           {!dailyDone ? (
-            <button onClick={markDailyDone}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm font-medium hover:bg-green-500/20 transition-colors">
-              <CheckCircle className="w-4 h-4" /> Mark Done
+            <button
+              onClick={markDailyDone}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400 hover:bg-green-500/20"
+            >
+              <CheckCircle className="w-4 h-4" /> Mark as Solved
             </button>
           ) : (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 text-sm">
-              <CheckCircle className="w-4 h-4" /> Come back tomorrow!
+            <div className="inline-flex items-center justify-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm font-medium text-green-400">
+              <CheckCircle className="w-4 h-4" /> Come back tomorrow for a new one
             </div>
           )}
         </div>
