@@ -587,12 +587,10 @@ function getDailyProblem() {
   return DAILY_PROBLEMS[dayOfYear % DAILY_PROBLEMS.length]
 }
 
-function buildYearHeatmap(submissionCounts: Record<string, number>) {
+function buildCurrentYearHeatmap(submissionCounts: Record<string, number>) {
   const cells: { date: string; count: number; month: number; week: number; dayOfWeek: number }[] = []
   const today = new Date()
-  const startDate = new Date(today)
-  startDate.setDate(today.getDate() - 364)
-  startDate.setDate(startDate.getDate() - startDate.getDay())
+  const startDate = new Date(today.getFullYear(), 0, 1)
 
   let weekIdx = 0
   const cur = new Date(startDate)
@@ -756,6 +754,13 @@ export default function PracticePage() {
   const totalSolved = SHEET_DATA.reduce((acc, t) => acc + getTopicProgress(t).done, 0)
   const grandTotal = SHEET_DATA.reduce((a, b) => a + b.total, 0)
   const stats = useMemo(() => computeStreakStats(submissionCounts), [submissionCounts])
+  const currentYear = new Date().getFullYear()
+  const currentYearSubmissionCounts = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(submissionCounts).filter(([key]) => key.startsWith(`${currentYear}-`))
+    )
+  }, [currentYear, submissionCounts])
+  const currentYearStats = useMemo(() => computeStreakStats(currentYearSubmissionCounts), [currentYearSubmissionCounts])
 
   const markDailyDone = () => {
     if (dailyDone) return
@@ -769,7 +774,7 @@ export default function PracticePage() {
     localStorage.setItem("practice_submission_counts", JSON.stringify(newSubmissionCounts))
   }
 
-  const { cells, totalWeeks } = buildYearHeatmap(submissionCounts)
+  const { cells, totalWeeks } = buildCurrentYearHeatmap(currentYearSubmissionCounts)
   const heatmapCellMap = useMemo(() => {
     return new Map(cells.map((cell) => [`${cell.week}-${cell.dayOfWeek}`, cell]))
   }, [cells])
@@ -778,7 +783,7 @@ export default function PracticePage() {
   const monthLabels: { month: number; week: number }[] = []
   let lastMonth = -1
   cells.forEach(c => {
-    if (c.dayOfWeek === 0 && c.month !== lastMonth) {
+    if (c.month !== lastMonth) {
       monthLabels.push({ month: c.month, week: c.week })
       lastMonth = c.month
     }
@@ -973,15 +978,15 @@ export default function PracticePage() {
       <div className="overflow-hidden rounded-[28px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,#161022_0%,#120d1d_100%)] px-4 py-5 shadow-[0_20px_60px_rgba(76,29,149,0.18)] sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-center gap-2 text-[15px] font-semibold text-violet-50 sm:text-[18px]">
-            <span className="text-3xl font-black tracking-tight text-white sm:text-[42px]">{stats.totalSubmissions}</span>
-            <span className="leading-none text-violet-100/80">submissions in the past one year</span>
+            <span className="text-3xl font-black tracking-tight text-white sm:text-[42px]">{currentYearStats.totalSubmissions}</span>
+            <span className="leading-none text-violet-100/80">submissions in {currentYear}</span>
             <Info className="h-4 w-4 text-violet-300/40" />
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:justify-end">
             <div className="flex items-center gap-6 text-sm text-violet-100/60">
-              <span>Total active days: <span className="font-semibold text-violet-50">{stats.activeDays}</span></span>
-              <span>Max streak: <span className="font-semibold text-violet-50">{stats.maxStreak}</span></span>
+              <span>Total active days: <span className="font-semibold text-violet-50">{currentYearStats.activeDays}</span></span>
+              <span>Max streak: <span className="font-semibold text-violet-50">{currentYearStats.maxStreak}</span></span>
             </div>
             <button
               type="button"
