@@ -1,9 +1,13 @@
 "use client"
 
-import { Mail, Clock, Plus, ChevronDown } from "lucide-react"
+import { Mail, Clock } from "lucide-react"
 import { useState } from "react"
 import { getToken, getCompanies, updateCompany } from "@/lib/api"
 import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { EmptyState } from "@/components/empty-state"
 
 export function GmailSync() {
   const [companies, setCompanies] = useState<any[]>([])
@@ -35,42 +39,42 @@ export function GmailSync() {
   }
 
   return (
-    <div className="glass-card rounded-xl p-5 border border-border space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Mail className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Gmail Sync</h3>
-        </div>
-        <div className="flex items-center gap-1.5 text-xs text-yellow-400">
-          <span className="w-2 h-2 bg-yellow-500 rounded-full" />
-          Coming Soon
-        </div>
-      </div>
-
-      {/* Coming soon notice */}
-      <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-        <div className="flex items-center gap-2 mb-1">
-          <Clock className="w-4 h-4 text-primary" />
-          <p className="text-sm font-medium text-primary">Gmail Auto-Detection</p>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Auto-detect offer, rejection & interview emails from companies. Coming in next update!
-        </p>
-      </div>
-
-      {/* Manual status update */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
-          Manual Status Update
-        </p>
-        <div className="space-y-3">
+    <Card>
+      <CardHeader className="pb-0">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">Company</label>
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[rgba(124,58,237,0.1)] text-primary">
+                <Mail className="h-4 w-4" />
+              </div>
+              <CardTitle className="section-heading">Gmail Sync</CardTitle>
+            </div>
+            <CardDescription className="body-copy mt-2">
+              Track status updates manually now, with automatic email parsing coming next.
+            </CardDescription>
+          </div>
+          <Badge variant="shortlisted">Coming soon</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#1A1A24] p-4">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">Auto-detect interview, offer, and rejection emails</p>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Gmail parsing is on the roadmap. Use the updater below to keep your pipeline accurate until then.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <p className="label-caption">Manual Status Update</p>
+          <div>
+            <label className="mb-2 block text-sm text-foreground">Company</label>
             <select
               value={selected}
               onChange={(e) => setSelected(e.target.value)}
-              className="w-full h-9 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm"
+              className="h-9 w-full rounded-lg border border-[rgba(255,255,255,0.08)] bg-card px-3 text-sm text-foreground"
             >
               <option value="">Select company...</option>
               {companies.map((c) => (
@@ -82,11 +86,11 @@ export function GmailSync() {
           </div>
 
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">New Status</label>
+            <label className="mb-2 block text-sm text-foreground">New Status</label>
             <select
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value)}
-              className="w-full h-9 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm"
+              className="h-9 w-full rounded-lg border border-[rgba(255,255,255,0.08)] bg-card px-3 text-sm text-foreground"
             >
               <option value="applied">Applied</option>
               <option value="shortlisted">Shortlisted</option>
@@ -96,28 +100,20 @@ export function GmailSync() {
             </select>
           </div>
 
-          <button
-            onClick={handleUpdate}
-            disabled={!selected || saving}
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
+          <Button onClick={handleUpdate} disabled={!selected || saving} className="w-full">
             {saving ? "Updating..." : saved ? "✅ Updated!" : "Update Status"}
-          </button>
+          </Button>
         </div>
-      </div>
 
-      {/* Email space placeholder */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-          Company Emails
-        </p>
-        <div className="bg-secondary/30 rounded-lg p-3 border border-dashed border-border text-center">
-          <Mail className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
-          <p className="text-xs text-muted-foreground">
-            Connect Gmail to see emails from companies here
-          </p>
+        <div>
+          <p className="label-caption mb-3">Company Emails</p>
+          <EmptyState
+            icon={Mail}
+            title="No synced emails yet"
+            subtitle="Connect Gmail in a future release to automatically surface recruiter and company email updates here."
+          />
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

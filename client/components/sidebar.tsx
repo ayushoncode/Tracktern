@@ -54,15 +54,17 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-sidebar border-r border-sidebar-border">
-      <div className="p-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg gradient-purple flex items-center justify-center"><Rocket className="w-5 h-5 text-primary-foreground" /></div>
-          <span className="text-xl font-bold text-sidebar-foreground">Tracktern</span>
+    <aside className="hidden lg:flex w-[220px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+      <div className="px-5 pb-4 pt-8">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Rocket className="h-4 w-4" />
+          </div>
+          <span className="text-sm font-semibold text-sidebar-foreground">Tracktern</span>
         </Link>
       </div>
-      <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        <ul className="space-y-0.5">
+      <nav className="flex-1 overflow-y-auto px-3 py-3">
+        <ul className="space-y-1">
           {visibleNavItems.map((item) => {
             const isActive = pathname === item.href
             return (
@@ -70,13 +72,13 @@ export function Sidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    "relative flex h-9 items-center gap-3 rounded-md px-3 text-sm transition-colors",
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[0_10px_24px_rgba(124,58,237,0.2)]"
-                      : "text-muted-foreground hover:-translate-y-0.5 hover:text-sidebar-foreground hover:bg-sidebar-accent/90 hover:shadow-[0_8px_18px_rgba(124,58,237,0.08)]"
+                      ? "border-l-2 border-primary bg-sidebar-primary pl-[10px] text-sidebar-primary-foreground"
+                      : "text-[#71717A] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   )}
                 >
-                  <item.icon className="w-5 h-5 shrink-0" />
+                  <item.icon className="h-4 w-4 shrink-0" />
                   <span className="truncate">{item.label}</span>
                 </Link>
               </li>
@@ -84,9 +86,12 @@ export function Sidebar() {
           })}
         </ul>
       </nav>
-      <div className="p-4 border-t border-sidebar-border">
-        <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all">
-          <LogOut className="w-5 h-5" /> Sign Out
+      <div className="border-t border-sidebar-border p-3">
+        <button
+          onClick={handleSignOut}
+          className="flex h-9 w-full items-center gap-3 rounded-md px-3 text-sm text-[#71717A] transition-colors hover:bg-[rgba(239,68,68,0.08)] hover:text-[#EF4444]"
+        >
+          <LogOut className="h-4 w-4" /> Sign Out
         </button>
       </div>
     </aside>

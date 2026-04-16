@@ -9,18 +9,13 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen overflow-x-hidden bg-background">
-      {/* Desktop Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <TopNavbar />
-        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6">
+        <main className="flex-1 px-5 pb-24 pt-8 sm:px-6 lg:px-10 lg:pb-10">
           {children}
         </main>
       </div>
-
-      {/* Mobile Bottom Nav */}
       <MobileNav />
     </div>
   )

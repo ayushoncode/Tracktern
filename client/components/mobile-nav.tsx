@@ -76,7 +76,7 @@ export function MobileNav() {
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setShowMore(false)}>
           <div className="absolute inset-0 bg-black/50" />
           <div
-            className="absolute bottom-16 left-0 right-0 max-h-[70vh] overflow-y-auto bg-card border-t border-border rounded-t-2xl p-4 z-50"
+            className="absolute bottom-16 left-0 right-0 z-50 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-border bg-card p-4"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -94,10 +94,10 @@ export function MobileNav() {
                     href={item.href}
                     onClick={() => setShowMore(false)}
                     className={cn(
-                      "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                      "flex flex-col items-center gap-2 rounded-xl p-3 transition-colors",
                       isActive
-                        ? "bg-primary/10 text-primary"
-                        : "bg-secondary text-muted-foreground hover:text-foreground"
+                        ? "border border-[rgba(124,58,237,0.2)] bg-[rgba(124,58,237,0.08)] text-[#A78BFA]"
+                        : "bg-[rgba(255,255,255,0.03)] text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <item.icon className="w-5 h-5" />
@@ -111,7 +111,7 @@ export function MobileNav() {
       )}
 
       {/* Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card lg:hidden">
         <div className="flex items-center justify-around py-2">
           {visiblePrimaryNav.map((item) => {
             if (item.href === "/more") {
@@ -121,8 +121,8 @@ export function MobileNav() {
                   key="more"
                   onClick={() => setShowMore(!showMore)}
                   className={cn(
-                    "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all",
-                    isMoreActive || showMore ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    "flex flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors",
+                    isMoreActive || showMore ? "text-[#A78BFA]" : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <Menu className="w-5 h-5" />
@@ -136,8 +136,8 @@ export function MobileNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all",
-                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  "flex flex-col items-center gap-1 rounded-lg px-3 py-2 transition-colors",
+                  isActive ? "text-[#A78BFA]" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <item.icon className="w-5 h-5" />

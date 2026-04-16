@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, Flame, Rocket, LogOut, Layers, Zap } from "lucide-react"
+import { Bell, Rocket, LogOut, Layers, Zap } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -51,35 +51,28 @@ export function TopNavbar() {
 
   const userName = user?.name || "there"
   const userEmail = user?.email || ""
+  const streak = Number(user?.streak || 0)
 
   return (
-    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center justify-between h-full px-4 lg:px-6">
-        {/* Mobile Logo */}
-        <div className="lg:hidden flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg gradient-purple flex items-center justify-center">
-            <Rocket className="w-4 h-4 text-primary-foreground" />
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm">
+      <div className="flex h-16 items-center justify-between px-5 sm:px-6 lg:px-10">
+        <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Rocket className="h-4 w-4" />
           </div>
-          <span className="text-lg font-bold text-foreground">Tracktern</span>
+          <span className="text-sm font-semibold text-foreground">Tracktern</span>
         </div>
-
-        {/* Greeting */}
-        <div className="hidden lg:flex items-center gap-3">
-          <h1 className="text-xl font-semibold text-foreground">
-            Hey {userName.split(" ")[0]} <span className="text-2xl">👋</span>
-          </h1>
+        <div className="hidden lg:flex min-w-0 flex-col">
+          <span className="label-caption">Workspace</span>
+          <span className="mt-1 text-sm text-foreground">Welcome back, {userName.split(" ")[0]}</span>
         </div>
-
-        {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-3">
-
-          {/* Focus Mode Toggle */}
           <button
             onClick={toggleFocusMode}
-            className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+            className={`hidden sm:flex h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors ${
               focusMode
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-secondary text-muted-foreground border-border hover:border-primary/50"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-[rgba(255,255,255,0.14)] bg-transparent text-foreground hover:bg-[rgba(255,255,255,0.06)]"
             }`}
           >
             {focusMode ? (
@@ -89,33 +82,31 @@ export function TopNavbar() {
             )}
           </button>
 
-          {/* Streak */}
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-foreground text-sm font-medium">
-            <Flame className="w-4 h-4 text-orange-500" />
-            <span>0 day streak</span>
-          </div>
+          {streak > 0 ? (
+            <div className="hidden md:flex h-9 items-center rounded-lg border border-[rgba(255,255,255,0.08)] bg-card px-3 text-sm text-foreground">
+              {streak} day streak
+            </div>
+          ) : null}
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:bg-[rgba(255,255,255,0.04)] hover:text-foreground">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
           </Button>
 
-          {/* Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                <Avatar className="h-9 w-9 border-2 border-primary/30">
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
+                <Avatar className="h-9 w-9 border border-[rgba(255,255,255,0.08)]">
+                  <AvatarFallback className="bg-[rgba(124,58,237,0.12)] text-primary text-sm font-medium">
                     {userName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-card border-border">
+            <DropdownMenuContent align="end" className="w-56 border-border bg-card">
               <div className="flex items-center gap-2 p-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                  <AvatarFallback className="bg-[rgba(124,58,237,0.12)] text-primary text-sm">
                     {userName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -125,7 +116,7 @@ export function TopNavbar() {
                 </div>
               </div>
               <DropdownMenuSeparator className="bg-border" />
-              <DropdownMenuItem className="cursor-pointer text-card-foreground hover:bg-secondary">
+              <DropdownMenuItem className="cursor-pointer text-card-foreground hover:bg-[rgba(255,255,255,0.04)]">
                 <Link href="/settings" className="w-full">Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer text-red-400 hover:bg-red-500/10" onClick={handleSignOut}>
