@@ -37,18 +37,19 @@ export function StatCard({ title, value, icon: Icon, color, change }: StatCardPr
 
   return (
     <div className={cn(
-      "glass-card rounded-xl border border-[rgba(255,255,255,0.08)] px-6 py-5",
+      "glass-card rounded-xl p-5 border",
+      colors.border
     )}>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="stat-label">{title}</p>
-          <p className="stat-number mt-2">{value}</p>
+          <p className="text-muted-foreground text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold text-foreground mt-1">{value}</p>
           {change && (
-            <p className="mt-2 text-xs text-muted-foreground">{change}</p>
+            <p className="text-xs text-muted-foreground mt-1">{change}</p>
           )}
         </div>
-        <div className={cn("flex h-8 w-8 items-center justify-center rounded-full bg-[rgba(124,58,237,0.1)]", colors.bg)}>
-          <Icon className={cn("h-4 w-4", colors.text)} />
+        <div className={cn("p-3 rounded-lg", colors.bg)}>
+          <Icon className={cn("w-5 h-5", colors.text)} />
         </div>
       </div>
     </div>
