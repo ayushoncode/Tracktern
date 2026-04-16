@@ -73,7 +73,8 @@ const cleanJSON = (text) => {
 // 🧠 QUESTION ROUTE
 router.post("/question", protect, async (req, res) => {
   try {
-    let { company, role, type, difficulty } = req.body;
+    let { company, role, type, round, difficulty, customTopic } = req.body;
+    const interviewRound = (round || type || "DSA").trim();
 
     // 🔥 COMPANY VALIDATION
     if (!company || typeof company !== "string") {
@@ -153,15 +154,15 @@ router.post("/question", protect, async (req, res) => {
     let companyHint = "";
 
     if (["google","meta"].includes(inputCompany)) {
-      companyHint = "DSA, graphs, trees, optimization";
+      companyHint = "high-bar, analytical, structured";
     } else if (inputCompany === "amazon") {
-      companyHint = "arrays, strings, greedy";
+      companyHint = "customer-focused, practical, ownership-driven";
     } else if (inputCompany === "microsoft") {
-      companyHint = "DP, recursion";
+      companyHint = "collaborative, product-aware, thoughtful";
     } else if (["tcs","infosys","wipro"].includes(inputCompany)) {
-      companyHint = "easy-medium DSA";
+      companyHint = "clear fundamentals, practical interview style";
     } else {
-      companyHint = "standard coding";
+      companyHint = "standard interview style";
     }
 
     // 🧠 ROLE STYLE
@@ -180,12 +181,12 @@ router.post("/question", protect, async (req, res) => {
     } else if (matchedRole.includes("DevOps")) {
       roleHint = "Docker, cloud, CI/CD";
     } else {
-      roleHint = "DSA, algorithms";
+      roleHint = "core engineering fundamentals";
     }
 
     let prompt = "";
 
-    if (type === "OA") {
+    if (interviewRound === "OA") {
       prompt = `You are creating a REAL interview MCQ.
 
 Company: ${company}
@@ -208,8 +209,8 @@ Return ONLY JSON:
   "options": ["A) ...","B) ...","C) ...","D) ..."],
   "correctAnswer": "A"
 }`;
-    } else {
-      prompt = `You are designing a REAL coding interview question.
+    } else if (interviewRound === "System Design") {
+      prompt = `You are a senior System Design interviewer at ${company} hiring for ${role}.
 
 Company: ${company}
 Role: ${role}
@@ -219,14 +220,133 @@ Company Style: ${companyHint}
 Role Focus: ${roleHint}
 
 RULES:
-- Real interview question
+- Ask a realistic system design question
+- Focus on architecture, scale, trade-offs, reliability, and APIs
+- Do not ask DSA/coding-only questions
+- Avoid generic textbook prompts
+
+Return ONLY JSON:
+{
+  "question": "system design problem statement",
+  "type": "System Design",
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2","topic3"],
+  "followUp": "natural follow-up question"
+}`;
+    } else if (interviewRound === "Behavioral") {
+      prompt = `You are a senior Behavioral interviewer at ${company} hiring for ${role}.
+
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
+
+RULES:
+- Ask a realistic behavioral question
+- Use STAR-style prompting
+- Do not ask DSA or coding questions
+- Keep it specific to the company and role
+
+Return ONLY JSON:
+{
+  "question": "behavioral question text",
+  "type": "Behavioral",
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2","topic3"],
+  "followUp": "natural follow-up question"
+}`;
+    } else if (interviewRound === "HR") {
+      prompt = `You are an HR interviewer at ${company} hiring for ${role}.
+
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
+
+RULES:
+- Ask a realistic HR round question
+- Focus on motivation, culture fit, communication, compensation, and work style
+- Do not ask DSA or coding questions
+
+Return ONLY JSON:
+{
+  "question": "HR interview question text",
+  "type": "HR",
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2","topic3"],
+  "followUp": "natural follow-up question"
+}`;
+    } else if (interviewRound === "Resume") {
+      prompt = `You are a resume interviewer at ${company} hiring for ${role}.
+
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
+
+RULES:
+- Ask a question based on the candidate's resume, projects, or experience
+- Do not ask DSA or coding questions unless the resume clearly suggests it
+- Keep the question practical and follow-up friendly
+
+Return ONLY JSON:
+{
+  "question": "resume review question text",
+  "type": "Resume",
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2","topic3"],
+  "followUp": "natural follow-up question"
+}`;
+    } else if (interviewRound === "Custom") {
+      prompt = `You are an interviewer at ${company} hiring for ${role}.
+
+Custom Topic: ${customTopic || "general interview fundamentals"}
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
+
+RULES:
+- Ask one realistic question about the custom topic
+- Do not default to DSA unless the custom topic is explicitly DSA
+- Keep the question sharp and practical
+
+Return ONLY JSON:
+{
+  "question": "custom interview question text",
+  "type": "Custom",
+  "hints": ["hint1","hint2"],
+  "expectedTopics": ["topic1","topic2","topic3"],
+  "followUp": "natural follow-up question"
+}`;
+    } else {
+      prompt = `You are designing a REAL DSA interview question.
+
+Company: ${company}
+Role: ${role}
+Difficulty: ${difficulty}
+
+Company Style: ${companyHint}
+Role Focus: ${roleHint}
+
+RULES:
+- Real DSA / coding interview question
 - Not generic
 - Avoid repeated problems
+- Focus on algorithms, data structures, complexity, and edge cases
 
 Return ONLY JSON:
 {
   "question": "problem statement",
-  "type": "${type}",
+  "type": "${interviewRound}",
   "hints": ["hint1","hint2"],
   "expectedTopics": ["topic1","topic2"]
 }`;
@@ -241,11 +361,11 @@ Return ONLY JSON:
       parsed = JSON.parse(cleaned);
     } catch {
       console.error("JSON FAIL:", raw);
-      parsed = { question: cleaned, type };
+      parsed = { question: cleaned, type: interviewRound };
     }
 
     // fallback MCQ
-    if (type === "OA" && !parsed.options) {
+    if (interviewRound === "OA" && !parsed.options) {
       parsed.options = [
         "A) True",
         "B) False",
@@ -254,6 +374,8 @@ Return ONLY JSON:
       ];
       parsed.correctAnswer = "A";
     }
+
+    parsed.type = parsed.type || interviewRound;
 
     res.json(parsed);
 
@@ -266,19 +388,32 @@ Return ONLY JSON:
 // 📊 SCORE ROUTE
 router.post("/score", protect, async (req, res) => {
   try {
-    const { question, answer, company } = req.body;
+    const { question, answer, company, role, round, type, transcript, timeUsed, hintsUsed } = req.body;
+    const interviewRound = (round || type || question?.type || "DSA").trim();
+    const penalty = hintsUsed ? "Deduct 5 points for hint usage." : "";
+    const timeNote = timeUsed ? `Candidate used ${timeUsed} seconds.` : "";
+    const answerText = typeof answer === "string" ? answer : "";
+    const questionText = question?.question || question;
 
     const raw = await groq([{
       role: "user",
       content: `You are a strict interviewer at ${company}.
 
-Question: ${question.question || question}
-Candidate Answer: ${answer}
+Question: ${questionText}
+Round Type: ${interviewRound}
+Candidate Answer: ${answerText}
+${transcript ? `Speech Transcript: ${transcript}` : ""}
+${timeNote} ${penalty}
 
 RULES:
 - Wrong → low score
 - Random → very low score
 - Correct → high score
+- Adjust expectations to the interview round
+- DSA answers should be judged on correctness, approach, complexity, and edge cases
+- System Design answers should be judged on architecture, scalability, trade-offs, and clarity
+- Behavioral/HR answers should be judged on structure, honesty, and relevance
+- OA answers should be scored strictly by answer accuracy
 
 Return ONLY JSON:
 {
@@ -320,6 +455,61 @@ Return ONLY JSON:
   } catch (err) {
     console.error("Score error:", err.message);
     res.status(500).json({ message: "Error scoring" });
+  }
+});
+
+// 📈 FINAL REPORT
+router.post("/final-report", protect, async (req, res) => {
+  try {
+    const { rounds = [], company, role, totalTime } = req.body;
+    const summary = rounds
+      .map((r, i) => `Round ${i + 1} (${r.type || "Unknown"}): Score ${r.score}, Grade ${r.grade}`)
+      .join("\n");
+
+    const raw = await groq([{
+      role: "user",
+      content: `You are a hiring manager at ${company} for ${role}.
+
+Here are interview results:
+${summary}
+
+Total time: ${totalTime || 0}s
+
+Return ONLY valid JSON:
+{
+  "decision": "Strong Hire",
+  "overallGrade": "B+",
+  "avgScore": 78,
+  "summary": "overall assessment",
+  "topStrength": "biggest strength",
+  "topWeakness": "biggest weakness",
+  "hiringChance": 72,
+  "nextSteps": ["step1","step2","step3"],
+  "studyPlan": [
+    {"week": 1, "focus": "topic", "tasks": ["task1","task2"]},
+    {"week": 2, "focus": "topic", "tasks": ["task1","task2"]}
+  ]
+}`
+    }], 1200);
+
+    const cleaned = cleanJSON(raw);
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      console.error("Final report JSON fail:", raw);
+      return res.status(500).json({ message: "Final report parsing failed" });
+    }
+
+    parsed.nextSteps = Array.isArray(parsed.nextSteps) ? parsed.nextSteps : [];
+    parsed.studyPlan = Array.isArray(parsed.studyPlan) ? parsed.studyPlan : [];
+
+    res.json(parsed);
+  } catch (err) {
+    console.error("Final report error:", err.message);
+    res.status(500).json({ message: "Error generating final report" });
   }
 });
 

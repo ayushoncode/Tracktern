@@ -220,15 +220,16 @@ export default function MockInterviewPage() {
     clearInterval(timerRef.current); setTimerActive(false); stopSpeech()
     setPhase("scoring")
     const timeUsed = Math.round((Date.now() - startTimeRef.current) / 1000)
+    const roundType = question?.type || selectedRound
     try {
       const res = await fetch(`${API}/mock-interview/score`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ question, answer: ans, type: selectedRound, round: selectedRound, company, role, transcript, timeUsed, hintsUsed })
+        body: JSON.stringify({ question, answer: ans, type: roundType, round: roundType, company, role, transcript, timeUsed, hintsUsed })
       })
       const score = await res.json()
       setCurrentScore(score)
-      setHistory(prev => [...prev, { question, answer: ans, score, timeUsed }])
+      setHistory(prev => [...prev, { question, answer: ans, score, timeUsed, type: roundType }])
     } catch {}
     setPhase("interview")
   }
@@ -248,7 +249,7 @@ export default function MockInterviewPage() {
       const res = await fetch(`${API}/mock-interview/final-report`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ rounds: history.map(h => ({ type: selectedRound, score: h.score.score, grade: h.score.grade })), company, role, totalTime: history.reduce((a, h) => a + h.timeUsed, 0) })
+        body: JSON.stringify({ rounds: history.map(h => ({ type: h.type || selectedRound, score: h.score.score, grade: h.score.grade })), company, role, totalTime: history.reduce((a, h) => a + h.timeUsed, 0) })
       })
       setFinalReport(await res.json())
     } catch {}
@@ -259,6 +260,8 @@ export default function MockInterviewPage() {
   const gradeColor = (g: string) => !g ? "text-muted-foreground" : g.startsWith("A") ? "text-green-400" : g.startsWith("B") ? "text-blue-400" : g.startsWith("C") ? "text-yellow-400" : "text-red-400"
   const avgScore = history.length > 0 ? Math.round(history.reduce((a, h) => a + (h.score?.score || 0), 0) / history.length) : 0
   const roundInfo = ROUNDS.find(r => r.id === selectedRound)
+  const activeRoundInfo = ROUNDS.find(r => r.id === (question?.type || selectedRound))
+  const displayRoundInfo = activeRoundInfo || roundInfo
 
   // SETUP
   if (phase === "setup") return (
@@ -499,7 +502,10 @@ export default function MockInterviewPage() {
           {currentScore && (
             <div className="glass-card rounded-2xl border border-border p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-foreground text-lg">Q{currentQ} Results</h3>
+                <div>
+                  <h3 className="font-bold text-foreground text-lg">Q{currentQ} Results</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{question?.type || selectedRound} Round</p>
+                </div>
                 <div className="text-center"><div className={cn("text-3xl font-black", gradeColor(currentScore.grade))}>{currentScore.grade}</div><div className="text-xs text-muted-foreground">{currentScore.score}/100</div></div>
               </div>
               <div className="h-2 bg-secondary rounded-full"><div className={cn("h-2 rounded-full transition-all", currentScore.score >= 80 ? "bg-green-500" : currentScore.score >= 60 ? "bg-yellow-500" : "bg-red-500")} style={{width:`${currentScore.score}%`}} /></div>
@@ -543,8 +549,13 @@ export default function MockInterviewPage() {
               {history.map((h, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">{i+1}</div>
-                  <div className="flex-1 h-1.5 bg-secondary rounded-full"><div className={cn("h-1.5 rounded-full", h.score.score >= 80 ? "bg-green-500" : h.score.score >= 60 ? "bg-yellow-500" : "bg-red-500")} style={{width:`${h.score.score}%`}} /></div>
-                  <span className={cn("text-xs font-bold w-6 text-right", gradeColor(h.score.grade))}>{h.score.grade}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[11px] text-muted-foreground truncate">{h.type || "Round"}</span>
+                      <span className={cn("text-xs font-bold shrink-0", gradeColor(h.score.grade))}>{h.score.grade}</span>
+                    </div>
+                    <div className="h-1.5 bg-secondary rounded-full"><div className={cn("h-1.5 rounded-full", h.score.score >= 80 ? "bg-green-500" : h.score.score >= 60 ? "bg-yellow-500" : "bg-red-500")} style={{width:`${h.score.score}%`}} /></div>
+                  </div>
                 </div>
               ))}
               {Array.from({length: numQuestions - history.length - (currentScore ? 0 : 1)}).map((_, i) => (
@@ -559,10 +570,10 @@ export default function MockInterviewPage() {
 
           <div className="glass-card rounded-xl border border-border p-4">
             <p className="text-xs font-bold text-foreground uppercase tracking-wide mb-3">Round Info</p>
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-3", roundInfo?.bg)}>{roundInfo && <roundInfo.icon className={cn("w-5 h-5", roundInfo.color)} />}</div>
-            <p className="text-sm font-semibold text-foreground">{roundInfo?.label}</p>
-            <p className="text-xs text-muted-foreground mt-1">{roundInfo?.desc}</p>
-            <p className="text-xs text-muted-foreground mt-1">⏱ {Math.floor((roundInfo?.time || 120) / 60)}m per question</p>
+            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-3", displayRoundInfo?.bg)}>{displayRoundInfo && <displayRoundInfo.icon className={cn("w-5 h-5", displayRoundInfo.color)} />}</div>
+            <p className="text-sm font-semibold text-foreground">{displayRoundInfo?.label}</p>
+            <p className="text-xs text-muted-foreground mt-1">{displayRoundInfo?.desc}</p>
+            <p className="text-xs text-muted-foreground mt-1">⏱ {Math.floor((displayRoundInfo?.time || 120) / 60)}m per question</p>
           </div>
         </div>
       </div>
@@ -601,7 +612,7 @@ export default function MockInterviewPage() {
           {history.map((h, i) => (
             <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-secondary/50 border border-border">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">{i+1}</div>
-              <div className="flex-1 min-w-0"><p className="text-sm text-foreground truncate">{h.question.question}</p><p className="text-xs text-muted-foreground mt-0.5">{h.timeUsed}s · {h.score.passed ? "✓ Passed" : "✗ Failed"}</p></div>
+              <div className="flex-1 min-w-0"><p className="text-sm text-foreground truncate">{h.question.question}</p><p className="text-xs text-muted-foreground mt-0.5">{h.type || "Round"} · {h.timeUsed}s · {h.score.passed ? "✓ Passed" : "✗ Failed"}</p></div>
               <div className={cn("text-xl font-black shrink-0", gradeColor(h.score.grade))}>{h.score.grade}</div>
             </div>
           ))}
