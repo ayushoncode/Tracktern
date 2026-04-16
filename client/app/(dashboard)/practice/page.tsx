@@ -670,11 +670,11 @@ const HEATMAP_CELL_SIZE = 13
 const HEATMAP_GRID_GAP = 4
 const HEATMAP_MONTH_GAP = 10
 const HEATMAP_LEVEL_STYLES = [
-  "bg-[#261a36] hover:bg-[#312046]",
-  "bg-[#4c1d95]/70 hover:bg-[#5b21b6]/80",
-  "bg-[#6d28d9]/80 hover:bg-[#7c3aed]/85",
-  "bg-[#8b5cf6]/85 hover:bg-[#9f67ff]/90",
-  "bg-[#c084fc] hover:bg-[#d8a4ff]",
+  "bg-[#1b1327] hover:bg-[#251735]",
+  "bg-[#4c1d95]/85 hover:bg-[#5b21b6]",
+  "bg-[#6d28d9] hover:bg-[#7c3aed]",
+  "bg-[#a855f7] hover:bg-[#b56cff]",
+  "bg-[#e9d5ff] hover:bg-[#f3e8ff]",
 ]
 
 type View = "home" | "topic" | "pattern"
@@ -929,7 +929,7 @@ export default function PracticePage() {
   // HOME VIEW
   return (
     <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Code2 className="w-6 h-6 text-primary" />
@@ -937,45 +937,67 @@ export default function PracticePage() {
           </h2>
           <p className="text-muted-foreground mt-1">Pattern-Wise Mastery — {SHEET_DATA.length} topics, {grandTotal} problems</p>
         </div>
-        <div className="glass-card rounded-xl border border-border px-5 py-3 text-right">
-          <div className="text-2xl font-bold text-primary">{totalSolved}<span className="text-muted-foreground text-base font-normal">/{grandTotal}</span></div>
-          <div className="text-xs text-muted-foreground">Total Solved</div>
+        <div className="rounded-2xl border border-[#8b5cf6]/16 bg-[#8b5cf6]/8 px-4 py-3 text-left sm:min-w-[220px] sm:text-right">
+          <div className="text-[11px] uppercase tracking-[0.2em] text-violet-100/55">This Year</div>
+          <div className="mt-1 text-2xl font-black text-violet-50">{currentYearStats.totalSubmissions}</div>
+          <div className="text-xs text-violet-100/60">submissions tracked in {currentYear}</div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
-          <div className="mb-1 flex items-center justify-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
-              <Flame className="h-5 w-5 text-[#c084fc]" />
-            </div>
-            <span className="text-2xl font-bold text-violet-50">{stats.currentStreak}</span>
+      <div className="rounded-[28px] border border-[#8b5cf6]/18 bg-[linear-gradient(180deg,rgba(109,40,217,0.1)_0%,rgba(28,19,39,0.9)_100%)] p-5 shadow-[0_16px_40px_rgba(76,29,149,0.14)]">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-violet-100/50">Progress Overview</p>
+            <h3 className="mt-2 text-2xl font-black text-violet-50">Momentum is building week by week.</h3>
+            <p className="mt-2 text-sm leading-6 text-violet-100/65">
+              Your streak, active days, and solved problems are grouped here so the next step is easier to read at a glance.
+            </p>
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Current Streak</p>
+          <div className="min-w-[220px]">
+            <div className="flex items-end justify-between text-sm text-violet-100/60">
+              <span>Sheet completion</span>
+              <span className="font-semibold text-violet-50">{Math.round((totalSolved / grandTotal) * 100)}%</span>
+            </div>
+            <div className="mt-2 h-2 rounded-full bg-white/8">
+              <div className="h-2 rounded-full bg-[linear-gradient(90deg,#7c3aed_0%,#c084fc_100%)]" style={{ width: `${Math.round((totalSolved / grandTotal) * 100)}%` }} />
+            </div>
+          </div>
         </div>
-        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
-          <div className="mb-1 flex items-center justify-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
-              <Trophy className="h-5 w-5 text-[#c084fc]" />
+
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="rounded-2xl border border-white/8 bg-white/[0.04] p-4">
+            <div className="flex items-center gap-2 text-violet-200/80">
+              <Flame className="h-4 w-4" />
+              <span className="text-[11px] uppercase tracking-[0.18em]">Current Streak</span>
             </div>
-            <span className="text-2xl font-bold text-violet-50">{totalSolved}</span>
+            <p className="mt-3 text-2xl font-black text-violet-50">{stats.currentStreak}</p>
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Problems Solved</p>
-        </div>
-        <div className="rounded-[24px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.12)_0%,rgba(18,13,29,0.9)_100%)] p-4 text-center shadow-[0_14px_34px_rgba(76,29,149,0.12)]">
-          <div className="mb-1 flex items-center justify-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#8b5cf6]/15">
-              <Target className="h-5 w-5 text-[#c084fc]" />
+          <div className="rounded-2xl border border-white/8 bg-white/[0.04] p-4">
+            <div className="flex items-center gap-2 text-violet-200/80">
+              <Trophy className="h-4 w-4" />
+              <span className="text-[11px] uppercase tracking-[0.18em]">Problems Solved</span>
             </div>
-            <span className="text-2xl font-bold text-violet-50">{stats.activeDays}</span>
+            <p className="mt-3 text-2xl font-black text-violet-50">{totalSolved}</p>
           </div>
-          <p className="text-xs uppercase tracking-[0.18em] text-violet-100/55">Active Days</p>
+          <div className="rounded-2xl border border-white/8 bg-white/[0.04] p-4">
+            <div className="flex items-center gap-2 text-violet-200/80">
+              <Target className="h-4 w-4" />
+              <span className="text-[11px] uppercase tracking-[0.18em]">Active Days</span>
+            </div>
+            <p className="mt-3 text-2xl font-black text-violet-50">{currentYearStats.activeDays}</p>
+          </div>
+          <div className="rounded-2xl border border-white/8 bg-white/[0.04] p-4">
+            <div className="flex items-center gap-2 text-violet-200/80">
+              <Info className="h-4 w-4" />
+              <span className="text-[11px] uppercase tracking-[0.18em]">Best Streak</span>
+            </div>
+            <p className="mt-3 text-2xl font-black text-violet-50">{stats.maxStreak}</p>
+          </div>
         </div>
       </div>
 
       {/* GitHub-style Yearly Heatmap */}
-      <div className="overflow-hidden rounded-[28px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,#161022_0%,#120d1d_100%)] px-4 py-5 shadow-[0_20px_60px_rgba(76,29,149,0.18)] sm:px-6">
+      <div className="overflow-hidden rounded-[28px] border border-[#8b5cf6]/14 bg-[#120d1d] px-4 py-5 shadow-[0_20px_60px_rgba(32,17,54,0.35)] sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-center gap-2 text-[15px] font-semibold text-violet-50 sm:text-[18px]">
             <span className="text-3xl font-black tracking-tight text-white sm:text-[42px]">{currentYearStats.totalSubmissions}</span>
@@ -1041,13 +1063,19 @@ export default function PracticePage() {
                       return (
                         <div
                           key={day}
-                          title={`${cell.date}${cell.count > 0 ? ` • ${cell.count} submission${cell.count > 1 ? "s" : ""}` : ""}`}
                           className={cn(
-                            "h-[13px] w-[13px] rounded-[3px] border border-transparent transition-all",
+                            "group/heatmap relative h-[13px] w-[13px] rounded-[3px] border border-transparent transition-all",
                             HEATMAP_LEVEL_STYLES[level],
                             isToday && "border-violet-200/90 ring-1 ring-violet-300/40"
                           )}
-                        />
+                        >
+                          <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 w-max -translate-x-1/2 rounded-lg border border-violet-400/20 bg-[#1a1326] px-2.5 py-1.5 text-[11px] font-medium text-violet-50 opacity-0 shadow-lg transition-opacity duration-150 group-hover/heatmap:opacity-100">
+                            {cell.date}
+                            <span className="ml-1 text-violet-200/70">
+                              {cell.count > 0 ? `• ${cell.count} submission${cell.count > 1 ? "s" : ""}` : "• No submissions"}
+                            </span>
+                          </div>
+                        </div>
                       )
                     })}
                   </div>
@@ -1067,7 +1095,7 @@ export default function PracticePage() {
       </div>
 
       {/* Daily Problem */}
-      <div className="rounded-[28px] border border-[#8b5cf6]/20 bg-[linear-gradient(180deg,rgba(109,40,217,0.14)_0%,rgba(18,13,29,0.96)_100%)] p-5 shadow-[0_18px_48px_rgba(76,29,149,0.14)] sm:p-6">
+      <div className="rounded-[28px] border border-[#c084fc]/24 bg-[linear-gradient(135deg,rgba(109,40,217,0.22)_0%,rgba(45,18,78,0.94)_45%,rgba(18,13,29,0.98)_100%)] p-5 shadow-[0_24px_56px_rgba(76,29,149,0.2)] sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#8b5cf6]/20 bg-[#8b5cf6]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#d8b4fe]">
@@ -1088,7 +1116,9 @@ export default function PracticePage() {
                 {stats.totalSubmissions} tracked submissions
               </span>
             </div>
-    
+            <p className="mt-4 text-sm leading-7 text-violet-100/72">
+              Pick up today’s featured problem and keep the heatmap alive. Daily solves and pattern progress update the same tracker, so every solve moves the dashboard forward.
+            </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 lg:w-[360px]">
@@ -1112,19 +1142,19 @@ export default function PracticePage() {
             href={dailyProblem.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl gradient-purple px-4 py-3 text-sm font-bold text-primary-foreground hover:opacity-90"
+            className="inline-flex items-center justify-center gap-2 rounded-xl gradient-purple px-5 py-3 text-sm font-bold text-primary-foreground shadow-[0_12px_30px_rgba(124,58,237,0.32)] transition-transform duration-200 hover:-translate-y-0.5 hover:opacity-95"
           >
-            Solve on LeetCode <ExternalLink className="w-4 h-4" />
+            Start Solving <ExternalLink className="w-4 h-4" />
           </a>
           {!dailyDone ? (
             <button
               onClick={markDailyDone}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#8b5cf6]/22 bg-[#8b5cf6]/14 px-4 py-3 text-sm font-medium text-[#e9d5ff] hover:bg-[#8b5cf6]/22"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.06] px-5 py-3 text-sm font-medium text-[#f5eaff] transition-colors hover:bg-white/[0.1]"
             >
-              <CheckCircle className="w-4 h-4" /> Mark as Solved
+              <CheckCircle className="w-4 h-4" /> Continue Practice
             </button>
           ) : (
-            <div className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#8b5cf6]/22 bg-[#8b5cf6]/14 px-4 py-3 text-sm font-medium text-[#e9d5ff]">
+            <div className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.06] px-5 py-3 text-sm font-medium text-[#f5eaff]">
               <CheckCircle className="w-4 h-4" /> Come back tomorrow for a new one
             </div>
           )}

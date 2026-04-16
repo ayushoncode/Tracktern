@@ -67,7 +67,15 @@ export function Sidebar() {
             const isActive = pathname === item.href
             return (
               <li key={item.href}>
-                <Link href={item.href} className={cn("flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all", isActive ? "bg-sidebar-primary text-sidebar-primary-foreground" : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent")}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-[0_10px_24px_rgba(124,58,237,0.2)]"
+                      : "text-muted-foreground hover:-translate-y-0.5 hover:text-sidebar-foreground hover:bg-sidebar-accent/90 hover:shadow-[0_8px_18px_rgba(124,58,237,0.08)]"
+                  )}
+                >
                   <item.icon className="w-5 h-5 shrink-0" />
                   <span className="truncate">{item.label}</span>
                 </Link>
