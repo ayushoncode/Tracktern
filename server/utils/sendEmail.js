@@ -20,14 +20,24 @@ const sendEmail = async (to, subject, text) => {
       },
     });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL,
+    const info = await transporter.sendMail({
+      from: `"Tracktern" <${process.env.EMAIL}>`,
       to,
       subject,
       text,
     });
 
-    console.log("✅ Email sent");
+    console.log("✅ Email send response", {
+      to,
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response,
+    });
+
+    if (info.rejected?.length) {
+      throw new Error(`Email rejected for: ${info.rejected.join(", ")}`);
+    }
   } catch (err) {
     console.error("❌ EMAIL ERROR:", err.message);
     throw err; // important
