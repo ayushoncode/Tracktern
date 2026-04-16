@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { Brain, Play, Send, Clock, ChevronRight, RotateCcw, Trophy, Target, Mic, MicOff, Video, VideoOff, Star, Zap, Code2, Users, Settings2, FileText, Plus, CheckCircle, XCircle, ArrowLeft } from "lucide-react"
+import { Brain, Play, Send, Clock, ChevronRight, RotateCcw, Trophy, Target, Mic, MicOff, Video, VideoOff, Star, Zap, Code2, Users, Settings2, FileText, Plus, CheckCircle, XCircle, ArrowLeft, Upload, Loader2 } from "lucide-react"
 import { getToken } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
@@ -61,6 +61,9 @@ export default function MockInterviewPage() {
   const [difficulty, setDifficulty] = useState("Medium")
   const [numQuestions, setNumQuestions] = useState(5)
   const [customTopic, setCustomTopic] = useState("")
+  const [resumeText, setResumeText] = useState("")
+  const [resumeFileName, setResumeFileName] = useState("")
+  const [extractingResume, setExtractingResume] = useState(false)
   const [isPro, setIsPro] = useState(false)
 
   const [currentQ, setCurrentQ] = useState(0)
@@ -87,6 +90,7 @@ export default function MockInterviewPage() {
   const recognitionRef = useRef<any>(null)
   const timerRef = useRef<any>(null)
   const startTimeRef = useRef<number>(0)
+  const resumeFileInputRef = useRef<HTMLInputElement>(null)
 
   const filteredCompanySuggestions = company.trim()
     ? COMPANIES.filter(item => item.toLowerCase().includes(company.toLowerCase()))
@@ -149,6 +153,59 @@ export default function MockInterviewPage() {
     setMicOn(false)
   }
 
+  const clearResumeFile = () => {
+    setResumeFileName("")
+    if (resumeFileInputRef.current) {
+      resumeFileInputRef.current.value = ""
+    }
+  }
+
+  const processResumeFile = async (file: File | undefined) => {
+    if (!file) return
+
+    const validTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain"
+    ]
+    const fileName = file.name.toLowerCase()
+    const isValidExtension = fileName.endsWith(".pdf") || fileName.endsWith(".docx") || fileName.endsWith(".txt")
+
+    if (!validTypes.includes(file.type) && !isValidExtension) {
+      alert("Please upload a PDF, DOCX, or TXT resume file.")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Please upload a file smaller than 5MB.")
+      return
+    }
+
+    setExtractingResume(true)
+
+    try {
+      const extractedText = await extractTextFromFile(file)
+      const sanitizedText = sanitizeResumeText(extractedText)
+
+      if (!sanitizedText.trim()) {
+        alert("We could not extract readable text from that file.")
+        return
+      }
+
+      setResumeText(sanitizedText)
+      setResumeFileName(file.name)
+    } catch {
+      alert("We could not read that file. Try another PDF or DOCX, or paste the resume text manually.")
+    } finally {
+      setExtractingResume(false)
+    }
+  }
+
+  const handleResumeFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    await processResumeFile(file)
+  }
+
   const handleBackToSetup = () => {
     clearInterval(timerRef.current)
     setTimerActive(false)
@@ -180,7 +237,8 @@ export default function MockInterviewPage() {
         role,
         type: selectedRound,
         difficulty,
-        customTopic
+        customTopic,
+        resume: resumeText
       })
     })
 
@@ -209,6 +267,7 @@ export default function MockInterviewPage() {
   const handleStart = async () => {
     if (!company || !role) return
     if (selectedRound === "Custom" && !customTopic) return
+    if (selectedRound === "Resume" && !resumeText.trim()) return
     setPhase("interview"); setCurrentQ(1); setHistory([])
     await fetchQuestion()
   }
@@ -368,6 +427,70 @@ export default function MockInterviewPage() {
           <div><label className="text-sm font-medium text-foreground mb-1.5 block">Custom Topic</label><input value={customTopic} onChange={e => setCustomTopic(e.target.value)} placeholder="e.g. React hooks, Database indexing, Leadership..." className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
         )}
 
+        {selectedRound === "Resume" && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground block">Paste Resume</label>
+            <div className="rounded-2xl border border-border bg-secondary/50 p-4 space-y-3">
+              <input
+                ref={resumeFileInputRef}
+                type="file"
+                accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                onChange={handleResumeFileSelect}
+                className="hidden"
+              />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Upload resume file</p>
+                  <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, or TXT. We extract the text here and use it to ask company-specific questions.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => resumeFileInputRef.current?.click()}
+                  disabled={extractingResume}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background/40 px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {extractingResume ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Reading file...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      Choose file
+                    </>
+                  )}
+                </button>
+              </div>
+              {resumeFileName && (
+                <div className="flex flex-col gap-2 rounded-xl border border-green-500/20 bg-green-500/10 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{resumeFileName}</p>
+                    <p className="text-xs text-muted-foreground">Resume text extracted and ready for the interview.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={clearResumeFile}
+                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    Clear file
+                  </button>
+                </div>
+              )}
+            </div>
+            <textarea
+              value={resumeText}
+              onChange={e => setResumeText(e.target.value)}
+              placeholder="Paste your resume text here, or upload a file above. The interview will ask questions based on your actual experience, the target company, and the role."
+              className="w-full min-h-44 px-3 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-y"
+            />
+            <p className="text-xs text-muted-foreground">
+              Resume round uses this text to generate company-specific questions about your projects, internships, impact, and skills.
+            </p>
+          </div>
+        )}
+
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Difficulty</label>
@@ -390,7 +513,7 @@ export default function MockInterviewPage() {
           </div>
         </div>
 
-        <button onClick={handleStart} disabled={!company || !role || (selectedRound === "Custom" && !customTopic)} className="w-full py-4 rounded-xl gradient-purple text-primary-foreground font-bold text-base flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity">
+        <button onClick={handleStart} disabled={!company || !role || (selectedRound === "Custom" && !customTopic) || (selectedRound === "Resume" && !resumeText.trim())} className="w-full py-4 rounded-xl gradient-purple text-primary-foreground font-bold text-base flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-opacity">
           <Play className="w-5 h-5" /> Start {roundInfo?.label} Interview
         </button>
       </div>
@@ -649,4 +772,68 @@ export default function MockInterviewPage() {
   )
 
   return null
+}
+
+async function extractTextFromFile(file: File) {
+  const fileName = file.name.toLowerCase()
+
+  if (file.type === "text/plain" || fileName.endsWith(".txt")) {
+    return file.text()
+  }
+
+  if (file.type === "application/pdf" || fileName.endsWith(".pdf")) {
+    return extractTextFromPdf(file)
+  }
+
+  if (
+    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    fileName.endsWith(".docx")
+  ) {
+    return extractTextFromDocx(file)
+  }
+
+  throw new Error("Unsupported file type")
+}
+
+async function extractTextFromPdf(file: File) {
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs")
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/legacy/build/pdf.worker.mjs",
+    import.meta.url
+  ).toString()
+
+  const arrayBuffer = await file.arrayBuffer()
+  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise
+  const pages: string[] = []
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+    const page = await pdf.getPage(pageNumber)
+    const textContent = await page.getTextContent()
+    const pageText = textContent.items
+      .map((item) => ("str" in item ? item.str : ""))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim()
+
+    if (pageText) {
+      pages.push(pageText)
+    }
+  }
+
+  return pages.join("\n\n")
+}
+
+async function extractTextFromDocx(file: File) {
+  const mammoth = await import("mammoth")
+  const arrayBuffer = await file.arrayBuffer()
+  const { value } = await mammoth.extractRawText({ arrayBuffer })
+  return value
+}
+
+function sanitizeResumeText(text: string) {
+  return text
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s([—–•])/g, " $1")
+    .trim()
 }

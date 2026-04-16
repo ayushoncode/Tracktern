@@ -73,7 +73,7 @@ const cleanJSON = (text) => {
 // 🧠 QUESTION ROUTE
 router.post("/question", protect, async (req, res) => {
   try {
-    let { company, role, type, round, difficulty, customTopic } = req.body;
+    let { company, role, type, round, difficulty, customTopic, resume } = req.body;
     const interviewRound = (round || type || "DSA").trim();
 
     // 🔥 COMPANY VALIDATION
@@ -185,6 +185,7 @@ router.post("/question", protect, async (req, res) => {
     }
 
     let prompt = "";
+    const trimmedResume = typeof resume === "string" ? resume.trim() : "";
 
     if (interviewRound === "OA") {
       prompt = `You are creating a REAL interview MCQ.
@@ -281,17 +282,25 @@ Return ONLY JSON:
   "followUp": "natural follow-up question"
 }`;
     } else if (interviewRound === "Resume") {
+      if (!trimmedResume) {
+        return res.status(400).json({ message: "Resume text is required for the Resume round" });
+      }
+
       prompt = `You are a resume interviewer at ${company} hiring for ${role}.
 
 Company: ${company}
 Role: ${role}
 Difficulty: ${difficulty}
+Candidate Resume:
+${trimmedResume.slice(0, 5000)}
 
 Company Style: ${companyHint}
 Role Focus: ${roleHint}
 
 RULES:
 - Ask a question based on the candidate's resume, projects, or experience
+- The question must directly reference something present in the resume
+- Tailor it to the target company and role
 - Do not ask DSA or coding questions unless the resume clearly suggests it
 - Keep the question practical and follow-up friendly
 
