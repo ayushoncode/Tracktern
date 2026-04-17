@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { Code2, ExternalLink, CheckCircle, Flame, Trophy, Target, ChevronRight, ArrowLeft, Play, CalendarDays, Sparkles, Activity, Info, ChevronDown } from "lucide-react"
+import { getUser } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const SHEET_DATA = [
@@ -680,6 +681,43 @@ const HEATMAP_LEVEL_STYLES = [
 type View = "home" | "topic" | "pattern"
 interface SelectedPattern { topic: typeof SHEET_DATA[0]; subPattern: typeof SHEET_DATA[0]["subPatterns"][0] }
 
+const PRACTICE_STORAGE_KEYS = {
+  solved: "lc_solved",
+  solvedDates: "lc_solved_dates",
+  dailyHistory: "daily_history",
+  submissionCounts: "practice_submission_counts",
+} as const
+
+function getPracticeStorageScope() {
+  const user = getUser()
+  const userIdentifier = user?._id || user?.id || user?.email
+  return userIdentifier ? String(userIdentifier) : "guest"
+}
+
+function getPracticeStorageKey(key: keyof typeof PRACTICE_STORAGE_KEYS) {
+  return `${PRACTICE_STORAGE_KEYS[key]}_${getPracticeStorageScope()}`
+}
+
+function readScopedPracticeState<T>(key: keyof typeof PRACTICE_STORAGE_KEYS, fallbackValue: T): T {
+  const scopedValue = localStorage.getItem(getPracticeStorageKey(key))
+  if (scopedValue) {
+    return JSON.parse(scopedValue) as T
+  }
+
+  const legacyValue = localStorage.getItem(PRACTICE_STORAGE_KEYS[key])
+  if (legacyValue) {
+    const parsedLegacyValue = JSON.parse(legacyValue) as T
+    localStorage.setItem(getPracticeStorageKey(key), JSON.stringify(parsedLegacyValue))
+    return parsedLegacyValue
+  }
+
+  return fallbackValue
+}
+
+function writeScopedPracticeState(key: keyof typeof PRACTICE_STORAGE_KEYS, value: unknown) {
+  localStorage.setItem(getPracticeStorageKey(key), JSON.stringify(value))
+}
+
 export default function PracticePage() {
   const [view, setView] = useState<View>("home")
   const [selectedTopic, setSelectedTopic] = useState<typeof SHEET_DATA[0] | null>(null)
@@ -693,10 +731,10 @@ export default function PracticePage() {
   const dailyProblem = getDailyProblem()
 
   useEffect(() => {
-    const savedSolved = JSON.parse(localStorage.getItem("lc_solved") || "{}")
-    const savedSolvedDates = JSON.parse(localStorage.getItem("lc_solved_dates") || "{}")
-    const savedHistory = JSON.parse(localStorage.getItem("daily_history") || "{}")
-    const savedSubmissionCounts = JSON.parse(localStorage.getItem("practice_submission_counts") || "{}")
+    const savedSolved = readScopedPracticeState("solved", {})
+    const savedSolvedDates = readScopedPracticeState("solvedDates", {})
+    const savedHistory = readScopedPracticeState("dailyHistory", {})
+    const savedSubmissionCounts = readScopedPracticeState("submissionCounts", {})
     const seededCounts = Object.keys(savedSubmissionCounts).length > 0
       ? savedSubmissionCounts
       : Object.fromEntries(
@@ -734,9 +772,9 @@ export default function PracticePage() {
     setSolved(newSolved)
     setSolvedDates(newSolvedDates)
     setSubmissionCounts(newSubmissionCounts)
-    localStorage.setItem("lc_solved", JSON.stringify(newSolved))
-    localStorage.setItem("lc_solved_dates", JSON.stringify(newSolvedDates))
-    localStorage.setItem("practice_submission_counts", JSON.stringify(newSubmissionCounts))
+    writeScopedPracticeState("solved", newSolved)
+    writeScopedPracticeState("solvedDates", newSolvedDates)
+    writeScopedPracticeState("submissionCounts", newSubmissionCounts)
   }
 
   const getSubPatternProgress = (topic: string, spName: string, count: number) => {
@@ -770,8 +808,8 @@ export default function PracticePage() {
     setDailyDone(true)
     setHistory(newHistory)
     setSubmissionCounts(newSubmissionCounts)
-    localStorage.setItem("daily_history", JSON.stringify(newHistory))
-    localStorage.setItem("practice_submission_counts", JSON.stringify(newSubmissionCounts))
+    writeScopedPracticeState("dailyHistory", newHistory)
+    writeScopedPracticeState("submissionCounts", newSubmissionCounts)
   }
 
   const { cells, totalWeeks } = buildCurrentYearHeatmap(currentYearSubmissionCounts)
