@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { getCareerProfile, getToken, predictCareerPaths, trackCareerPath } from "@/lib/api"
 
@@ -119,6 +120,14 @@ function buildInternshipLinks(path: CareerPath) {
   ] satisfies JobPlatform[]
 }
 
+function buildRecruiterPitch(path: CareerPath, skills: string[]) {
+  const strongestSkills = path.matchingSkills.slice(0, 3)
+  const selectedSkills = strongestSkills.length ? strongestSkills : skills.slice(0, 3)
+  const gap = path.skillGaps[0]
+
+  return `Targeting ${path.title} internships with hands-on exposure in ${selectedSkills.join(", ")}. Current fit is ${path.matchScore}%, with a focused plan to close ${gap || "remaining skill gaps"} and become job-ready in ${path.timeToReady || "the next few months"}.`
+}
+
 function SkillTag({
   label,
   active,
@@ -154,6 +163,7 @@ export function CareerPathPage() {
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [predicting, setPredicting] = useState(false)
   const [trackingTitle, setTrackingTitle] = useState("")
+  const [copiedTitle, setCopiedTitle] = useState("")
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
@@ -238,6 +248,17 @@ export function CareerPathPage() {
     setSavedPaths(Array.isArray(data.profile?.savedPaths) ? data.profile.savedPaths : savedPaths)
     setSuccess(`Added ${path.internshipKeywords.length} wishlist cards for ${path.title}.`)
     setTrackingTitle("")
+  }
+
+  const handleCopyPitch = async (path: CareerPath) => {
+    const pitch = buildRecruiterPitch(path, skills)
+    await navigator.clipboard.writeText(pitch)
+    setCopiedTitle(path.title)
+    toast({
+      title: "Pitch copied",
+      description: `A quick intro for ${path.title} is ready to paste.`,
+    })
+    window.setTimeout(() => setCopiedTitle(""), 1800)
   }
 
   if (loadingProfile) {
@@ -401,12 +422,42 @@ export function CareerPathPage() {
           ))}
         </div>
       ) : careerPaths.length ? (
-        <div className="grid gap-6 xl:grid-cols-3">
+        <>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {[
+              {
+                label: "Best Fit",
+                value: careerPaths[0]?.title || "Not available",
+                detail: `${careerPaths[0]?.matchScore || 0}% profile match`,
+              },
+              {
+                label: "Strongest Skill Signal",
+                value: careerPaths[0]?.matchingSkills?.[0] || skills[0] || "Keep building",
+                detail: "Use this in resume bullets and interviews",
+              },
+              {
+                label: "Top Skill Gap",
+                value: careerPaths[0]?.skillGaps?.[0] || "No major gap",
+                detail: "Best next learning target for this week",
+              },
+            ].map((item) => (
+              <Card key={item.label} className="border-white/10 bg-[linear-gradient(180deg,rgba(124,58,237,0.1),rgba(10,10,16,0.95))]">
+                <CardContent className="px-6 py-5">
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{item.label}</p>
+                  <p className="mt-3 text-xl font-semibold text-foreground">{item.value}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.detail}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-3">
           {careerPaths.map((path) => {
             const radarData = buildRadarData(path)
             const isTracked = savedPaths.some((savedPath) => savedPath.title.toLowerCase() === path.title.toLowerCase())
             const applyLinks = buildInternshipLinks(path)
             const hasMatch = path.matchingSkills.length > 0 || path.matchScore >= 50
+            const recruiterPitch = buildRecruiterPitch(path, skills)
 
             return (
               <Card key={path.title} className="overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(10,10,16,0.98))]">
@@ -547,6 +598,19 @@ export function CareerPathPage() {
                       </div>
                     </div>
                   ) : null}
+
+                  <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-medium text-emerald-200">Quick recruiter pitch</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Useful for LinkedIn intros, referral asks, and hackathon demos.</p>
+                      </div>
+                      <Button variant="secondary" size="sm" onClick={() => handleCopyPitch(path)}>
+                        {copiedTitle === path.title ? "Copied" : "Copy"}
+                      </Button>
+                    </div>
+                    <p className="mt-3 text-sm text-foreground/90">{recruiterPitch}</p>
+                  </div>
                 </CardContent>
 
                 <CardFooter className="border-t border-white/8 pt-5">
@@ -572,7 +636,8 @@ export function CareerPathPage() {
               </Card>
             )
           })}
-        </div>
+          </div>
+        </>
       ) : (
         <EmptyState
           icon={Compass}
