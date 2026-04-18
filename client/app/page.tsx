@@ -440,8 +440,8 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400 sm:text-xl">
-              Tracktern helps students manage applications, prepare for interviews, discover career paths, close skill gaps,
-              and stay consistent with practice, all in one workspace that actually feels built for placement season.
+You started with a WhatsApp forward and a color-coded Excel sheet. Now you have 12 tabs open, three deadlines missed, and no idea which companies you've actually applied to.
+Tracktern fixes that. One AI-powered workspace to manage applications, prep for interviews, discover career paths, and close skill gaps — built for placement season, not against it.
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
