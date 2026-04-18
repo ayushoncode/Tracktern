@@ -22,9 +22,9 @@ import { cn } from "@/lib/utils"
 
 const primaryNav = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Home" },
+  { href: "/career-path", icon: Compass, label: "Career" },
   { href: "/analytics", icon: TrendingUp, label: "Analytics" },
   { href: "/calendar", icon: Calendar, label: "Calendar" },
-  { href: "/settings", icon: Settings, label: "Settings" },
   { href: "/more", icon: Menu, label: "More" },
 ]
 
@@ -41,7 +41,7 @@ const moreNav = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
 
-const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+const FOCUS_MODE_ROUTES = ["/dashboard", "/career-path", "/analytics", "/calendar", "/settings"]
 
 export function MobileNav() {
   const pathname = usePathname()

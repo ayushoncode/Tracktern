@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Briefcase, Compass, LoaderCircle, Plus, Radar, Sparkles, Target, TrendingUp, X } from "lucide-react"
+import { ArrowUpRight, Briefcase, Compass, LoaderCircle, Plus, Radar, Sparkles, Target, TrendingUp, X } from "lucide-react"
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -67,6 +67,11 @@ type CareerProfile = {
   savedPaths: CareerPath[]
 }
 
+type JobPlatform = {
+  label: string
+  href: string
+}
+
 function isCareerProfile(value: unknown): value is CareerProfile {
   if (!value || typeof value !== "object") return false
 
@@ -88,6 +93,30 @@ function buildRadarData(path: CareerPath) {
   }))
 
   return [...matched, ...gaps].slice(0, 6)
+}
+
+function buildInternshipLinks(path: CareerPath) {
+  const seedKeyword = path.internshipKeywords[0] || path.title
+  const query = encodeURIComponent(`${seedKeyword} internship india`)
+
+  return [
+    {
+      label: "LinkedIn",
+      href: `https://www.linkedin.com/jobs/search/?keywords=${query}`,
+    },
+    {
+      label: "Naukri",
+      href: `https://www.naukri.com/${query.replace(/%20/g, "-")}-jobs`,
+    },
+    {
+      label: "Internshala",
+      href: `https://internshala.com/internships/keywords-${query.replace(/%20/g, "-")}/`,
+    },
+    {
+      label: "Indeed",
+      href: `https://in.indeed.com/jobs?q=${query}`,
+    },
+  ] satisfies JobPlatform[]
 }
 
 function SkillTag({
@@ -376,6 +405,8 @@ export function CareerPathPage() {
           {careerPaths.map((path) => {
             const radarData = buildRadarData(path)
             const isTracked = savedPaths.some((savedPath) => savedPath.title.toLowerCase() === path.title.toLowerCase())
+            const applyLinks = buildInternshipLinks(path)
+            const hasMatch = path.matchingSkills.length > 0 || path.matchScore >= 50
 
             return (
               <Card key={path.title} className="overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(10,10,16,0.98))]">
@@ -490,6 +521,32 @@ export function CareerPathPage() {
                       ))}
                     </div>
                   </div>
+
+                  {hasMatch ? (
+                    <div className="rounded-2xl border border-violet-500/15 bg-violet-500/8 p-4">
+                      <div className="flex items-center gap-2 text-sm font-medium text-violet-200">
+                        <ArrowUpRight className="h-4 w-4" />
+                        Start Applying
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Your profile already has a decent match here, so you can jump straight into internship searches on job platforms.
+                      </p>
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        {applyLinks.map((platform) => (
+                          <a
+                            key={`${path.title}-${platform.label}`}
+                            href={platform.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-foreground transition-colors hover:border-violet-400/30 hover:bg-violet-500/10"
+                          >
+                            <span>{platform.label}</span>
+                            <ArrowUpRight className="h-3.5 w-3.5 text-violet-200" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </CardContent>
 
                 <CardFooter className="border-t border-white/8 pt-5">

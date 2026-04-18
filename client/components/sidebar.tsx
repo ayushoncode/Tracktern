@@ -23,7 +23,7 @@ const navItems = [
   { href: "/settings", icon: Settings, label: "Settings" },
 ]
 
-const FOCUS_MODE_ROUTES = ["/dashboard", "/analytics", "/calendar", "/settings"]
+const FOCUS_MODE_ROUTES = ["/dashboard", "/career-path", "/analytics", "/calendar", "/settings"]
 
 export function Sidebar() {
   const pathname = usePathname()
