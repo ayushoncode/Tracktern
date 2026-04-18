@@ -88,6 +88,9 @@
     @apply bg-background text-foreground;
     font-feature-settings: "ss01" 1, "cv11" 1;
   }
+}\@theme inline {
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
 }
 
 .glass-card {

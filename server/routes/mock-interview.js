@@ -39,6 +39,40 @@ const ROLES = [
   "Android Developer","iOS Developer"
 ];
 
+const ROLE_KEYWORDS = {
+  "SDE Intern": ["javascript", "python", "java", "c++", "dsa", "sql", "git", "api"],
+  "SDE": ["javascript", "python", "java", "c++", "dsa", "sql", "git", "system design"],
+  "SDE 2": ["system design", "distributed systems", "sql", "api", "docker", "aws", "git", "leadership"],
+  "Software Engineer": ["javascript", "python", "java", "sql", "git", "api", "debugging", "testing"],
+  "Software Developer": ["javascript", "python", "java", "sql", "git", "api", "oop", "debugging"],
+  "Frontend Engineer": ["javascript", "typescript", "react", "next.js", "css", "html", "ui", "api"],
+  "Backend Engineer": ["node.js", "express", "python", "java", "sql", "mongodb", "api", "system design"],
+  "Full Stack Developer": ["react", "next.js", "node.js", "express", "sql", "mongodb", "api", "git"],
+  "Data Analyst": ["sql", "excel", "python", "power bi", "tableau", "statistics", "pandas", "visualization"],
+  "Data Scientist": ["python", "machine learning", "statistics", "pandas", "numpy", "sql", "data visualization", "scikit-learn"],
+  "ML Engineer": ["python", "machine learning", "deep learning", "tensorflow", "pytorch", "sql", "mlops", "docker"],
+  "AI Engineer": ["python", "machine learning", "llm", "prompt engineering", "deep learning", "api", "vector database", "pytorch"],
+  "DevOps Engineer": ["docker", "kubernetes", "aws", "ci/cd", "linux", "terraform", "monitoring", "git"],
+  "Cloud Engineer": ["aws", "azure", "gcp", "docker", "terraform", "linux", "networking", "ci/cd"],
+  "Security Engineer": ["network security", "owasp", "linux", "python", "siem", "threat modeling", "cryptography", "api security"],
+  "Product Manager": ["product sense", "analytics", "sql", "roadmap", "stakeholder management", "user research", "experiments", "communication"],
+  "Associate Product Manager": ["product sense", "analytics", "communication", "roadmap", "stakeholder management", "user research", "sql", "experiments"],
+  "QA Engineer": ["testing", "selenium", "automation", "bug tracking", "api testing", "postman", "java", "javascript"],
+  "Test Engineer": ["testing", "automation", "selenium", "postman", "api testing", "java", "debugging", "qa"],
+  "Android Developer": ["kotlin", "java", "android", "jetpack", "mvvm", "rest api", "firebase", "git"],
+  "iOS Developer": ["swift", "ios", "xcode", "swiftui", "uikit", "rest api", "mvvm", "git"],
+};
+
+const COMPANY_KEYWORDS = {
+  Google: ["algorithms", "scalability", "distributed systems", "leadership", "ownership"],
+  Amazon: ["ownership", "leadership", "scalability", "metrics", "customer"],
+  Microsoft: ["collaboration", "product thinking", "system design", "impact"],
+  Meta: ["performance", "experimentation", "scale", "product"],
+  Flipkart: ["e-commerce", "scale", "backend", "metrics"],
+  Razorpay: ["payments", "backend", "api", "reliability"],
+  "JPMorgan Chase": ["finance", "risk", "security", "compliance"],
+};
+
 // 🤖 GROQ
 const groq = async (messages, max_tokens = 1000) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -69,6 +103,67 @@ const cleanJSON = (text) => {
     .replace(/[^}]*$/, "")
     .trim();
 };
+
+const clampScore = (value) => Math.max(0, Math.min(100, Math.round(value)));
+
+function uniqueStrings(values) {
+  return Array.from(new Set(values.filter(Boolean).map((value) => value.trim()))).filter(Boolean);
+}
+
+function analyzeResumeHeuristics(resume, company, role) {
+  const normalizedResume = resume.toLowerCase();
+  const roleKeywords = ROLE_KEYWORDS[role] || ROLE_KEYWORDS["Software Engineer"];
+  const companyKeywords = COMPANY_KEYWORDS[company] || [];
+  const combinedKeywords = uniqueStrings([...roleKeywords, ...companyKeywords]);
+
+  const matchedKeywords = combinedKeywords.filter((keyword) => normalizedResume.includes(keyword.toLowerCase()));
+  const missingKeywords = combinedKeywords.filter((keyword) => !normalizedResume.includes(keyword.toLowerCase()));
+
+  const projectMentions = (normalizedResume.match(/\b(project|internship|experience|built|developed|designed)\b/g) || []).length;
+  const metricMentions = (resume.match(/\b\d+[%+xkK]?\b/g) || []).length;
+  const sectionMentions = ["education", "experience", "project", "skills"].filter((section) =>
+    normalizedResume.includes(section)
+  ).length;
+  const actionVerbs = (normalizedResume.match(/\b(built|developed|led|improved|optimized|implemented|designed|launched|created)\b/g) || []).length;
+  const atsBase = 35
+    + (matchedKeywords.length / Math.max(combinedKeywords.length, 1)) * 38
+    + Math.min(metricMentions, 6) * 3
+    + Math.min(sectionMentions, 4) * 2
+    + Math.min(actionVerbs, 6) * 2;
+
+  const overallBase = 30
+    + (matchedKeywords.length / Math.max(combinedKeywords.length, 1)) * 32
+    + Math.min(projectMentions, 5) * 4
+    + Math.min(metricMentions, 6) * 3
+    + Math.min(actionVerbs, 6) * 2;
+
+  const strengths = [];
+  if (matchedKeywords.length >= 4) strengths.push(`Strong role alignment through keywords like ${matchedKeywords.slice(0, 4).join(", ")}.`)
+  if (metricMentions >= 2) strengths.push("Resume includes measurable impact, which improves recruiter trust and ATS relevance.")
+  if (projectMentions >= 2) strengths.push("Projects and experience are visible enough to support interview follow-up questions.")
+  if (actionVerbs >= 3) strengths.push("Bullet points use action-oriented language instead of passive descriptions.")
+
+  const suggestions = [];
+  if (metricMentions < 2) suggestions.push("Add more quantified outcomes such as percentages, user counts, latency improvements, or time saved.")
+  if (projectMentions < 2) suggestions.push("Make at least 2 projects or internships more visible with clearer titles, tech stack, and impact.")
+  if (missingKeywords.length > 0) suggestions.push(`Add role-relevant keywords naturally in projects or skills, starting with ${missingKeywords.slice(0, 3).join(", ")}.`)
+  if (!normalizedResume.includes("github") && !normalizedResume.includes("portfolio")) suggestions.push("Add a GitHub or portfolio link to strengthen technical credibility.")
+
+  const quickWins = [];
+  if (missingKeywords[0]) quickWins.push(`Add "${missingKeywords[0]}" where it genuinely appears in your work.`)
+  if (metricMentions < 2) quickWins.push("Rewrite one project bullet with a number-backed result.")
+  if (!normalizedResume.includes("impact")) quickWins.push("Highlight outcomes, not only responsibilities.")
+
+  return {
+    atsScore: clampScore(atsBase),
+    overallScore: clampScore(overallBase),
+    matchedKeywords,
+    missingKeywords,
+    strengths,
+    suggestions,
+    quickWins,
+  };
+}
 
 // 🧠 QUESTION ROUTE
 router.post("/question", protect, async (req, res) => {
@@ -563,6 +658,8 @@ router.post("/resume", protect, async (req, res) => {
       return res.status(400).json({ message: "Role is required" });
     }
 
+    const heuristics = analyzeResumeHeuristics(resume.trim(), company.trim(), role.trim());
+
     const raw = await groq([{
       role: "user",
       content: `You are a senior recruiter at ${company.trim()} hiring for ${role.trim()}.
@@ -572,16 +669,21 @@ ${resume.trim()}
 
 Return ONLY valid JSON:
 {
-  "overallScore": 75,
   "strengths": ["s1", "s2", "s3"],
   "missingSkills": ["skill1", "skill2"],
   "suggestions": ["suggestion1", "suggestion2", "suggestion3"],
-  "atsScore": 80,
   "keywordsMissing": ["kw1", "kw2"],
   "summary": "2-3 sentence honest assessment",
   "experienceGap": "what experience is missing",
   "quickWins": ["easy fix 1", "easy fix 2"]
-}`
+}
+
+RULES:
+- Do not return placeholder feedback
+- Make the feedback depend on the actual resume content
+- Do not invent skills or projects that are not present
+- Be strict if the resume is generic
+- Focus especially on ${role.trim()} alignment for ${company.trim()}`
     }], 1500);
 
     const cleaned = cleanJSON(raw);
@@ -595,13 +697,49 @@ Return ONLY valid JSON:
       return res.status(500).json({ message: "Resume analysis parsing failed" });
     }
 
-    parsed.strengths = Array.isArray(parsed.strengths) ? parsed.strengths : [];
-    parsed.missingSkills = Array.isArray(parsed.missingSkills) ? parsed.missingSkills : [];
-    parsed.suggestions = Array.isArray(parsed.suggestions) ? parsed.suggestions : [];
-    parsed.keywordsMissing = Array.isArray(parsed.keywordsMissing) ? parsed.keywordsMissing : [];
+    parsed.strengths = uniqueStrings(Array.isArray(parsed.strengths) ? parsed.strengths : []).slice(0, 4);
+    parsed.missingSkills = uniqueStrings(Array.isArray(parsed.missingSkills) ? parsed.missingSkills : []);
+    parsed.suggestions = uniqueStrings(Array.isArray(parsed.suggestions) ? parsed.suggestions : []).slice(0, 4);
+    parsed.keywordsMissing = uniqueStrings(Array.isArray(parsed.keywordsMissing) ? parsed.keywordsMissing : []);
     parsed.summary = typeof parsed.summary === "string" ? parsed.summary : "Analysis complete.";
+    parsed.quickWins = uniqueStrings(Array.isArray(parsed.quickWins) ? parsed.quickWins : []).slice(0, 3);
 
-    res.json(parsed);
+    const mergedMissingKeywords = uniqueStrings([
+      ...parsed.keywordsMissing,
+      ...heuristics.missingKeywords,
+    ]).slice(0, 6);
+
+    const mergedMissingSkills = uniqueStrings([
+      ...parsed.missingSkills,
+      ...heuristics.missingKeywords,
+    ]).slice(0, 6);
+
+    const mergedStrengths = uniqueStrings([
+      ...parsed.strengths,
+      ...heuristics.strengths,
+    ]).slice(0, 5);
+
+    const mergedSuggestions = uniqueStrings([
+      ...parsed.suggestions,
+      ...heuristics.suggestions,
+    ]).slice(0, 5);
+
+    const mergedQuickWins = uniqueStrings([
+      ...parsed.quickWins,
+      ...heuristics.quickWins,
+    ]).slice(0, 4);
+
+    res.json({
+      overallScore: heuristics.overallScore,
+      atsScore: heuristics.atsScore,
+      summary: parsed.summary,
+      strengths: mergedStrengths,
+      missingSkills: mergedMissingSkills,
+      suggestions: mergedSuggestions,
+      keywordsMissing: mergedMissingKeywords,
+      quickWins: mergedQuickWins,
+      experienceGap: typeof parsed.experienceGap === "string" ? parsed.experienceGap : "",
+    });
   } catch (err) {
     console.error("Resume error:", err.message);
     res.status(500).json({ message: "Error analyzing resume" });
