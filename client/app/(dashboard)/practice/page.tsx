@@ -731,10 +731,10 @@ export default function PracticePage() {
   const dailyProblem = getDailyProblem()
 
   useEffect(() => {
-    const savedSolved = readScopedPracticeState("solved", {})
-    const savedSolvedDates = readScopedPracticeState("solvedDates", {})
-    const savedHistory = readScopedPracticeState("dailyHistory", {})
-    const savedSubmissionCounts = readScopedPracticeState("submissionCounts", {})
+    const savedSolved = readScopedPracticeState<Record<string, boolean>>("solved", {})
+    const savedSolvedDates = readScopedPracticeState<Record<string, string>>("solvedDates", {})
+    const savedHistory = readScopedPracticeState<Record<string, boolean>>("dailyHistory", {})
+    const savedSubmissionCounts = readScopedPracticeState<Record<string, number>>("submissionCounts", {})
     const seededCounts = Object.keys(savedSubmissionCounts).length > 0
       ? savedSubmissionCounts
       : Object.fromEntries(

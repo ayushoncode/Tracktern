@@ -13,7 +13,7 @@ import { getCompanies, getStats, getToken, getUser } from "@/lib/api"
 import { STATUS_THEME } from "@/lib/status-theme"
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({ total: 0, applied: 0, shortlisted: 0, interview: 0, offer: 0, rejected: 0 })
+  const [stats, setStats] = useState({ total: 0, wishlist: 0, applied: 0, shortlisted: 0, interview: 0, offer: 0, rejected: 0 })
   const [companies, setCompanies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userName, setUserName] = useState("there")

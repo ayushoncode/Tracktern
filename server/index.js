@@ -18,6 +18,7 @@ const companyRoutes = require("./routes/companies");
 app.use("/api/auth", authRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/ai", require("./routes/ai"));
+app.use("/api/career", require("./routes/career"));
 app.use("/api/journal", require("./routes/journal"));
 app.use("/api/mock-interview", require("./routes/mock-interview"));
 app.use("/api/community", require("./routes/community"));

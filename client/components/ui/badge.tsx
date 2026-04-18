@@ -13,6 +13,7 @@ const badgeVariants = cva(
         secondary: 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] text-foreground',
         destructive: 'border-[rgba(239,68,68,0.19)] bg-[rgba(239,68,68,0.08)] text-[#F87171]',
         outline: 'border-[rgba(255,255,255,0.12)] bg-transparent text-foreground',
+        wishlist: 'border-[rgba(20,184,166,0.2)] bg-[rgba(20,184,166,0.08)] text-[#5EEAD4]',
         applied: 'border-[rgba(59,130,246,0.19)] bg-[rgba(59,130,246,0.08)] text-[#60A5FA]',
         shortlisted: 'border-[rgba(245,158,11,0.19)] bg-[rgba(245,158,11,0.08)] text-[#FBB947]',
         interview: 'border-[rgba(139,92,246,0.19)] bg-[rgba(139,92,246,0.08)] text-[#A78BFA]',

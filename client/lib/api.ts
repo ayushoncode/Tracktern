@@ -83,6 +83,24 @@ export const getFollowUpEmail = async (token: string, company: string, role: str
   return fetchJson(`${API_URL}/ai/followup`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ company, role }) });
 };
 
+export const getCareerProfile = async (token: string) => {
+  return fetchJson(`${API_URL}/career/profile`, { headers: { Authorization: `Bearer ${token}` } });
+};
+export const predictCareerPaths = async (token: string, data: object) => {
+  return fetchJson(`${API_URL}/career/predict`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+};
+export const trackCareerPath = async (token: string, data: object) => {
+  return fetchJson(`${API_URL}/career/track-path`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getJournalEntries = async (token: string) => {
   return fetchJson(`${API_URL}/journal`, { headers: { Authorization: `Bearer ${token}` } });
 };

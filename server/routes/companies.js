@@ -20,7 +20,8 @@ router.get("/stats", protect, async (req, res) => {
   try {
     const companies = await Company.find({ userId: req.userId });
     const stats = {
-      total: companies.length,
+      total: companies.filter(c => c.status !== "wishlist").length,
+      wishlist: companies.filter(c => c.status === "wishlist").length,
       applied: companies.filter(c => c.status === "applied").length,
       shortlisted: companies.filter(c => c.status === "shortlisted").length,
       interview: companies.filter(c => c.status === "interview").length,

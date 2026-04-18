@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Brain,
+  Compass,
   FileText,
   Mail,
   Calendar,
@@ -30,6 +31,7 @@ const primaryNav = [
 const moreNav = [
   { href: "/analytics", icon: TrendingUp, label: "Analytics" },
   { href: "/mock-interview", icon: Brain, label: "Mock" },
+  { href: "/career-path", icon: Compass, label: "Career" },
   { href: "/resume-analyzer", icon: FileText, label: "Resume" },
   { href: "/follow-up", icon: Mail, label: "Follow-up" },
   { href: "/calendar", icon: Calendar, label: "Calendar" },

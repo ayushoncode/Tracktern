@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { LayoutDashboard, Briefcase, Sparkles, BarChart3, BookOpen, Settings, Rocket, LogOut, Users, Code2, Brain, FileText, Mail, Calendar, TrendingUp } from "lucide-react"
+import { LayoutDashboard, Briefcase, Sparkles, BarChart3, BookOpen, Settings, Rocket, LogOut, Users, Code2, Brain, FileText, Mail, Calendar, TrendingUp, Compass } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { removeToken } from "@/lib/api"
 
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/applications", icon: Briefcase, label: "Applications" },
   { href: "/analytics", icon: TrendingUp, label: "Analytics" },
   { href: "/ai-prep", icon: Sparkles, label: "AI Prep" },
+  { href: "/career-path", icon: Compass, label: "Career Path" },
   { href: "/mock-interview", icon: Brain, label: "Mock Interview" },
   { href: "/resume-analyzer", icon: FileText, label: "Resume Analyzer" },
   { href: "/follow-up", icon: Mail, label: "Follow-up Emails" },

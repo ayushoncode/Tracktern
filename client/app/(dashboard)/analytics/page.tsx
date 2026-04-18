@@ -30,7 +30,7 @@ type Company = {
   name: string
   role: string
   companyType?: CompanyType | null
-  status: "applied" | "shortlisted" | "interview" | "offer" | "rejected"
+  status: "wishlist" | "applied" | "shortlisted" | "interview" | "offer" | "rejected"
   appliedDate?: string
   deadline?: string | null
 }
@@ -102,8 +102,10 @@ function buildTrendSeries(companies: Company[], days: number) {
     const key = startOfDay(appliedAt).toISOString().slice(0, 10)
     const point = map.get(key)
     if (!point) return
-    point.applications += 1
-    if (company.status !== "applied") point.responses += 1
+    if (company.status !== "wishlist") {
+      point.applications += 1
+    }
+    if (!["wishlist", "applied"].includes(company.status)) point.responses += 1
     if (company.status === "interview" || company.status === "offer") point.interviews += 1
   })
 
@@ -144,8 +146,8 @@ function percentageChange(current: number, previous: number) {
 }
 
 function getMetricCount(companies: Company[], metric: "applications" | "responses" | "interviews") {
-  if (metric === "applications") return companies.length
-  if (metric === "responses") return companies.filter((company) => company.status !== "applied").length
+  if (metric === "applications") return companies.filter((company) => company.status !== "wishlist").length
+  if (metric === "responses") return companies.filter((company) => !["wishlist", "applied"].includes(company.status)).length
   return companies.filter((company) => company.status === "interview" || company.status === "offer").length
 }
 
@@ -203,9 +205,10 @@ export default function AnalyticsPage() {
     })
   }, [companies, timeFilter, roleFilter, companyTypeFilter])
 
-  const total = filteredCompanies.length
+  const total = filteredCompanies.filter((company) => company.status !== "wishlist").length
 
   const byStatus = useMemo(() => ({
+    wishlist: filteredCompanies.filter((company) => company.status === "wishlist").length,
     applied: filteredCompanies.filter((company) => company.status === "applied").length,
     shortlisted: filteredCompanies.filter((company) => company.status === "shortlisted").length,
     interview: filteredCompanies.filter((company) => company.status === "interview").length,
@@ -248,7 +251,7 @@ export default function AnalyticsPage() {
     filteredCompanies.forEach((company) => {
       const current = map.get(company.role) ?? { total: 0, responses: 0, interviews: 0, offers: 0 }
       current.total += 1
-      if (company.status !== "applied") current.responses += 1
+      if (!["wishlist", "applied"].includes(company.status)) current.responses += 1
       if (company.status === "interview" || company.status === "offer") current.interviews += 1
       if (company.status === "offer") current.offers += 1
       map.set(company.role, current)

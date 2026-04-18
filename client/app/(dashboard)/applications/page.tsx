@@ -10,6 +10,7 @@ import { COMPANY_TYPE_LABELS, COMPANY_TYPE_OPTIONS, getCompanyType, type Company
 import { STATUS_THEME } from "@/lib/status-theme"
 
 const COLUMNS = [
+  { id: "wishlist", title: "Wishlist" },
   { id: "applied", title: "Applied" },
   { id: "shortlisted", title: "Shortlisted" },
   { id: "interview", title: "Interview" },

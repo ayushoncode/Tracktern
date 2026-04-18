@@ -1,4 +1,4 @@
-export type ApplicationStatus = "applied" | "shortlisted" | "interview" | "offer" | "rejected"
+export type ApplicationStatus = "wishlist" | "applied" | "shortlisted" | "interview" | "offer" | "rejected"
 
 type StatusTheme = {
   label: string
@@ -11,6 +11,15 @@ type StatusTheme = {
 }
 
 export const STATUS_THEME: Record<ApplicationStatus, StatusTheme> = {
+  wishlist: {
+    label: "Wishlist",
+    hex: "#14B8A6",
+    dotClassName: "bg-teal-400",
+    softClassName: "border-teal-500/20 bg-teal-500/10",
+    cardClassName: "border-teal-500/20 bg-[linear-gradient(180deg,rgba(20,184,166,0.12),rgba(17,17,24,0.92))]",
+    pillClassName: "bg-teal-500 text-slate-950",
+    textClassName: "text-teal-200",
+  },
   applied: {
     label: "Applied",
     hex: "#3B82F6",
