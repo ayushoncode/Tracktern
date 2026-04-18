@@ -721,6 +721,107 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── GMAIL SYNC COMING SOON ── */}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(234,67,53,0.08),rgba(66,133,244,0.08),rgba(12,12,20,0.97))] p-10 sm:p-14">
+            <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+
+              {/* Left: copy */}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" />
+                  Coming Soon
+                </div>
+
+                <h2 className="mt-5 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+                  Gmail Sync —
+                  <span className="block bg-[linear-gradient(135deg,#fca5a5,#f87171,#fb923c)] bg-clip-text text-transparent">
+                    your inbox updates your tracker.
+                  </span>
+                </h2>
+
+                <p className="mt-5 max-w-lg text-lg leading-8 text-zinc-400">
+                  Connect Gmail once. Tracktern automatically detects offer letters, rejection emails, and interview invites — and updates your pipeline without you lifting a finger.
+                </p>
+
+                <div className="mt-8 space-y-3">
+                  {[
+                    { icon: "📬", text: "Auto-detect offers, rejections, and interview invites" },
+                    { icon: "🔔", text: "Get notified the moment a company replies" },
+                    { icon: "🗂️", text: "Full company email history inside each application card" },
+                    { icon: "✅", text: "Zero manual updates — ever" },
+                  ].map((item) => (
+                    <div key={item.text} className="flex items-center gap-3 text-sm text-zinc-300">
+                      <span className="text-base">{item.icon}</span>
+                      {item.text}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8">
+                  <button
+                    onClick={openSignUp}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-6 py-3 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20 hover:border-amber-500/50"
+                  >
+                    Get early access
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Right: mock inbox preview */}
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-[32px] bg-[radial-gradient(circle,rgba(234,67,53,0.15),transparent_65%)] blur-2xl" />
+                <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0e0e16] p-5">
+
+                  {/* Fake browser bar */}
+                  <div className="mb-4 flex items-center gap-2 border-b border-white/8 pb-4">
+                    <div className="h-3 w-3 rounded-full bg-red-500/70" />
+                    <div className="h-3 w-3 rounded-full bg-amber-500/70" />
+                    <div className="h-3 w-3 rounded-full bg-emerald-500/70" />
+                    <div className="ml-3 flex-1 rounded-lg bg-white/5 px-3 py-1 text-xs text-zinc-500">
+                      tracktern.com/dashboard
+                    </div>
+                  </div>
+
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                    Gmail Sync — auto-synced from your inbox
+                  </p>
+
+                  {/* Mock email items */}
+                  {[
+                    { emoji: "🎉", company: "Microsoft", preview: "Congratulations! We're excited to offer...", time: "2m ago", color: "text-emerald-400", bg: "bg-emerald-500/8 border-emerald-500/20" },
+                    { emoji: "📅", company: "Google", preview: "Interview scheduled for Thursday, Apr 24...", time: "1h ago", color: "text-sky-400", bg: "bg-sky-500/8 border-sky-500/20" },
+                    { emoji: "🔥", company: "Razorpay", preview: "Moving you to the next round — details...", time: "3h ago", color: "text-violet-400", bg: "bg-violet-500/8 border-violet-500/20" },
+                    { emoji: "✅", company: "Flipkart", preview: "We received your application and will...", time: "1d ago", color: "text-zinc-400", bg: "bg-white/4 border-white/8" },
+                  ].map((item) => (
+                    <div
+                      key={item.company}
+                      className={`mb-2 flex items-start gap-3 rounded-2xl border px-4 py-3 ${item.bg}`}
+                    >
+                      <span className="mt-0.5 text-lg">{item.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`text-sm font-semibold ${item.color}`}>{item.company}</p>
+                          <p className="shrink-0 text-xs text-zinc-600">{item.time}</p>
+                        </div>
+                        <p className="mt-0.5 truncate text-xs text-zinc-500">{item.preview}</p>
+                      </div>
+                    </div>
+                  ))}
+
+                  <p className="mt-3 text-center text-xs text-zinc-600">
+                    Tracker updated automatically · No manual entry
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FINAL CTA ── */}
       <section className="px-6 pb-24 pt-8">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(124,58,237,0.18),rgba(56,189,248,0.08),rgba(12,12,20,0.98))] p-10 shadow-[0_35px_120px_rgba(0,0,0,0.38)] sm:p-14">
