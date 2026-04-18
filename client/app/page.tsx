@@ -909,12 +909,68 @@ export default function HomePage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-white/6 px-6 py-6 text-center text-sm text-zinc-500">
-        Tracktern — Built by Ayush &nbsp;·&nbsp;{" "}
-        <Link href="/community" className="text-zinc-400 transition hover:text-white">
-          Community
-        </Link>
-      </footer>
+     <footer className="border-t border-white/[0.07] px-6 pt-14 pb-8 bg-[#07070d]">
+  <div className="mx-auto max-w-7xl">
+    
+    <div className="grid gap-12 md:grid-cols-[2fr_1fr_1fr_1fr] mb-14">
+      
+      {/* Brand col */}
+      <div>
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[linear-gradient(135deg,#7c3aed,#4f46e5)]">
+            <Rocket className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-base font-semibold tracking-tight text-white">Tracktern</span>
+        </div>
+        <p className="text-sm text-zinc-500 leading-relaxed max-w-[220px] mb-5">
+          The AI internship workspace for placement-focused students. Track, prep, and land more offers — for free.
+        </p>
+        <div className="flex gap-2.5">
+          {/* Twitter, LinkedIn, GitHub icon buttons here */}
+        </div>
+      </div>
+
+      {/* Product */}
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 mb-4">Product</p>
+        <div className="flex flex-col gap-2.5">
+          {["Dashboard", "Application tracker", "AI interview prep", "Career predictor", "Analytics", "Community"].map(link => (
+            <Link key={link} href="#" className="text-sm text-zinc-500 hover:text-white transition-colors">{link}</Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Resources */}
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 mb-4">Resources</p>
+        <div className="flex flex-col gap-2.5">
+          {["Blog", "Interview experiences", "DSA practice", "Resume tips", "Changelog"].map(link => (
+            <Link key={link} href="#" className="text-sm text-zinc-500 hover:text-white transition-colors">{link}</Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Company */}
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 mb-4">Company</p>
+        <div className="flex flex-col gap-2.5">
+          {["About", "Contact", "Privacy policy", "Terms of service"].map(link => (
+            <Link key={link} href="#" className="text-sm text-zinc-500 hover:text-white transition-colors">{link}</Link>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="border-t border-white/[0.07] pt-6 flex items-center justify-between flex-wrap gap-3">
+      <p className="text-xs text-zinc-700">© 2025 Tracktern. Built with care by Ayush.</p>
+      <div className="flex items-center gap-1.5">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="text-xs text-zinc-700">All systems operational</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
     </div>
   )
 }
