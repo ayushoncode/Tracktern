@@ -572,85 +572,117 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── WHY TRACKTERN (replaces "Why this converts") ── */}
+      {/* ── WHY TRACKTERN ── */}
       <section className="px-6 py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.88fr_1.12fr]">
-          <div>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">Why students switch</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
               Stop juggling tools. Start actually landing interviews.
             </h2>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-400">
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-zinc-400">
               Most students don't fail placement season because they didn't work hard enough.
-              They fail because their system was scattered. Tracktern puts it all in one place so every decision is clearer and every application is stronger.
+              They fail because their system was scattered. Tracktern puts it all in one place.
             </p>
-
-            {/* ✅ NEW: User-facing benefit cards */}
-            <div className="mt-8 space-y-3">
-              {WHY_TRACKTERN.map((item) => (
-                <div key={item.heading} className="flex items-start gap-4 rounded-2xl border border-white/7 bg-white/4 px-4 py-4">
-                  <span className="mt-0.5 text-xl">{item.icon}</span>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{item.heading}</p>
-                    <p className="mt-1 text-sm leading-6 text-zinc-400">{item.body}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Interactive showcase */}
-          <div className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(124,58,237,0.12),rgba(15,15,24,0.94))] p-4 shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
-            <div className="flex flex-wrap gap-2 border-b border-white/8 pb-4">
-              {SHOWCASE_ITEMS.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveShowcase(item.id)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    activeShowcase === item.id
-                      ? "bg-violet-500 text-white"
-                      : "bg-white/5 text-zinc-400 hover:bg-white/8 hover:text-white"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {WHY_TRACKTERN.map((item) => (
+              <div key={item.heading} className="rounded-[24px] border border-white/8 bg-white/[0.04] p-6">
+                <span className="text-3xl">{item.icon}</span>
+                <p className="mt-4 text-base font-semibold text-white">{item.heading}</p>
+                <p className="mt-2 text-sm leading-6 text-zinc-400">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-5 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-200">{activeItem.label}</p>
-                <h3 className="mt-3 text-2xl font-semibold text-white">{activeItem.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-zinc-400">{activeItem.description}</p>
+      {/* ── PRODUCT SHOWCASE (full-width, balanced) ── */}
+      <section className="px-6 py-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Product tour</p>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+              See exactly what you're getting.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg leading-8 text-zinc-400">
+              Real screens from the product — not mockups.
+            </p>
+          </div>
 
-                <div className="mt-6 space-y-3">
+          {/* Tab pills */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {SHOWCASE_ITEMS.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveShowcase(item.id)}
+                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  activeShowcase === item.id
+                    ? "bg-violet-500 text-white shadow-[0_8px_24px_rgba(124,58,237,0.4)]"
+                    : "border border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 50/50 split: text left, screenshot right */}
+          <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(124,58,237,0.10),rgba(12,12,20,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.4)]">
+            <div className="grid lg:grid-cols-2">
+
+              {/* Left: text */}
+              <div className="flex flex-col justify-center p-8 lg:p-12">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
+                  {activeItem.label}
+                </p>
+                <h3 className="mt-4 text-3xl font-bold leading-snug text-white lg:text-4xl">
+                  {activeItem.title}
+                </h3>
+                <p className="mt-5 text-base leading-8 text-zinc-400">
+                  {activeItem.description}
+                </p>
+                <div className="mt-8 space-y-3">
                   {[
                     "Built around real internship workflows",
                     "Designed to reduce manual effort",
-                    "Strong visual storytelling for demos",
+                    "Zero learning curve — works how you think",
                   ].map((point) => (
-                    <div key={point} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <span className="h-2 w-2 rounded-full bg-violet-400" />
-                      {point}
+                    <div key={point} className="flex items-center gap-3">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <span className="text-sm text-zinc-300">{point}</span>
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={openSignUp}
+                  className="mt-10 inline-flex w-fit items-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(124,58,237,0.35)] transition hover:scale-[1.02]"
+                >
+                  Try it free
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
 
-              <div className="overflow-hidden rounded-[24px] border border-white/10 bg-[#0e0e16]">
+              {/* Right: screenshot full-bleed */}
+              <div className="relative min-h-[340px] overflow-hidden border-t border-white/8 lg:border-l lg:border-t-0 bg-[#0a0a12] lg:min-h-[500px]">
                 <Image
                   src={activeItem.image}
                   alt={activeItem.title}
-                  width={1600}
-                  height={1000}
+                  fill
                   placeholder="empty"
-                  className="h-full w-full object-cover"
+                  className="object-cover object-left-top"
                 />
+                <div className="absolute inset-y-0 left-0 w-10 bg-[linear-gradient(to_right,rgba(10,10,18,0.5),transparent)]" />
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-[linear-gradient(to_top,rgba(10,10,18,0.5),transparent)]" />
               </div>
+
             </div>
           </div>
         </div>
       </section>
+
+      {/* ── FEATURE CARDS ── */}
 
       {/* ── FEATURE CARDS ── */}
       <section className="px-6 py-20">
