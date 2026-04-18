@@ -6,7 +6,6 @@ import Link from "next/link"
 import {
   ArrowRight,
   BarChart3,
-  BookOpen,
   Brain,
   Calendar,
   CheckCircle2,
@@ -27,6 +26,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { getToken, loginUser, registerUser, saveToken, saveUser, verifyOtp } from "@/lib/api"
 
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
 const HERO_STATS = [
   { value: "11+", label: "workflow modules" },
   { value: "AI", label: "career + prep assistance" },
@@ -37,29 +38,41 @@ const SHOWCASE_ITEMS = [
   {
     id: "career",
     label: "Career Predictor",
+    spanClass: "md:col-span-2 md:row-span-2",
+    imageHeight: "h-[24rem] md:h-full",
     title: "AI career path prediction with job-search shortcuts",
-    description: "Match skills to career paths, see gaps, copy recruiter-ready pitches, and jump straight to LinkedIn, Naukri, Internshala, and Indeed.",
+    description:
+      "Match skills to career paths, see gaps, copy recruiter-ready pitches, and jump straight to LinkedIn, Naukri, Internshala, and Indeed.",
     image: "/screenshots/career-path.png",
   },
   {
     id: "dashboard",
     label: "Dashboard",
+    spanClass: "md:col-span-1",
+    imageHeight: "h-48 md:h-full",
     title: "A dashboard that tells you where your pipeline actually stands",
-    description: "Track applications, offers, interview rate, response rate, and momentum without digging through sheets or scattered notes.",
+    description:
+      "Track applications, offers, interview rate, response rate, and momentum without digging through sheets or scattered notes.",
     image: "/screenshots/dashboard.png",
   },
   {
     id: "applications",
     label: "Applications",
+    spanClass: "md:col-span-1",
+    imageHeight: "h-48 md:h-full",
     title: "Kanban application tracking that stays easy to update",
-    description: "Move roles through wishlist, applied, shortlisted, interview, offer, and rejected with a cleaner visual workflow.",
+    description:
+      "Move roles through wishlist, applied, shortlisted, interview, offer, and rejected with a cleaner visual workflow.",
     image: "/screenshots/applications.png",
   },
   {
     id: "analytics",
     label: "Analytics",
+    spanClass: "md:col-span-1",
+    imageHeight: "h-48 md:h-full",
     title: "See what is working across companies, roles, and time windows",
-    description: "Understand where your funnel leaks, which roles convert best, and how your effort is trending week by week.",
+    description:
+      "Understand where your funnel leaks, which roles convert best, and how your effort is trending week by week.",
     image: "/screenshots/analytics.png",
   },
 ]
@@ -68,7 +81,7 @@ const FEATURE_CARDS = [
   {
     icon: Compass,
     title: "AI Career Path Predictor",
-    desc: "Predict best-fit roles, spot skills gaps, get a roadmap, and add wishlist cards instantly.",
+    desc: "Predict best-fit roles, spot skill gaps, get a roadmap, and add wishlist cards instantly.",
     image: "/screenshots/career-results.png",
   },
   {
@@ -121,7 +134,7 @@ const WORKFLOW_STEPS = [
   },
 ]
 
-const SOCIAL_PROOF = [
+const SOCIAL_PROOF_TAGS = [
   "Application tracker",
   "Career path predictor",
   "AI prep generator",
@@ -132,12 +145,30 @@ const SOCIAL_PROOF = [
   "Community insights",
 ]
 
-function screenshotClass(index: number) {
-  if (index === 0) return "md:col-span-2 md:row-span-2"
-  if (index === 1) return "md:col-span-1"
-  if (index === 2) return "md:col-span-1"
-  return "md:col-span-1"
-}
+const WHY_TRACKTERN = [
+  {
+    icon: "🗂️",
+    heading: "One place, zero tabs",
+    body: "Applications, prep, analytics, follow-ups, and career planning — all connected. No more switching between tools.",
+  },
+  {
+    icon: "🤖",
+    heading: "AI that actually helps",
+    body: "Not just a chatbot. Tracktern gives you prep plans, career predictions, and skill gap reports built around your profile.",
+  },
+  {
+    icon: "📊",
+    heading: "Know where you stand",
+    body: "Pipeline analytics show you exactly where applications drop off so you can fix the leak, not just apply more.",
+  },
+  {
+    icon: "🔥",
+    heading: "Stay consistent",
+    body: "Daily DSA practice, streaks, and an interview journal keep you sharp across the whole placement season.",
+  },
+]
+
+// ─── COMPONENT ───────────────────────────────────────────────────────────────
 
 export default function HomePage() {
   const [showAuth, setShowAuth] = useState(false)
@@ -152,7 +183,9 @@ export default function HomePage() {
   const [success, setSuccess] = useState("")
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState("")
   const [activeShowcase, setActiveShowcase] = useState(SHOWCASE_ITEMS[0].id)
+
   const isVerifying = Boolean(pendingVerificationEmail) && !isLogin
+  const activeItem = SHOWCASE_ITEMS.find((item) => item.id === activeShowcase) || SHOWCASE_ITEMS[0]
 
   useEffect(() => {
     const token = getToken()
@@ -168,14 +201,12 @@ export default function HomePage() {
     try {
       if (isVerifying) {
         const data = await verifyOtp(pendingVerificationEmail, otp)
-
         if (data.token) {
           saveToken(data.token)
           saveUser(data.user)
           window.location.href = "/dashboard"
           return
         }
-
         setError(data.message || "Invalid OTP")
         return
       }
@@ -202,8 +233,16 @@ export default function HomePage() {
     }
   }
 
-  const activeItem = SHOWCASE_ITEMS.find((item) => item.id === activeShowcase) || SHOWCASE_ITEMS[0]
+  const openSignUp = () => { setShowAuth(true); setIsLogin(false) }
+  const openSignIn = () => { setShowAuth(true); setIsLogin(true) }
+  const resetAuth = () => {
+    setPendingVerificationEmail("")
+    setOtp("")
+    setError("")
+    setSuccess("")
+  }
 
+  // ── AUTH SCREEN ────────────────────────────────────────────────────────────
   if (showAuth) {
     return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#07070d] px-4 py-10">
@@ -238,51 +277,46 @@ export default function HomePage() {
                 ? "Pick up your internship pipeline where you left off."
                 : isVerifying
                   ? `We sent an OTP to ${pendingVerificationEmail}`
-                  : "Start free and organize applications, prep, analytics, and career planning in one place."}
+                  : "Start free. Organize applications, prep, analytics, and career planning in one place."}
             </p>
 
             <div className="mt-6 flex rounded-2xl border border-white/8 bg-white/5 p-1">
               <button
-                onClick={() => {
-                  setIsLogin(true)
-                  setPendingVerificationEmail("")
-                  setError("")
-                  setSuccess("")
-                }}
-                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${
-                  isLogin ? "bg-violet-600 text-white shadow-lg" : "text-zinc-400 hover:text-white"
-                }`}
+                onClick={() => { setIsLogin(true); resetAuth() }}
+                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${isLogin ? "bg-violet-600 text-white shadow-lg" : "text-zinc-400 hover:text-white"}`}
               >
                 Sign In
               </button>
               <button
-                onClick={() => {
-                  setIsLogin(false)
-                  setError("")
-                  setSuccess("")
-                }}
-                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${
-                  !isLogin ? "bg-violet-600 text-white shadow-lg" : "text-zinc-400 hover:text-white"
-                }`}
+                onClick={() => { setIsLogin(false); setError(""); setSuccess("") }}
+                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${!isLogin ? "bg-violet-600 text-white shadow-lg" : "text-zinc-400 hover:text-white"}`}
               >
                 Sign Up
               </button>
             </div>
 
-            {error ? <div className="mt-5 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div> : null}
-            {success ? <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{success}</div> : null}
+            {error && (
+              <div className="mt-5 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+                {success}
+              </div>
+            )}
 
             <form className="mt-5 space-y-3" onSubmit={handleSubmit}>
-              {!isLogin && !isVerifying ? (
+              {!isLogin && !isVerifying && (
                 <Input
                   type="text"
                   placeholder="Full name"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   required
                   className="h-12 rounded-2xl border-white/10 bg-white/5 text-sm text-white placeholder:text-zinc-600"
                 />
-              ) : null}
+              )}
 
               {!isVerifying ? (
                 <div className="relative">
@@ -291,7 +325,7 @@ export default function HomePage() {
                     type="email"
                     placeholder="Email address"
                     value={email}
-                    onChange={(event) => setEmail(event.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="h-12 rounded-2xl border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-zinc-600"
                   />
@@ -307,7 +341,7 @@ export default function HomePage() {
                   type="text"
                   placeholder="Enter 6-digit OTP"
                   value={otp}
-                  onChange={(event) => setOtp(event.target.value)}
+                  onChange={(e) => setOtp(e.target.value)}
                   required
                   maxLength={6}
                   className="h-12 rounded-2xl border-white/10 bg-white/5 text-sm text-white placeholder:text-zinc-600"
@@ -319,7 +353,7 @@ export default function HomePage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     className="h-12 rounded-2xl border-white/10 bg-white/5 pl-10 pr-10 text-sm text-white placeholder:text-zinc-600"
                   />
@@ -333,20 +367,26 @@ export default function HomePage() {
                 </div>
               )}
 
-              {isLogin && !isVerifying ? (
+              {isLogin && !isVerifying && (
                 <div className="mt-2 text-right">
                   <Link href="/auth/forgot-password" className="text-xs text-zinc-400 transition hover:text-white">
                     Forgot Password?
                   </Link>
                 </div>
-              ) : null}
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
                 className="mt-2 h-12 w-full rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] text-sm font-bold text-white transition hover:scale-[1.01] hover:opacity-95 disabled:opacity-50"
               >
-                {loading ? "Please wait..." : isLogin ? "Sign In" : isVerifying ? "Verify OTP" : "Create Free Account"}
+                {loading
+                  ? "Please wait..."
+                  : isLogin
+                    ? "Sign In"
+                    : isVerifying
+                      ? "Verify OTP"
+                      : "Create Free Account"}
               </button>
             </form>
 
@@ -354,12 +394,7 @@ export default function HomePage() {
               <p className="mt-4 text-center text-sm text-zinc-500">
                 {isLogin ? "No account? " : "Have an account? "}
                 <button
-                  onClick={() => {
-                    setIsLogin(!isLogin)
-                    setPendingVerificationEmail("")
-                    setError("")
-                    setSuccess("")
-                  }}
+                  onClick={() => { setIsLogin(!isLogin); resetAuth() }}
                   className="font-semibold text-violet-400 transition-colors hover:text-violet-300"
                 >
                   {isLogin ? "Sign up free" : "Sign in"}
@@ -368,12 +403,7 @@ export default function HomePage() {
             ) : (
               <button
                 type="button"
-                onClick={() => {
-                  setPendingVerificationEmail("")
-                  setOtp("")
-                  setError("")
-                  setSuccess("")
-                }}
+                onClick={resetAuth}
                 className="mt-4 w-full text-center text-sm font-semibold text-violet-400 transition-colors hover:text-violet-300"
               >
                 Edit email and sign up again
@@ -385,10 +415,13 @@ export default function HomePage() {
     )
   }
 
+  // ── LANDING PAGE ───────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#07070d] text-white">
+      {/* Global background */}
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(124,58,237,0.24),transparent_30%),radial-gradient(circle_at_75%_10%,rgba(56,189,248,0.14),transparent_22%),linear-gradient(180deg,#07070d_0%,#090913_100%)]" />
 
+      {/* ── NAV ── */}
       <nav className="sticky top-0 z-50 border-b border-white/6 bg-[rgba(7,7,13,0.72)] backdrop-blur-2xl">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
@@ -403,19 +436,13 @@ export default function HomePage() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => {
-                setShowAuth(true)
-                setIsLogin(true)
-              }}
+              onClick={openSignIn}
               className="rounded-xl px-4 py-2 text-sm text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
             >
               Sign In
             </button>
             <button
-              onClick={() => {
-                setShowAuth(true)
-                setIsLogin(false)
-              }}
+              onClick={openSignUp}
               className="rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_14px_40px_rgba(124,58,237,0.32)] transition hover:scale-[1.03]"
             >
               Get Started Free
@@ -424,35 +451,39 @@ export default function HomePage() {
         </div>
       </nav>
 
+      {/* ── HERO ── */}
       <section className="relative px-6 pb-16 pt-14 lg:pt-20">
         <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <div>
+            {/* Badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet-200">
               <Sparkles className="h-3.5 w-3.5" />
               Built for the full internship journey
             </div>
 
-            <h1 className="mt-6 max-w-3xl text-5xl font-bold leading-[0.92] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Turn internship chaos into a
-              <span className="block bg-[linear-gradient(135deg,#c4b5fd,#818cf8,#67e8f9)] bg-clip-text text-transparent">
-                focused, AI-powered system.
+            {/* ✅ NEW: Relatable pain → solution headline */}
+            <h1 className="mt-6 max-w-3xl text-5xl font-bold leading-[1.0] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              It starts with a WhatsApp forward.
+              <span className="mt-2 block bg-[linear-gradient(135deg,#c4b5fd,#818cf8,#67e8f9)] bg-clip-text text-transparent">
+                Then placement season hits.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400 sm:text-xl">
-You started with a WhatsApp forward and a color-coded Excel sheet. Now you have 12 tabs open, three deadlines missed, and no idea which companies you've actually applied to.
-Tracktern fixes that. One AI-powered workspace to manage applications, prep for interviews, discover career paths, and close skill gaps — built for placement season, not against it.
+            {/* ✅ NEW: Subheading that earns the CTA */}
+            <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-400 sm:text-xl">
+              Twelve tabs open. Three deadlines missed. An Excel sheet nobody's updated in two weeks.
+              <br /><br />
+              <span className="font-semibold text-white">Tracktern is what you needed from Day 1.</span>{" "}
+              One AI-powered workspace to track applications, prep for interviews, discover career paths, and close skill gaps — built for placement season, not against it.
             </p>
 
+            {/* CTAs */}
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(false)
-                }}
+                onClick={openSignUp}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#4f46e5)] px-7 py-4 text-base font-semibold text-white shadow-[0_18px_50px_rgba(124,58,237,0.35)] transition hover:scale-[1.02]"
               >
-                Start Free Now
+                Get organized — it's free
                 <ArrowRight className="h-4 w-4" />
               </button>
               <button
@@ -464,14 +495,15 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
               </button>
             </div>
 
+            {/* Social trust */}
             <div className="mt-8 flex flex-wrap items-center gap-5 text-sm text-zinc-400">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
-                  {["A", "R", "M", "S"].map((label, index) => (
+                  {["A", "R", "M", "S"].map((label, i) => (
                     <div
                       key={label}
                       className="flex h-8 w-8 items-center justify-center rounded-full border border-[#07070d] text-xs font-bold text-white"
-                      style={{ background: ["#7c3aed", "#4f46e5", "#0ea5e9", "#10b981"][index] }}
+                      style={{ background: ["#7c3aed", "#4f46e5", "#0ea5e9", "#10b981"][i] }}
                     >
                       {label}
                     </div>
@@ -480,13 +512,14 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
                 <span>Built for placement-focused students</span>
               </div>
               <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, index) => (
-                  <Star key={index} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 ))}
                 <span className="ml-1">Track everything in one place</span>
               </div>
             </div>
 
+            {/* Stats */}
             <div className="mt-10 grid gap-3 sm:grid-cols-3">
               {HERO_STATS.map((item) => (
                 <div key={item.label} className="rounded-[24px] border border-white/8 bg-white/4 p-5">
@@ -497,21 +530,23 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
             </div>
           </div>
 
+          {/* Screenshot grid */}
           <div className="relative">
             <div className="absolute -inset-8 rounded-[36px] bg-[radial-gradient(circle,rgba(124,58,237,0.24),transparent_62%)] blur-3xl" />
             <div className="relative grid gap-4 md:grid-cols-3">
-              {[SHOWCASE_ITEMS[0], SHOWCASE_ITEMS[1], SHOWCASE_ITEMS[2], SHOWCASE_ITEMS[3]].map((item, index) => (
+              {SHOWCASE_ITEMS.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveShowcase(item.id)}
-                  className={`${screenshotClass(index)} group relative overflow-hidden rounded-[28px] border border-white/10 bg-[#10101a] text-left shadow-[0_22px_70px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-white/18`}
+                  className={`${item.spanClass} group relative overflow-hidden rounded-[28px] border border-white/10 bg-[#10101a] text-left shadow-[0_22px_70px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-white/18`}
                 >
                   <Image
                     src={item.image}
                     alt={item.title}
                     width={1600}
                     height={1000}
-                    className={`w-full object-cover transition duration-500 group-hover:scale-[1.02] ${index === 0 ? "h-[24rem] md:h-full" : "h-48 md:h-full"}`}
+                    placeholder="empty"
+                    className={`w-full object-cover transition duration-500 group-hover:scale-[1.02] ${item.imageHeight}`}
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(7,7,13,0.88))]" />
                   <div className="absolute inset-x-0 bottom-0 p-5">
@@ -525,9 +560,10 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
         </div>
       </section>
 
+      {/* ── FEATURE TAGS STRIP ── */}
       <section className="border-y border-white/6 bg-white/[0.03] px-6 py-4">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {SOCIAL_PROOF.map((item) => (
+          {SOCIAL_PROOF_TAGS.map((item) => (
             <div key={item} className="flex items-center gap-3">
               <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
               <span className="text-sm font-medium text-zinc-400">{item}</span>
@@ -536,33 +572,34 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
         </div>
       </section>
 
+      {/* ── WHY TRACKTERN (replaces "Why this converts") ── */}
       <section className="px-6 py-20">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.88fr_1.12fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">Why this converts</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">Why students switch</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              It shows students the next right move, not just more information.
+              Stop juggling tools. Start actually landing interviews.
             </h2>
             <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-400">
-              The best internship tools remove confusion. Tracktern combines tracking, AI prep, skill development,
-              career guidance, and follow-through, so visitors immediately understand the outcome: more control and better conversion.
+              Most students don't fail placement season because they didn't work hard enough.
+              They fail because their system was scattered. Tracktern puts it all in one place so every decision is clearer and every application is stronger.
             </p>
 
+            {/* ✅ NEW: User-facing benefit cards */}
             <div className="mt-8 space-y-3">
-              {[
-                "Real screenshots from the product build trust faster than mockups.",
-                "Career predictor creates a high-wow first impression for hackathon judges.",
-                "Application tracker + analytics gives the product a clear daily-use reason.",
-                "Practice, community, and mock interviews make it feel like a full ecosystem.",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/7 bg-white/4 px-4 py-4">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
-                  <p className="text-sm leading-7 text-zinc-300">{item}</p>
+              {WHY_TRACKTERN.map((item) => (
+                <div key={item.heading} className="flex items-start gap-4 rounded-2xl border border-white/7 bg-white/4 px-4 py-4">
+                  <span className="mt-0.5 text-xl">{item.icon}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{item.heading}</p>
+                    <p className="mt-1 text-sm leading-6 text-zinc-400">{item.body}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Interactive showcase */}
           <div className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(124,58,237,0.12),rgba(15,15,24,0.94))] p-4 shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
             <div className="flex flex-wrap gap-2 border-b border-white/8 pb-4">
               {SHOWCASE_ITEMS.map((item) => (
@@ -606,6 +643,7 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
                   alt={activeItem.title}
                   width={1600}
                   height={1000}
+                  placeholder="empty"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -614,16 +652,16 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
         </div>
       </section>
 
+      {/* ── FEATURE CARDS ── */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Feature stack</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              Everything a student needs between “I found a role” and “I got the offer.”
+              Everything you need between "I found a role" and "I got the offer."
             </h2>
             <p className="mt-4 text-lg leading-8 text-zinc-400">
-              Instead of making visitors piece the product together, the landing page now shows the whole system:
-              track, prepare, analyze, grow, and apply smarter.
+              Track, prepare, analyze, grow, and apply smarter — all inside one workspace that connects the dots for you.
             </p>
           </div>
 
@@ -639,6 +677,7 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
                     alt={feature.title}
                     width={1600}
                     height={1000}
+                    placeholder="empty"
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(7,7,13,0.7))]" />
@@ -658,12 +697,13 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
         </div>
       </section>
 
+      {/* ── WORKFLOW ── */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">Simple workflow</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">How it works</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              A cleaner story for users and judges.
+              Three steps from chaos to offer letter.
             </h2>
           </div>
 
@@ -681,39 +721,51 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
         </div>
       </section>
 
+      {/* ── FINAL CTA ── */}
       <section className="px-6 pb-24 pt-8">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(124,58,237,0.18),rgba(56,189,248,0.08),rgba(12,12,20,0.98))] p-10 shadow-[0_35px_120px_rgba(0,0,0,0.38)] sm:p-14">
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Launch your internship system</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-200">Ready when you are</p>
+
+              {/* ✅ NEW: Actual user-facing CTA copy */}
               <h2 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                Stop guessing.
+                Your placement season
                 <span className="block bg-[linear-gradient(135deg,#c4b5fd,#818cf8,#67e8f9)] bg-clip-text text-transparent">
-                  Start tracking, preparing, and converting.
+                  starts here.
                 </span>
               </h2>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-300/80">
-                Make the landing page work like the product: clear, useful, and action-oriented. Give visitors immediate proof
-                that Tracktern is where their internship hunt becomes structured.
+                Stop guessing which companies you applied to. Stop missing follow-up windows.
+                Stop preparing at the last minute. Tracktern gives you the structure to show up to every interview confident and prepared — for free.
               </p>
+
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-zinc-400">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  100% free, no credit card
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  Set up in under 2 minutes
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  Built by a student, for students
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
               <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(false)
-                }}
+                onClick={openSignUp}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-semibold text-black transition hover:scale-[1.02]"
               >
-                Create Free Account
+                Start tracking — it's free
                 <ArrowRight className="h-4 w-4" />
               </button>
               <button
-                onClick={() => {
-                  setShowAuth(true)
-                  setIsLogin(true)
-                }}
+                onClick={openSignIn}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/14 bg-white/5 px-7 py-4 text-base font-semibold text-white transition hover:bg-white/10"
               >
                 Sign In
@@ -722,6 +774,14 @@ Tracktern fixes that. One AI-powered workspace to manage applications, prep for 
           </div>
         </div>
       </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-white/6 px-6 py-6 text-center text-sm text-zinc-500">
+        Tracktern — Built by Ayush &nbsp;·&nbsp;{" "}
+        <Link href="/community" className="text-zinc-400 transition hover:text-white">
+          Community
+        </Link>
+      </footer>
     </div>
   )
 }
